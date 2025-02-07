@@ -11,9 +11,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "runWristHalfSpeed"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "2bto6a"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopWrist"
           }
         },
         {
