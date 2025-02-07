@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StraightShot"
+            "pathName": "Cto2b"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Cto5a"
+            "pathName": "2bto6a"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6atoC"
           }
         }
       ]
