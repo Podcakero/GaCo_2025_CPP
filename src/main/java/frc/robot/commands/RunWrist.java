@@ -19,6 +19,7 @@ public class RunWrist extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(wristSubsystem);
     this.wristSubsystem = wristSubsystem;
+    this.speed = speed;
   }
 
   // Called when the command is initially scheduled.

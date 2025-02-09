@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.RunWrist;
-import frc.robot.commands.RunWristInstant;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.WristSubsystem;
@@ -50,8 +49,8 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        NamedCommands.registerCommand("runWristHalfSpeed", Commands.runOnce(() -> wrist.set(1)));
-        NamedCommands.registerCommand("stopWrist", Commands.runOnce(() -> wrist.set(0)));
+        NamedCommands.registerCommand("runWristHalfSpeed", new RunWrist(wrist, 1));
+        NamedCommands.registerCommand("stopWrist", new RunWrist(wrist, 0));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
@@ -60,7 +59,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        joystick.y().onTrue(Commands.runOnce(() -> wrist.set(1))).onFalse(Commands.runOnce(() -> wrist.set(0)));
+        joystick.y().onTrue(new RunWrist(wrist, 1)).onFalse(new RunWrist(wrist, 0));
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
