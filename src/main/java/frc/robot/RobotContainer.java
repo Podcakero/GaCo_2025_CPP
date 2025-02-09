@@ -49,8 +49,9 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        NamedCommands.registerCommand("runWristHalfSpeed", new RunWrist(wrist, 1));
+        NamedCommands.registerCommand("runWristHalfSpeed", new RunWrist(wrist, 0.5));
         NamedCommands.registerCommand("stopWrist", new RunWrist(wrist, 0));
+        NamedCommands.registerCommand("stop", drivetrain.applyRequest(() -> brake));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
