@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Cto2b"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "runWristHalfSpeed"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2bto6a"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopWrist"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6atoC"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
