@@ -31,6 +31,34 @@
               "imageWidth": -1,
               "imageHeight": -1
             }
+          },
+          "5,0": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///FMSInfo/IsRedAlliance",
+              "_title": "/FMSInfo/IsRedAlliance",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "0,0": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Auto Mode",
+              "_title": "/SmartDashboard/Auto Mode",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -53,6 +81,6 @@
     "x": -6.400000095367432,
     "y": 1.600000023841858,
     "width": 1550.4000244140625,
-    "height": 643.2000122070312
+    "height": 627.2000122070312
   }
 }
