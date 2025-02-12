@@ -23,6 +23,7 @@ import frc.robot.commands.RunWrist;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.JacksPhotonVision;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 
 public class RobotContainer {
@@ -46,7 +47,8 @@ public class RobotContainer {
 
     public final WristSubsystem wrist = new WristSubsystem();
 
-    public final JacksPhotonVision vision = new JacksPhotonVision();
+    //public final JacksPhotonVision vision = new JacksPhotonVision();
+    public final VisionSubsystem vision = new VisionSubsystem();
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
