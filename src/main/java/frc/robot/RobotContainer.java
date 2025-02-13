@@ -48,7 +48,7 @@ public class RobotContainer {
     public final WristSubsystem wrist = new WristSubsystem();
 
     //public final JacksPhotonVision vision = new JacksPhotonVision();
-    public final VisionSubsystem vision = new VisionSubsystem();
+    public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;

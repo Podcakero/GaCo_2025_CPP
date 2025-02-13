@@ -25,6 +25,7 @@ import frc.robot.Robot;
 
 public class VisionSubsystem extends SubsystemBase{
 
+    CommandSwerveDrivetrain drivetrain;
     PhotonCamera lowerCamera;
     PhotonPoseEstimator poseEstimator;
     Optional<EstimatedRobotPose>  estimatedRobotPose;
@@ -34,7 +35,8 @@ public class VisionSubsystem extends SubsystemBase{
     static final Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); 
                                             //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
 
-    public VisionSubsystem(){
+    public VisionSubsystem(CommandSwerveDrivetrain  drivetrain){
+        this.drivetrain = drivetrain;
         lowerCamera = new PhotonCamera("PC_Camera Left");
 
         // Construct PhotonPoseEstimator
@@ -49,7 +51,11 @@ public class VisionSubsystem extends SubsystemBase{
             EstimatedRobotPose estPose = estimatedRobotPose.get();   
             
             Pose3d pose   = estPose.estimatedPose;
+            double timestampSeconds = estPose.timestampSeconds;
             Pose2d robotPose = pose.toPose2d();
+
+            // send this new vision position to drivetrain to adjust odometry
+            drivetrain.addVisionMeasurement(robotPose, timestampSeconds);
 
             SmartDashboard.putBoolean("pose Present", true);
             SmartDashboard.putString("Pose 3d", pose.toString());
