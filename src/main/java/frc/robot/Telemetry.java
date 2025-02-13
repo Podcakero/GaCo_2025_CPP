@@ -1,9 +1,20 @@
 package frc.robot;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
+import org.json.simple.parser.ParseException;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -14,6 +25,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -48,7 +61,7 @@ public class Telemetry {
 
     /* Robot pose for field positioning */
     private final NetworkTable table = inst.getTable("Pose");
-    private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
+    private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("Robot").publish();
     private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
 
     /* Mechanisms to represent the swerve module states */
@@ -121,4 +134,65 @@ public class Telemetry {
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
     }
+
+    // Autonomous path display variables
+    private static List<PathPlannerPath> paths;
+    private static List<Pose2d> poses;
+    private static double autoAnimationStep = 0;
+    private static final double AUTO_ANIMATION_SPEED = 0.3; // Speed of the animation. Default = 0.3 *Animation not the speed of actual autonomous
+    private static final int AUTO_ANIMATION_FREEZE_TIME = 10; // How long to wait before restarting the animation. Default = 10
+    public static final Field2d m_field2 = new Field2d(); // Autonomous animation field
+    
+    /** Display the currently selected autonomous path on the dashboard */
+    public static void displayAutoPaths(){
+        //Retrieve the currently selected path from the dashboard
+        try {
+            paths = PathPlannerAuto.getPathGroupFromAutoFile(SmartDashboard.getEntry("Auto Mode/active").getString("New Auto"));
+        } catch (IOException e) {
+            //System.out.println("Auto not found!"); // Selected auto program does not exist
+        } catch (ParseException e) {
+            //System.out.println("Bad JSON in path file"); // The selected path cannot be parsed
+        }
+        
+        poses = new ArrayList<>(); // Clear the pose list
+        m_field2.getObject("path").setPose(new Pose2d()); // Clear old paths
+
+        // Generate trajectories for field2d and run animation
+        if(paths != null && paths.size() > 0){
+
+            // Flip paths to match current side of the field
+            try{
+                if(DriverStation.getAlliance().get() == DriverStation.Alliance.Red){
+                    for(int i = 0; i < paths.size(); i++){
+                        paths.set(i, paths.get(i).flipPath());
+                    }
+                }
+            } catch(NoSuchElementException e){
+                // FMS is not connected, path will flip if needed once connected
+            }
+
+            // Add all Pose2d points from all paths in the selected auto to the poses variable
+            for(int i = 0; i < paths.size(); i++){
+                poses.addAll(
+                paths.get(i).getAllPathPoints().stream()
+                    .map(point -> new Pose2d(point.position, new Rotation2d()))
+                    .collect(Collectors.toList()));
+            }
+
+            m_field2.getObject("path").setPoses(poses); // Add the full auto to the field
+
+            // Animate the auto by moving through the list of poses each cycle
+            if(autoAnimationStep >= poses.size()-1){
+                autoAnimationStep = -AUTO_ANIMATION_FREEZE_TIME; // Wait this many cycles before restarting the animation
+            } else{
+                autoAnimationStep = autoAnimationStep + AUTO_ANIMATION_SPEED; // Increment the animation counter
+            }
+
+            // If waiting period is over, set the pose of the robot to the current animation step
+            if(autoAnimationStep >= 0){
+                m_field2.getObject("Robot").setPose(poses.get((int)autoAnimationStep));
+            }
+        }
+    }
+
 }
