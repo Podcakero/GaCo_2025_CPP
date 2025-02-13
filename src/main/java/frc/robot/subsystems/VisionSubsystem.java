@@ -26,7 +26,7 @@ import frc.robot.Robot;
 public class VisionSubsystem extends SubsystemBase{
 
     PhotonCamera lowerCamera;
-    PhotonPoseEstimator photonPoseEstimator;
+    PhotonPoseEstimator poseEstimator;
     Optional<EstimatedRobotPose>  estimatedRobotPose;
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     Pose3d robotPose;
@@ -38,15 +38,13 @@ public class VisionSubsystem extends SubsystemBase{
         lowerCamera = new PhotonCamera("PC_Camera Left");
 
         // Construct PhotonPoseEstimator
-        photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
-        photonPoseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
+        poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
+        poseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS);
     }
 
     public void periodic(){
 
-        PhotonPipelineResult result = lowerCamera.getLatestResult();
-
-        estimatedRobotPose = photonPoseEstimator.update(result);
+        estimatedRobotPose = getEstimatedGlobalPose();
         if (estimatedRobotPose.isPresent()){
             EstimatedRobotPose estPose = estimatedRobotPose.get();   
             
@@ -63,7 +61,23 @@ public class VisionSubsystem extends SubsystemBase{
             SmartDashboard.putBoolean("pose Present", false);
 
         }
-
     }
 
+    /**
+     * The latest estimated robot pose on the field from vision data. This may be empty. This should
+     * only be called once per loop.
+     *
+     * <p>Also includes updates for the standard deviations, which can (optionally) be retrieved with
+     * {@link getEstimationStdDevs}
+     *
+     * @return An {@link EstimatedRobotPose} with an estimated pose, estimate timestamp, and targets
+     *     used for estimation.
+     */
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+        Optional<EstimatedRobotPose> visionEst = Optional.empty();
+        for (var change : lowerCamera.getAllUnreadResults()) {
+            visionEst = poseEstimator.update(change);
+        }
+        return visionEst;
+    }
 }
