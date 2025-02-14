@@ -150,6 +150,7 @@ public class Telemetry {
             paths = PathPlannerAuto.getPathGroupFromAutoFile(SmartDashboard.getEntry("Auto Mode/active").getString("New Auto"));
         } catch (IOException e) {
             //System.out.println("Auto not found!"); // Selected auto program does not exist
+            paths = null;
         } catch (ParseException e) {
             //System.out.println("Bad JSON in path file"); // The selected path cannot be parsed
         }
