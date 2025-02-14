@@ -56,5 +56,10 @@
     "edu.wpi.first.math.proto.*",
     "edu.wpi.first.math.**.proto.*",
     "edu.wpi.first.math.**.struct.*",
-  ]
+  ],
+  "wpilib.selectDefaultSimulateExtension": false,
+  "spotlessGradle.diagnostics.enable": true,
+	"spotlessGradle.format.enable": true,
+  "editor.formatOnSave": true,
+	"editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
 }
