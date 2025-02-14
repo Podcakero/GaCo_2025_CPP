@@ -19,12 +19,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.RunElevator;
 import frc.robot.commands.RunWrist;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.JacksPhotonVision;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -47,6 +49,8 @@ public class RobotContainer {
 
     public final WristSubsystem wrist = new WristSubsystem();
 
+    public final ElevatorSubsystem elevator = new ElevatorSubsystem();
+
     //public final JacksPhotonVision vision = new JacksPhotonVision();
     public final VisionSubsystem vision = new VisionSubsystem();
 
@@ -66,6 +70,7 @@ public class RobotContainer {
 
     private void configureBindings() {
         joystick.y().onTrue(new RunWrist(wrist, 1)).onFalse(new RunWrist(wrist, 0));
+        joystick.x().onTrue(new RunElevator(elevator, 1));
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
