@@ -32,7 +32,7 @@ public class VisionSubsystem extends SubsystemBase{
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     Pose3d robotPose;
 
-    static final Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); 
+    static final Transform3d robotToCam = new Transform3d(new Translation3d(-0.12, 0.05, 0.44), new Rotation3d(0,0,0)); 
                                             //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
 
     public VisionSubsystem(CommandSwerveDrivetrain  drivetrain){
@@ -61,7 +61,7 @@ public class VisionSubsystem extends SubsystemBase{
             SmartDashboard.putString("Pose 3d", pose.toString());
             SmartDashboard.putString("Pose 2d", robotPose.toString());
 
-            Robot.m_field.setRobotPose(robotPose);
+
 
         } else {
             SmartDashboard.putBoolean("pose Present", false);
