@@ -1,27 +1,26 @@
 
 package frc.robot.subsystems;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.PhotonUtils;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 
 public class VisionSubsystem extends SubsystemBase{
 
@@ -31,8 +30,17 @@ public class VisionSubsystem extends SubsystemBase{
     Optional<EstimatedRobotPose>  estimatedRobotPose;
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     Pose3d robotPose;
+       
+    /**
+     * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
+     * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
+     */
+    private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(1.0, 1.0, Units.degreesToRadians(10));
 
-    static final Transform3d robotToCam = new Transform3d(new Translation3d(-0.12, 0.05, 0.44), new Rotation3d(0,0,0)); 
+
+    static final Transform3d robotToCam = new Transform3d(new Translation3d(-0.12, 0.05, 0.44), 
+                                                          new Rotation3d(0,Math.toRadians(30),0)); 
+                                                          
                                             //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
 
     public VisionSubsystem(CommandSwerveDrivetrain  drivetrain){
@@ -55,7 +63,7 @@ public class VisionSubsystem extends SubsystemBase{
             Pose2d robotPose = pose.toPose2d();
 
             // send this new vision position to drivetrain to adjust odometry
-            drivetrain.addVisionMeasurement(robotPose, timestampSeconds);
+            drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
 
             SmartDashboard.putBoolean("pose Present", true);
             SmartDashboard.putString("Pose 3d", pose.toString());
