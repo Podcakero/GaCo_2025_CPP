@@ -9,4 +9,19 @@ public class Constants {
     public class WristConstants {
         public static final int kWristMotorId = 3;
     }
+
+    public class ElevatorConstants {
+        public static final double kP = 0.4;
+        public static final double kI = 0;
+        public static final double kD = 0.023;
+
+        public static final int kElevatorCurrentLimit = 40;
+
+        public static final int kElevatorMotorLeftId = 51;
+        public static final int kElevatorMotorCenterId = 52;
+        public static final int kElevatorMotorRightId = 53;
+
+        public static final double kElevatorEncoderPositionConversionFactor = 1.0; // Needs to be empirically measured
+        public static final double kElevatorEncoderVelocityConversionFactor = 1.0; // Needs to be empirically measured. Should be able to be derived from kElevatorEncoderPositionConversionFactor
+    }
 }

@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.SignalLogger;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,10 +28,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    SignalLogger.enableAutoLogging(false);
-
+    //SignalLogger.enableAutoLogging(false);
+    m_robotContainer.elevator.resetRelativeEncoder();
     SmartDashboard.putData("Field", m_field);
-
   }
 
   @Override
