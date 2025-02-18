@@ -56,9 +56,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
     new SysIdRoutine.Config(
-      Volts.of(1).per(Seconds),
-      Volts.of(4),
-      Seconds.of(4),
+      Volts.of(0.5).per(Seconds),
+      Volts.of(2),
+      Seconds.of(5),
       null
     ),
     new SysIdRoutine.Mechanism(
