@@ -11,9 +11,9 @@ public class Constants {
     }
 
     public class ElevatorConstant {
-        public static final double kP = 1.0;
+        public static final double kP = 0.4;
         public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double kD = 0.023;
 
         public static final int kElevatorCurrentLimit = 40;
 

@@ -69,8 +69,13 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        joystick.y().onTrue(new RunWrist(wrist, 1)).onFalse(new RunWrist(wrist, 0));
-        joystick.x().onTrue(new RunElevator(elevator, 1));
+        //joystick.y().onTrue(new RunWrist(wrist, 1)).onFalse(new RunWrist(wrist, 0));
+        joystick.y().onTrue(new RunElevator(elevator, 25));
+        joystick.x().onTrue(new RunElevator(elevator, 10));
+        //joystick.a().whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
+        //joystick.b().whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
+        //joystick.x().whileTrue(elevator.sysIdDynamic(Direction.kForward));
+        //joystick.y().whileTrue(elevator.sysIdDynamic(Direction.kReverse));
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
@@ -83,10 +88,10 @@ public class RobotContainer {
             )
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        //joystick.b().whileTrue(drivetrain.applyRequest(() ->
+        //    point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        //));
 
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0.5).withVelocityY(0))

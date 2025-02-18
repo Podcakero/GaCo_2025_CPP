@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    SignalLogger.enableAutoLogging(false);
+    //SignalLogger.enableAutoLogging(false);
 
     SmartDashboard.putData("Field", m_field);
 
