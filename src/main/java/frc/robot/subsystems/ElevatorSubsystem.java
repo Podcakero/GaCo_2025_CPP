@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.ElevatorConstant;
+import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private SparkFlex m_leftElevatorMotor;
@@ -80,24 +80,25 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    m_leftElevatorMotor = new SparkFlex(ElevatorConstant.kElevatorMotorLeftId, MotorType.kBrushless);
-    m_centerElevatorMotor = new SparkFlex(ElevatorConstant.kElevatorMotorCenterId, MotorType.kBrushless);
-    m_rightElevatorMotor = new SparkFlex(ElevatorConstant.kElevatorMotorRightId, MotorType.kBrushless);
+    m_leftElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorLeftId, MotorType.kBrushless);
+    m_centerElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorCenterId, MotorType.kBrushless);
+    m_rightElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorRightId, MotorType.kBrushless);
 
     m_elevatorController = m_centerElevatorMotor.getClosedLoopController();
     m_elevatorEncoder = m_centerElevatorMotor.getEncoder();
     //pidController = new PIDController(ElevatorConstant.kP, ElevatorConstant.kI, ElevatorConstant.kD);
 
     m_centerElevatorMotorConfig = new SparkFlexConfig();
-    m_centerElevatorMotorConfig.closedLoop.p(ElevatorConstant.kP).i(ElevatorConstant.kI).d(ElevatorConstant.kD).feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-    m_centerElevatorMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit);
+    m_centerElevatorMotorConfig.closedLoop.p(ElevatorConstants.kP).i(ElevatorConstants.kI).d(ElevatorConstants.kD).feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+    m_centerElevatorMotorConfig.encoder.positionConversionFactor(ElevatorConstants.kElevatorEncoderPositionConversionFactor).velocityConversionFactor(ElevatorConstants.kElevatorEncoderVelocityConversionFactor);
+    m_centerElevatorMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit);
 
     m_leftElevatorMotorConfig = new SparkFlexConfig();
-    m_leftElevatorMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit).follow(m_centerElevatorMotor);
+    m_leftElevatorMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit).follow(m_centerElevatorMotor);
     //leftConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit);
     
     m_rightElevatorMotorConfig = new SparkFlexConfig();
-    m_rightElevatorMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit).follow(m_centerElevatorMotor);
+    m_rightElevatorMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit).follow(m_centerElevatorMotor);
     //rightConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit);
 
     m_leftElevatorMotor.configure(m_leftElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
