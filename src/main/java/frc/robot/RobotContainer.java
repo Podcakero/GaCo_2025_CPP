@@ -42,14 +42,11 @@ public class RobotContainer {
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
+    // Instanciate subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
     public final WristSubsystem wrist = new WristSubsystem();
-
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
-
-    //public final JacksPhotonVision vision = new JacksPhotonVision();
-    public final VisionSubsystem vision = new VisionSubsystem();
+    public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
@@ -95,6 +92,12 @@ public class RobotContainer {
         );
         joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(-0.5).withVelocityY(0))
+        );
+        joystick.pov(90).whileTrue(drivetrain.applyRequest(() ->
+            forwardStraight.withVelocityX(0).withVelocityY(-0.5))
+        );
+        joystick.pov(270).whileTrue(drivetrain.applyRequest(() ->
+            forwardStraight.withVelocityX(0).withVelocityY(0.5))
         );
 
         // Run SysId routines when holding back/start and X/Y.
