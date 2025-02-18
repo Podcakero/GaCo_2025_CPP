@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 
@@ -11,10 +12,10 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class RunElevator extends Command {
   private ElevatorSubsystem elevatorSubsystem;
 
-  private double position;
+  private Distance position;
 
   /** Creates a new RunElevator. */
-  public RunElevator(ElevatorSubsystem elevatorSubsystem, double position) {
+  public RunElevator(ElevatorSubsystem elevatorSubsystem, Distance position) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(elevatorSubsystem);
 
@@ -29,7 +30,7 @@ public class RunElevator extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setPosition(this.position);
+    elevatorSubsystem.setPosition(position);
   }
 
   // Called once the command ends or is interrupted.
@@ -39,9 +40,6 @@ public class RunElevator extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (elevatorSubsystem.getPosition() == this.position){
-      return true;
-    }
-    return false;
+    return true;
   }
 }

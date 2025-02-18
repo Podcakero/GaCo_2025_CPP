@@ -9,35 +9,25 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.SignalLogger;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkRelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.MutAngle;
 import edu.wpi.first.units.measure.MutAngularVelocity;
-import edu.wpi.first.units.measure.MutDistance;
-import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,17 +36,16 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ElevatorConstant;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  SparkFlex left;
-  SparkFlex center;
-  SparkFlex right;
+  private SparkFlex m_leftElevatorMotor;
+  private SparkFlex m_centerElevatorMotor;
+  private SparkFlex m_rightElevatorMotor;
   
-  SparkFlexConfig leftConfig;
-  SparkFlexConfig centerConfig;
-  SparkFlexConfig rightConfig;
+  private SparkFlexConfig m_leftElevatorMotorConfig;
+  private SparkFlexConfig m_centerElevatorMotorConfig;
+  private SparkFlexConfig m_rightElevatorMotorConfig;
 
-  SparkClosedLoopController elevatorController;
-  RelativeEncoder elevatorEncoder;
-  PIDController pidController;
+  private SparkClosedLoopController m_elevatorController;
+  private RelativeEncoder m_elevatorEncoder;
 
   // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
   private final MutVoltage m_appliedVoltage = Volts.mutable(0);
@@ -73,51 +62,47 @@ public class ElevatorSubsystem extends SubsystemBase {
       null
     ),
     new SysIdRoutine.Mechanism(
-      output -> setVoltage(output.in(Volts)),
+      output -> setVoltage(output),
       log -> {
         // Record a frame for the left motors.  Since these share an encoder, we consider
         // the entire group to be one motor.
         log.motor("elevator")
             .voltage(
                 m_appliedVoltage.mut_replace(
-                    center.get() * RobotController.getBatteryVoltage(), Volts))
-            .angularPosition(m_distance.mut_replace(center.getEncoder().getPosition(), Rotations))
+                    m_centerElevatorMotor.get() * RobotController.getBatteryVoltage(), Volts))
+            .angularPosition(m_distance.mut_replace(m_centerElevatorMotor.getEncoder().getPosition(), Rotations))
             .angularVelocity(
-                m_velocity.mut_replace(center.getEncoder().getVelocity() / 60, RotationsPerSecond));
+                m_velocity.mut_replace(m_centerElevatorMotor.getEncoder().getVelocity(), RotationsPerSecond));
       },
       this
     )
-    );
-
-  private ShuffleboardTab elevatorTab = Shuffleboard.getTab("Elevator");
+  );
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    left = new SparkFlex(ElevatorConstant.kElevatorMotorLeftId, MotorType.kBrushless);
-    center = new SparkFlex(ElevatorConstant.kElevatorMotorCenterId, MotorType.kBrushless);
-    right = new SparkFlex(ElevatorConstant.kElevatorMotorRightId, MotorType.kBrushless);
+    m_leftElevatorMotor = new SparkFlex(ElevatorConstant.kElevatorMotorLeftId, MotorType.kBrushless);
+    m_centerElevatorMotor = new SparkFlex(ElevatorConstant.kElevatorMotorCenterId, MotorType.kBrushless);
+    m_rightElevatorMotor = new SparkFlex(ElevatorConstant.kElevatorMotorRightId, MotorType.kBrushless);
 
-    elevatorController = center.getClosedLoopController();
-    elevatorEncoder = center.getEncoder();
+    m_elevatorController = m_centerElevatorMotor.getClosedLoopController();
+    m_elevatorEncoder = m_centerElevatorMotor.getEncoder();
     //pidController = new PIDController(ElevatorConstant.kP, ElevatorConstant.kI, ElevatorConstant.kD);
 
-    centerConfig = new SparkFlexConfig();
-    centerConfig.closedLoop.p(ElevatorConstant.kP).i(ElevatorConstant.kI).d(ElevatorConstant.kD).feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-    centerConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit);
+    m_centerElevatorMotorConfig = new SparkFlexConfig();
+    m_centerElevatorMotorConfig.closedLoop.p(ElevatorConstant.kP).i(ElevatorConstant.kI).d(ElevatorConstant.kD).feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+    m_centerElevatorMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit);
 
-    leftConfig = new SparkFlexConfig();
-    leftConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit).follow(center);
+    m_leftElevatorMotorConfig = new SparkFlexConfig();
+    m_leftElevatorMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit).follow(m_centerElevatorMotor);
     //leftConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit);
     
-    rightConfig = new SparkFlexConfig();
-    rightConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit).follow(center);
+    m_rightElevatorMotorConfig = new SparkFlexConfig();
+    m_rightElevatorMotorConfig.idleMode(IdleMode.kBrake).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit).follow(m_centerElevatorMotor);
     //rightConfig.idleMode(IdleMode.kCoast).smartCurrentLimit(ElevatorConstant.kElevatorCurrentLimit);
 
-    elevatorEncoder.setPosition(0.0);
-
-    left.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    center.configure(centerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    right.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_leftElevatorMotor.configure(m_leftElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_centerElevatorMotor.configure(m_centerElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    m_rightElevatorMotor.configure(m_rightElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   public Command sysIdQuasistatic(Direction direction) {
@@ -128,24 +113,28 @@ public class ElevatorSubsystem extends SubsystemBase {
     return m_sysIdRoutine.dynamic(direction);
   }
 
-  public void setVoltage(double voltage) {
-    center.setVoltage(voltage);
+  public void setVoltage(Voltage voltage) {
+    m_centerElevatorMotor.setVoltage(voltage.in(Volts));
   }
 
-  public void setPosition(double position){
-    elevatorController.setReference(position, ControlType.kPosition);
+  public void setPosition(Distance position){
+    m_elevatorController.setReference(position.in(Meters), ControlType.kPosition);
     //left.set(pidController.calculate(elevatorEncoder.getPosition(), position));
     //center.set(pidController.calculate(elevatorEncoder.getPosition(), position));
     //right.set(pidController.calculate(elevatorEncoder.getPosition(), position));
   }
 
-  public double getPosition(){
-    return elevatorEncoder.getPosition();
+  public Distance getPosition(){
+    return Meters.of(m_elevatorEncoder.getPosition());
+  }
+
+  public void resetRelativeEncoder() {
+    m_elevatorEncoder.setPosition(0.0); // Change 0.0 to instead get the value of the absolute encoder
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("ElevatorEncoder", elevatorEncoder.getPosition());
+    SmartDashboard.putNumber("ElevatorEncoder", m_elevatorEncoder.getPosition());
   }
 }
