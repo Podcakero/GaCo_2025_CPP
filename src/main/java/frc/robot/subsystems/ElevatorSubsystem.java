@@ -53,6 +53,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   private SparkFlexConfig m_rightElevatorMotorConfig;
   private SparkClosedLoopController m_elevatorController;
   private RelativeEncoder m_elevatorEncoder;
+  private SparkAnalogSensor m_elevatorAbs;
+  
+  private ElevatorFeedforward m_elevatorFeedforward;
+
+	private TrapezoidProfile m_elevatorTrapezoidProfile;
+	private TrapezoidProfile.State m_elevatorGoal = new TrapezoidProfile.State();
+	private TrapezoidProfile.State m_elevatorSetpoint;
 
   // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
   private final MutVoltage m_appliedVoltage = Volts.mutable(0);
@@ -93,6 +100,21 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     m_elevatorController = m_centerElevatorMotor.getClosedLoopController();
     m_elevatorEncoder = m_centerElevatorMotor.getEncoder();
+    m_elevatorAbs = m_centerElevatorMotor.getAnalog();
+     
+	m_elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
+
+	m_elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(ElevatorConstants.kElevatorMaxVelocityRPS.in(MetersPerSecond),
+				// m_elevatorFeedforward.maxAchievableVelocity(
+				//		ElevatorConstants.kElevatorMaxVolage.in(Volts),
+				//		ElevatorConstants.kElevatorMaxAccelerationRPSPS.in(MetersPerSecondPerSecond)),
+				// m_elevatorFeedforward.maxAchievableAcceleration(
+				//		ElevatorConstants.kElevatorMaxVolage.in(Volts),
+				//		ElevatorConstants.kElevatorMaxVelocityRPS.in(MetersPerSecond))));
+				ElevatorConstants.kElevatorMaxAccelerationRPSPS.in(MetersPerSecondPerSecond)));
+
+	m_elevatorSetpoint = new TrapezoidProfile.State(m_elevatorEncoder.getPosition(), m_elevatorEncoder.getVelocity());
+		
     //pidController = new PIDController(ElevatorConstant.kP, ElevatorConstant.kI, ElevatorConstant.kD);
 
     m_centerElevatorMotorConfig = new SparkFlexConfig();
@@ -132,29 +154,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void resetRelativeEncoder() {
     m_elevatorEncoder.setPosition(0.0); // Change 0.0 to instead get the value of the absolute encoder
   }
-	private ElevatorFeedforward m_elevatorFeedforward;
-
-	private TrapezoidProfile m_elevatorTrapezoidProfile;
-	private TrapezoidProfile.State m_elevatorGoal = new TrapezoidProfile.State();
-	private TrapezoidProfile.State m_elevatorSetpoint;
-
-	private SparkAnalogSensor m_elevatorAbs;
-		m_elevatorAbs = m_centerElevatorMotor.getAnalog();
-		m_elevatorFeedforward =
-				new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
-
-		m_elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(
-				ElevatorConstants.kElevatorMaxVelocityRPS.in(MetersPerSecond),
-				// m_elevatorFeedforward.maxAchievableVelocity(
-				//		ElevatorConstants.kElevatorMaxVolage.in(Volts),
-				//		ElevatorConstants.kElevatorMaxAccelerationRPSPS.in(MetersPerSecondPerSecond)),
-				// m_elevatorFeedforward.maxAchievableAcceleration(
-				//		ElevatorConstants.kElevatorMaxVolage.in(Volts),
-				//		ElevatorConstants.kElevatorMaxVelocityRPS.in(MetersPerSecond))));
-				ElevatorConstants.kElevatorMaxAccelerationRPSPS.in(MetersPerSecondPerSecond)));
-
-		m_elevatorSetpoint =
-				new TrapezoidProfile.State(m_elevatorEncoder.getPosition(), m_elevatorEncoder.getVelocity());
 
 	public void setGoalPosition(Distance goalPosition) {
 		// m_elevatorFeedforward.calculate(0);
