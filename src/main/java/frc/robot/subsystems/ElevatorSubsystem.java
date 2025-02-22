@@ -172,7 +172,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 		m_elevatorSetpoint = new TrapezoidProfile.State(m_elevatorEncoder.getPosition(), 0.0);
 	}
 
-	}
+
 	@Override
 	public void periodic() {
 		m_elevatorSetpoint = m_elevatorTrapezoidProfile.calculate(

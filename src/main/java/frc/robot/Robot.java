@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledExit() {
     m_robotContainer.elevator.resetRelativeEncoder();
-    m_robotContainer.elevator.clearGoalPosition($;
+    m_robotContainer.elevator.clearGoalPosition();
     m_robotContainer.elevator.resetSetPoint();
   }
 
