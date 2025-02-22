@@ -1,7 +1,6 @@
 plugins {
 	id "java"
 	id "edu.wpi.first.GradleRIO" version "2025.2.1"
-	id 'com.diffplug.spotless' version '7.0.2'
 }
 
 java {
@@ -39,50 +38,6 @@ deploy {
 				}
 			}
 		}
-	}
-}
-
-spotless {
-	java {
-		target fileTree('.') {
-			include '**/*.java'
-			exclude '**/build/**', '**/build-*/**'
-		}
-		palantirJavaFormat()
-		importOrder('edu.wpi', '\\#edu.wpi', 'com.ctre', 'frc.robot.LimelightHelpers', 'com.pathplanner', 'org.photonvision', 'com.revrobotics', 'frc.robot', '', '\\#')
-		removeUnusedImports()
-		trimTrailingWhitespace()
-		endWithNewline()
-		leadingSpacesToTabs()
-	}
-	groovyGradle {
-		target fileTree('.') {
-			include '**/*.gradle'
-			exclude '**/build/**', '**/build-*/**'
-		}
-		greclipse()
-		leadingSpacesToTabs()
-		trimTrailingWhitespace()
-		endWithNewline()
-	}
-	format 'xml', {
-		target fileTree('.') {
-			include '**/*.xml'
-			exclude '**/build/**', '**/build-*/**'
-		}
-		eclipseWtp('xml')
-		trimTrailingWhitespace()
-		leadingSpacesToTabs()
-		endWithNewline()
-	}
-	format 'misc', {
-		target fileTree('.') {
-			include '**/*.md', '**/.gitignore'
-			exclude '**/build/**', '**/build-*/**'
-		}
-		trimTrailingWhitespace()
-		leadingSpacesToTabs()
-		endWithNewline()
 	}
 }
 

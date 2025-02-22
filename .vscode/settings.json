@@ -59,9 +59,5 @@
 		"edu.wpi.first.math.**.proto.*",
 		"edu.wpi.first.math.**.struct.*"
 	],
-	"spotlessGradle.diagnostics.enable": true,
-	"spotlessGradle.format.enable": true,
-	"files.eol": "\r\n",
-	"editor.formatOnSave": true,
-	"editor.defaultFormatter": "richardwillis.vscode-spotless-gradle",
+	"files.eol": "\r\n"
 }
