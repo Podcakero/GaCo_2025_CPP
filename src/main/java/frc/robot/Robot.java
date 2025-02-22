@@ -37,7 +37,11 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {}
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+    m_robotContainer.elevator.resetRelativeEncoder();
+    m_robotContainer.elevator.clearGoalPosition($;
+    m_robotContainer.elevator.resetSetPoint();
+  }
 
   @Override
   public void autonomousInit() {

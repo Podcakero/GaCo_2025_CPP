@@ -66,6 +66,7 @@ public class RobotContainer {
         //joystick.y().onTrue(new RunWrist(wrist, 1)).onFalse(new RunWrist(wrist, 0));
         joystick.y().onTrue(new RunElevator(elevator, Meters.of(25))); // NOTE: Meters = Rotations until position conversion factor is calculated
         joystick.x().onTrue(new RunElevator(elevator, Meters.of(10)));
+        joystick.b().onTrue(new RunElevator(elevator, Meters.of(0)));
         //joystick.a().whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
         //joystick.b().whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
         //joystick.x().whileTrue(elevator.sysIdDynamic(Direction.kForward));
