@@ -23,7 +23,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.TowerSubsystem;;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -44,8 +45,9 @@ public class RobotContainer {
 
     // Instanciate subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final WristSubsystem wrist = new WristSubsystem();
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
+    public final WristSubsystem wrist = new WristSubsystem();
+    public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist);
     public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
 
     /* Path follower */
@@ -66,11 +68,8 @@ public class RobotContainer {
         //joystick.y().onTrue(new RunWrist(wrist, 1)).onFalse(new RunWrist(wrist, 0));
         joystick.y().onTrue(new RunElevator(elevator, Meters.of(25))); // NOTE: Meters = Rotations until position conversion factor is calculated
         joystick.x().onTrue(new RunElevator(elevator, Meters.of(10)));
-        joystick.b().onTrue(new RunElevator(elevator, Meters.of(0)));
-        //joystick.a().whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
-        //joystick.b().whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
-        //joystick.x().whileTrue(elevator.sysIdDynamic(Direction.kForward));
-        //joystick.y().whileTrue(elevator.sysIdDynamic(Direction.kReverse));
+        joystick.a().onTrue(new RunElevator(elevator, Meters.of(0)));
+
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.

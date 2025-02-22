@@ -11,6 +11,11 @@ public class Constants {
 
     public class WristConstants {
         public static final int kWristMotorId = 3;
+        public static final int kIntakeMotorId = 4;
+		
+		public static final double kCoralIntakePower = 1;
+		public static final double kCoralOutputPower = -0.5;
+		public static final double kCoralScoringPower = 0.5;
     }
 
     public class ElevatorConstants {
