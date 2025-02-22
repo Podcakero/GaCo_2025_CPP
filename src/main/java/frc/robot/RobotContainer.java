@@ -117,4 +117,5 @@ public class RobotContainer {
         /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
     }
+		joystick.b().onTrue(new RunElevator(elevator, Meters.of(0)));
 }
