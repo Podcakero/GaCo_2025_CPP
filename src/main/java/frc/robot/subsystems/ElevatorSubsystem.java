@@ -12,8 +12,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -104,14 +102,8 @@ public class ElevatorSubsystem extends SubsystemBase {
      
 	m_elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
 
-	m_elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(ElevatorConstants.kElevatorMaxVelocityRPS.in(MetersPerSecond),
-				// m_elevatorFeedforward.maxAchievableVelocity(
-				//		ElevatorConstants.kElevatorMaxVolage.in(Volts),
-				//		ElevatorConstants.kElevatorMaxAccelerationRPSPS.in(MetersPerSecondPerSecond)),
-				// m_elevatorFeedforward.maxAchievableAcceleration(
-				//		ElevatorConstants.kElevatorMaxVolage.in(Volts),
-				//		ElevatorConstants.kElevatorMaxVelocityRPS.in(MetersPerSecond))));
-				ElevatorConstants.kElevatorMaxAccelerationRPSPS.in(MetersPerSecondPerSecond)));
+	m_elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(ElevatorConstants.kElevatorMaxVelocityRPS,
+				                                              ElevatorConstants.kElevatorMaxAccelerationRPSPS));
 
 	m_elevatorSetpoint = new TrapezoidProfile.State(m_elevatorEncoder.getPosition(), m_elevatorEncoder.getVelocity());
 		
@@ -156,12 +148,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
 	public void setGoalPosition(Distance goalPosition) {
-		// m_elevatorFeedforward.calculate(0);
-		// m_elevatorController.setReference(position.in(Meters), ControlType.kPosition);
-		// left.set(pidController.calculate(elevatorEncoder.getPosition(), position));
-		// center.set(pidController.calculate(elevatorEncoder.getPosition(), position));
-		// right.set(pidController.calculate(elevatorEncoder.getPosition(), position));
-		m_elevatorGoal = new TrapezoidProfile.State(goalPosition.in(Meters), 0.0);
+	  m_elevatorGoal = new TrapezoidProfile.State(goalPosition.in(Meters), 0.0);
 	}
 
 	public void clearGoalPosition() {
@@ -175,16 +162,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		m_elevatorSetpoint = m_elevatorTrapezoidProfile.calculate(
-				Constants.kDt.in(Seconds),
-				// new TrapezoidProfile.State(m_elevatorEncoder.getPosition(), m_elevatorEncoder.getVelocity()),
-				m_elevatorSetpoint,
-				m_elevatorGoal);
+		m_elevatorSetpoint = m_elevatorTrapezoidProfile.calculate(Constants.kDt, m_elevatorSetpoint, m_elevatorGoal);
 
 		double arbFF = m_elevatorFeedforward.calculate(m_elevatorSetpoint.velocity);
-		// double arbFF = 0.0;
-		// Negative ArbFF is a red herring until proven otherwise. Phil and Greyson are going insane.
-
+		
 		m_elevatorController.setReference(
 				m_elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
 
@@ -194,8 +175,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("ElevatorSetpoint", m_elevatorSetpoint.position);
 		SmartDashboard.putNumber("ElevatorProfileVelocity", m_elevatorSetpoint.velocity);
 		SmartDashboard.putNumber("ElevatorGoal", m_elevatorGoal.position);
-		SmartDashboard.putNumber(
-				"Elevator Voltage", m_centerElevatorMotor.getAppliedOutput() * m_centerElevatorMotor.getBusVoltage());
+		SmartDashboard.putNumber("Elevator Voltage", m_centerElevatorMotor.getAppliedOutput() );
 		SmartDashboard.putNumber("Elevator FeedForward", arbFF);
 		SmartDashboard.putNumber("Elevator Absolute", m_elevatorAbs.getVoltage());
 	}

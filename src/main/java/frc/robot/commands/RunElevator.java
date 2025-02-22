@@ -30,7 +30,7 @@ public class RunElevator extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    elevatorSubsystem.setPosition(position);
+    elevatorSubsystem.setGoalPosition(position);
   }
 
   // Called once the command ends or is interrupted.
