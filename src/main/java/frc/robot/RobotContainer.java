@@ -17,8 +17,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.RunElevator;
-import frc.robot.commands.RunWrist;
+
+import frc.robot.commands.SetElevatorHeight;
+import frc.robot.commands.SetFinAngle;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
@@ -54,8 +55,6 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        NamedCommands.registerCommand("runWristHalfSpeed", new RunWrist(wrist, 0.5));
-        NamedCommands.registerCommand("stopWrist", new RunWrist(wrist, 0));
         NamedCommands.registerCommand("stop", drivetrain.applyRequest(() -> brake));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
@@ -66,9 +65,13 @@ public class RobotContainer {
 
     private void configureBindings() {
         //joystick.y().onTrue(new RunWrist(wrist, 1)).onFalse(new RunWrist(wrist, 0));
-        joystick.y().onTrue(new RunElevator(elevator, Meters.of(25))); // NOTE: Meters = Rotations until position conversion factor is calculated
-        joystick.x().onTrue(new RunElevator(elevator, Meters.of(10)));
-        joystick.a().onTrue(new RunElevator(elevator, Meters.of(0)));
+        joystick.y().onTrue(new SetElevatorHeight(elevator, Meters.of(25))); // NOTE: Meters = Rotations until position conversion factor is calculated
+        joystick.x().onTrue(new SetElevatorHeight(elevator, Meters.of(10)));
+        joystick.a().onTrue(new SetElevatorHeight(elevator, Meters.of(0)));
+        joystick.povDown().onTrue(new SetFinAngle(wrist, 3));
+        joystick.povLeft().onTrue(new SetFinAngle(wrist, 40));
+        joystick.povUp().onTrue(new SetFinAngle(wrist, 83));
+        
 
 
         // Note that X is defined as forward according to WPILib convention,

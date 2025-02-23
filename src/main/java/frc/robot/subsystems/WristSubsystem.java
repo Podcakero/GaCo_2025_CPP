@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -18,37 +20,41 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
 
 public class WristSubsystem extends SubsystemBase {
 
-  private final SparkMax m_drivingSpark;
-  private final SparkMax m_turningSpark;
+  private final SparkMax intakeSpark;
+  private final SparkMax angleSpark;
 
-  private final RelativeEncoder m_drivingEncoder;
-  private final AbsoluteEncoder m_turningEncoder;
+  private final RelativeEncoder intakeEncoder;
+  private final AbsoluteEncoder angleEncoder;
 
-  private final SparkClosedLoopController m_drivingClosedLoopController;
-  private final SparkClosedLoopController m_turningClosedLoopController;
-  private SparkFlex wristMotor;
-  private RelativeEncoder wristEncoder;
+  private final SparkClosedLoopController angleController;
+  private TrapezoidProfile angleTrapezoidProfile;
+	private TrapezoidProfile.State angleGoal = new TrapezoidProfile.State();
+	private TrapezoidProfile.State angleSetpoint;
 
+  
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
 
-    m_drivingSpark = new SparkMax(Constants.WristConstants.kIntakeMotorId, MotorType.kBrushless);
-    m_turningSpark = new SparkMax(Constants.WristConstants.kWristMotorId, MotorType.kBrushless);
+    intakeSpark = new SparkMax(Constants.WristConstants.kIntakeMotorId, MotorType.kBrushless);
+    angleSpark = new SparkMax(Constants.WristConstants.kAngleMotorId, MotorType.kBrushless);
 
-    m_drivingEncoder = m_drivingSpark.getEncoder();
-    m_turningEncoder = m_turningSpark.getAbsoluteEncoder();
+    intakeEncoder = intakeSpark.getEncoder();
+    angleEncoder = angleSpark.getAbsoluteEncoder();
 
-    m_drivingClosedLoopController = m_drivingSpark.getClosedLoopController();
-    m_turningClosedLoopController = m_turningSpark.getClosedLoopController();
+    angleTrapezoidProfile = new TrapezoidProfile(new Constraints(Constants.WristConstants.kAngleMaxVelocityDPS,
+				                                              Constants.WristConstants.kAngleMaxAccelerationDPSPS));
 
-    double wristAngularOffset = 0;
-  
+	  angleSetpoint = new TrapezoidProfile.State(angleEncoder.getPosition(), angleEncoder.getVelocity());
+    angleController = angleSpark.getClosedLoopController();
 
     // Apply the respective configurations to the SPARKS. Reset parameters before
     // applying the configuration to bring the SPARK to a known good state. Persist
@@ -59,7 +65,7 @@ public class WristSubsystem extends SubsystemBase {
 
                 // Use module constants to calculate conversion factors and feed forward gain.
     double intakeFactor = 1;
-    double turningFactor = 1;
+    double angleFactor = 360 * 24 / 52;  // Sprocket reduction
 
     intakeConfig
             .idleMode(IdleMode.kBrake)
@@ -70,39 +76,63 @@ public class WristSubsystem extends SubsystemBase {
     
     angleConfig
             .idleMode(IdleMode.kBrake)
+            //.inverted(true)
             .smartCurrentLimit(20);
     angleConfig.absoluteEncoder
-            .inverted(true)
-            .positionConversionFactor(turningFactor) // radians
-            .velocityConversionFactor(turningFactor / 60.0); // radians per second
+            //.inverted(true)
+            .positionConversionFactor(angleFactor) // degrees
+            .velocityConversionFactor(angleFactor / 60.0); // degrees per second
     angleConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
             // These are example gains you may need to them for your own robot!
-            .pid(1, 0, 0)
-            .outputRange(-1, 1)
-            .positionWrappingInputRange(0, turningFactor);
+            .pid(Constants.WristConstants.kP, Constants.WristConstants.kI, Constants.WristConstants.kD)
+            .outputRange(-Constants.WristConstants.kAnglePower, Constants.WristConstants.kAnglePower)
+            .positionWrappingInputRange(0, angleFactor);
 
-    m_drivingSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_turningSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    m_drivingEncoder.setPosition(0);
-  }
+   }
 
+   // intake
   public void setIntakeSpeed(double speed) {
-
+    intakeSpark.set(speed);
   }
 
-
-  public double getAngle(){
-    return wristEncoder.getPosition();
+  public double getIntakeSpeed() {
+    return intakeEncoder.getVelocity();
   }
 
+  // wrist
+  public void resetWristControl () {
+    angleGoal = new TrapezoidProfile.State(getWristAngle(), 0.0);
+    angleSetpoint = new TrapezoidProfile.State(getWristAngle(), 0.0);
+  }
+
+  public void setGoalAngle(double angle){
+    angleGoal = new TrapezoidProfile.State(angle, 0.0);
+  }
+
+  public double getWristAngle(){
+    return angleEncoder.getPosition();
+  }
+
+  public double getWristSpeed(){
+    return angleEncoder.getVelocity();
+  }
 
 
   @Override
   public void periodic() {
+
+    angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
+		angleController.setReference(angleSetpoint.position, ControlType.kPosition);
+
     // This method will be called once per scheduler run
-    //SmartDashboard.putNumber("Wrist Position", wristEncoder.getPosition());
-    //SmartDashboard.putNumber("Wrist Velocity", wristEncoder.getVelocity());
+    SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
+    SmartDashboard.putNumber("Wrist Angle", getWristAngle());
+    SmartDashboard.putNumber("Wrist Speed", getWristSpeed());
+
+    SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
   }
 }

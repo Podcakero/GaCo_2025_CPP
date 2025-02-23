@@ -34,7 +34,10 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    // Make the wrist safe.
+    m_robotContainer.wrist.resetWristControl();
+  }
 
   @Override
   public void disabledExit() {
@@ -63,6 +66,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+   
   }
 
   @Override

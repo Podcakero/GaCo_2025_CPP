@@ -10,12 +10,22 @@ public class Constants {
     public static final double kDt = 0.02;
 
     public class WristConstants {
-        public static final int kWristMotorId = 3;
-        public static final int kIntakeMotorId = 4;
+        public static final int kAngleMotorId = 61;
+        public static final int kIntakeMotorId = 62;
+
+        public static final double kP = 0.02;
+        public static final double kI = 0;
+        public static final double kD = 0.0;
+		
+        public static final double kAnglePower = 1;
 		
 		public static final double kCoralIntakePower = 1;
 		public static final double kCoralOutputPower = -0.5;
 		public static final double kCoralScoringPower = 0.5;
+
+        public static final double kAngleMaxVelocityDPS = 400; // 
+		public static final double kAngleMaxAccelerationDPSPS = 1000; // 
+
     }
 
     public class ElevatorConstants {
