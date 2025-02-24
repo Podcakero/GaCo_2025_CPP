@@ -11,10 +11,10 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -26,8 +26,8 @@ import frc.robot.commands.DefaultWristCommand;
 
 public class WristSubsystem extends SubsystemBase {
 
-  private final SparkMax intakeSpark;
-  private final SparkMax angleSpark;
+  private final SparkFlex intakeSpark;
+  private final SparkFlex angleSpark;
 
   private final RelativeEncoder intakeEncoder;
   private final AbsoluteEncoder angleEncoder;
@@ -40,8 +40,8 @@ public class WristSubsystem extends SubsystemBase {
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
 
-    intakeSpark = new SparkMax(Constants.WristConstants.kIntakeMotorId, MotorType.kBrushless);
-    angleSpark = new SparkMax(Constants.WristConstants.kAngleMotorId, MotorType.kBrushless);
+    intakeSpark = new SparkFlex(Constants.WristConstants.kIntakeMotorId, MotorType.kBrushless);
+    angleSpark = new SparkFlex(Constants.WristConstants.kAngleMotorId, MotorType.kBrushless);
 
     intakeEncoder = intakeSpark.getEncoder();
     angleEncoder = angleSpark.getAbsoluteEncoder();
@@ -56,8 +56,8 @@ public class WristSubsystem extends SubsystemBase {
     // applying the configuration to bring the SPARK to a known good state. Persist
     // the settings to the SPARK to avoid losing them on a power cycle.
 
-    SparkMaxConfig intakeConfig = new SparkMaxConfig();
-    SparkMaxConfig angleConfig = new SparkMaxConfig();
+    SparkFlexConfig intakeConfig = new SparkFlexConfig();
+    SparkFlexConfig angleConfig = new SparkFlexConfig();
 
     // Use module constants to calculate conversion factors and feed forward gain.
     double intakeFactor = 1;
