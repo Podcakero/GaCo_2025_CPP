@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+
+import edu.wpi.first.units.measure.Distance;
+
 /** Add your docs here. */
 public class Constants {
 
@@ -16,6 +20,7 @@ public class Constants {
         public static final double kP = 0.02;
         public static final double kI = 0;
         public static final double kD = 0.0;
+        public static final double kAngleTollerance = 1;
 		
         public static final double kAnglePower = 1;
 		
@@ -37,6 +42,8 @@ public class Constants {
 		public static final double kG = 0.257;
 		public static final double kV = 0.117;
 		public static final double kA = 0.00803;
+
+        public static final Distance kHeightTollerance = Inches.of(1.0);
 
         public static final int kElevatorCurrentLimit = 40;
 
