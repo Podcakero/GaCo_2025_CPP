@@ -43,31 +43,31 @@ import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  private final SparkFlex m_leftElevatorMotor;
-  private SparkFlex m_centerElevatorMotor; // Cannot be final due to sysID Routine method
-  private final SparkFlex m_rightElevatorMotor;
+  private final SparkFlex leftElevatorMotor;
+  private SparkFlex centerElevatorMotor; // Cannot be final due to sysID Routine method
+  private final SparkFlex rightElevatorMotor;
   
-  private final SparkFlexConfig m_leftElevatorMotorConfig;
-  private final SparkFlexConfig m_centerElevatorMotorConfig;
-  private final SparkFlexConfig m_rightElevatorMotorConfig;
-  private final SparkClosedLoopController m_elevatorController;
-  private final RelativeEncoder m_elevatorEncoder;
-  private final SparkAnalogSensor m_elevatorAbs;
+  private final SparkFlexConfig leftElevatorMotorConfig;
+  private final SparkFlexConfig centerElevatorMotorConfig;
+  private final SparkFlexConfig rightElevatorMotorConfig;
+  private final SparkClosedLoopController elevatorController;
+  private final RelativeEncoder elevatorEncoder;
+  private final SparkAnalogSensor elevatorAbs;
   
-  private final ElevatorFeedforward m_elevatorFeedforward;
+  private final ElevatorFeedforward elevatorFeedforward;
 
-	private final TrapezoidProfile m_elevatorTrapezoidProfile;
-	private TrapezoidProfile.State m_elevatorGoal = new TrapezoidProfile.State();
-	private TrapezoidProfile.State m_elevatorSetpoint;
+	private final TrapezoidProfile elevatorTrapezoidProfile;
+	private TrapezoidProfile.State elevatorGoal = new TrapezoidProfile.State();
+	private TrapezoidProfile.State elevatorSetpoint;
 
   // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
-  private final MutVoltage m_appliedVoltage = Volts.mutable(0);
+  private final MutVoltage appliedVoltage = Volts.mutable(0);
   // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
-  private final MutAngle m_distance = Rotations.mutable(0);
+  private final MutAngle distance = Rotations.mutable(0);
   // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
-  private final MutAngularVelocity m_velocity = RotationsPerSecond.mutable(0);
+  private final MutAngularVelocity velocity = RotationsPerSecond.mutable(0);
 
-  private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
+  private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
     new SysIdRoutine.Config(
       Volts.of(0.5).per(Seconds),
       Volts.of(2),
@@ -81,11 +81,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         // the entire group to be one motor.
         log.motor("elevator")
             .voltage(
-                m_appliedVoltage.mut_replace(
-                    m_centerElevatorMotor.get() * RobotController.getBatteryVoltage(), Volts))
-            .angularPosition(m_distance.mut_replace(m_centerElevatorMotor.getEncoder().getPosition(), Rotations))
+                appliedVoltage.mut_replace(
+                    centerElevatorMotor.get() * RobotController.getBatteryVoltage(), Volts))
+            .angularPosition(distance.mut_replace(centerElevatorMotor.getEncoder().getPosition(), Rotations))
             .angularVelocity(
-                m_velocity.mut_replace(m_centerElevatorMotor.getEncoder().getVelocity(), RotationsPerSecond));
+                velocity.mut_replace(centerElevatorMotor.getEncoder().getVelocity(), RotationsPerSecond));
       },
       this
     )
@@ -93,99 +93,99 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    m_leftElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorLeftId, MotorType.kBrushless);
-    m_centerElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorCenterId, MotorType.kBrushless);
-    m_rightElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorRightId, MotorType.kBrushless);
+    leftElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorLeftId, MotorType.kBrushless);
+    centerElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorCenterId, MotorType.kBrushless);
+    rightElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorRightId, MotorType.kBrushless);
 
-    m_elevatorController = m_centerElevatorMotor.getClosedLoopController();
-    m_elevatorEncoder = m_centerElevatorMotor.getEncoder();
-    m_elevatorAbs = m_centerElevatorMotor.getAnalog();
+    elevatorController = centerElevatorMotor.getClosedLoopController();
+    elevatorEncoder = centerElevatorMotor.getEncoder();
+    elevatorAbs = centerElevatorMotor.getAnalog();
      
-	  m_elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
+	  elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
 
-	  m_elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(ElevatorConstants.kElevatorMaxVelocityRPS,
+	  elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(ElevatorConstants.kElevatorMaxVelocityRPS,
 				                                              ElevatorConstants.kElevatorMaxAccelerationRPSPS));
 
-	  m_elevatorSetpoint = new TrapezoidProfile.State(m_elevatorEncoder.getPosition(), m_elevatorEncoder.getVelocity());
+	  elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), elevatorEncoder.getVelocity());
 
-    m_centerElevatorMotorConfig = new SparkFlexConfig();
-    m_centerElevatorMotorConfig.closedLoop
+    centerElevatorMotorConfig = new SparkFlexConfig();
+    centerElevatorMotorConfig.closedLoop
       .p(ElevatorConstants.kP)
       .i(ElevatorConstants.kI)
       .d(ElevatorConstants.kD)
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-    m_centerElevatorMotorConfig.encoder
+    centerElevatorMotorConfig.encoder
       .positionConversionFactor(ElevatorConstants.kElevatorEncoderPositionConversionFactor)
       .velocityConversionFactor(ElevatorConstants.kElevatorEncoderVelocityConversionFactor);
-    m_centerElevatorMotorConfig
+    centerElevatorMotorConfig
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit);
 
-    m_leftElevatorMotorConfig = new SparkFlexConfig();
-    m_leftElevatorMotorConfig
+    leftElevatorMotorConfig = new SparkFlexConfig();
+    leftElevatorMotorConfig
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit)
-      .follow(m_centerElevatorMotor);
+      .follow(centerElevatorMotor);
     
-    m_rightElevatorMotorConfig = new SparkFlexConfig();
-    m_rightElevatorMotorConfig
+    rightElevatorMotorConfig = new SparkFlexConfig();
+    rightElevatorMotorConfig
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit)
-      .follow(m_centerElevatorMotor);
+      .follow(centerElevatorMotor);
 
-    m_leftElevatorMotor.configure(m_leftElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_centerElevatorMotor.configure(m_centerElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    m_rightElevatorMotor.configure(m_rightElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    leftElevatorMotor.configure(leftElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    centerElevatorMotor.configure(centerElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    rightElevatorMotor.configure(rightElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     setDefaultCommand(runElevatorClosedLoop());
   }
 
   public Command sysIdQuasistatic(Direction direction) {
-    return m_sysIdRoutine.quasistatic(direction);
+    return sysIdRoutine.quasistatic(direction);
   }
 
   public Command sysIdDynamic(Direction direction) {
-    return m_sysIdRoutine.dynamic(direction);
+    return sysIdRoutine.dynamic(direction);
   }
 
   public void setVoltage(Voltage voltage) {
-    m_centerElevatorMotor.setVoltage(voltage.in(Volts));
+    centerElevatorMotor.setVoltage(voltage.in(Volts));
   }
 
   public Distance getPosition(){
-    return Meters.of(m_elevatorEncoder.getPosition());
+    return Meters.of(elevatorEncoder.getPosition());
   }
 
   public void resetRelativeEncoder() {
-    m_elevatorEncoder.setPosition(0.0); // Change 0.0 to instead get the value of the absolute encoder
+    elevatorEncoder.setPosition(0.0); // Change 0.0 to instead get the value of the absolute encoder
   }
 
 	public void setGoalPosition(Distance goalPosition) {
-	  m_elevatorGoal = new TrapezoidProfile.State(goalPosition.in(Meters), 0.0);
+	  elevatorGoal = new TrapezoidProfile.State(goalPosition.in(Meters), 0.0);
 	}
 
 	public void clearGoalPosition() {
-		m_elevatorGoal = new TrapezoidProfile.State();
+		elevatorGoal = new TrapezoidProfile.State();
 	}
 
 	public void resetSetPoint() {
-		m_elevatorSetpoint = new TrapezoidProfile.State(m_elevatorEncoder.getPosition(), 0.0);
+		elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), 0.0);
 	}
 
   public boolean inPosition(){
-    return Math.abs(m_elevatorGoal.position - m_elevatorEncoder.getPosition()) < Constants.ElevatorConstants.kHeightTollerance.in(Meters);
+    return Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Constants.ElevatorConstants.kHeightTollerance.in(Meters);
   }
 
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		SmartDashboard.putNumber("ElevatorEncoder", m_elevatorEncoder.getPosition());
-		SmartDashboard.putNumber("Elevator Velocity", m_elevatorEncoder.getVelocity() / 60);
-		SmartDashboard.putNumber("ElevatorSetpoint", m_elevatorSetpoint.position);
-		SmartDashboard.putNumber("ElevatorProfileVelocity", m_elevatorSetpoint.velocity);
-		SmartDashboard.putNumber("ElevatorGoal", m_elevatorGoal.position);
-		SmartDashboard.putNumber("Elevator Voltage", m_centerElevatorMotor.getAppliedOutput() );
-		SmartDashboard.putNumber("Elevator Absolute", m_elevatorAbs.getVoltage());
+		SmartDashboard.putNumber("ElevatorEncoder", elevatorEncoder.getPosition());
+		SmartDashboard.putNumber("Elevator Velocity", elevatorEncoder.getVelocity() / 60);
+		SmartDashboard.putNumber("ElevatorSetpoint", elevatorSetpoint.position);
+		SmartDashboard.putNumber("ElevatorProfileVelocity", elevatorSetpoint.velocity);
+		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position);
+		SmartDashboard.putNumber("Elevator Voltage", centerElevatorMotor.getAppliedOutput() );
+		SmartDashboard.putNumber("Elevator Absolute", elevatorAbs.getVoltage());
 	}
 
   //----------//
@@ -193,12 +193,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   //----------//
   public Command runElevatorClosedLoop() {
     return Commands.run(() -> {
-     m_elevatorSetpoint = m_elevatorTrapezoidProfile.calculate(Constants.kDt, m_elevatorSetpoint, m_elevatorGoal);
+     elevatorSetpoint = elevatorTrapezoidProfile.calculate(Constants.kDt, elevatorSetpoint, elevatorGoal);
    
-     double arbFF = m_elevatorFeedforward.calculate(m_elevatorSetpoint.velocity);
+     double arbFF = elevatorFeedforward.calculate(elevatorSetpoint.velocity);
        
-     m_elevatorController.setReference(
-       m_elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
+     elevatorController.setReference(
+       elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
    
      SmartDashboard.putNumber("Elevator FeedForward", arbFF);
     });
