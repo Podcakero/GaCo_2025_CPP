@@ -23,6 +23,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
@@ -36,10 +38,9 @@ public class WristSubsystem extends SubsystemBase {
   private final AbsoluteEncoder angleEncoder;
 
   private final SparkClosedLoopController angleController;
-  private TrapezoidProfile angleTrapezoidProfile;
+  private final TrapezoidProfile angleTrapezoidProfile;
 	private TrapezoidProfile.State angleGoal = new TrapezoidProfile.State();
 	private TrapezoidProfile.State angleSetpoint;
-
   
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
@@ -91,6 +92,8 @@ public class WristSubsystem extends SubsystemBase {
 
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    setDefaultCommand(runWristClosedLoop());
   }
 
    // intake
@@ -124,12 +127,15 @@ public class WristSubsystem extends SubsystemBase {
     return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;
   }
 
+  public Command runWristClosedLoop() {
+    return Commands.run(() -> {
+      angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
+		  angleController.setReference(angleSetpoint.position, ControlType.kPosition);
+    });
+  }
+
   @Override
   public void periodic() {
-
-    angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
-		angleController.setReference(angleSetpoint.position, ControlType.kPosition);
-
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
     SmartDashboard.putNumber("Wrist Angle", getWristAngle());
