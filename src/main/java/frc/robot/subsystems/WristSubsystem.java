@@ -63,36 +63,35 @@ public class WristSubsystem extends SubsystemBase {
     SparkMaxConfig intakeConfig = new SparkMaxConfig();
     SparkMaxConfig angleConfig = new SparkMaxConfig();
 
-                // Use module constants to calculate conversion factors and feed forward gain.
+    // Use module constants to calculate conversion factors and feed forward gain.
     double intakeFactor = 1;
     double angleFactor = 360 * 24 / 52;  // Sprocket reduction
 
     intakeConfig
-            .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(50);
+      .idleMode(IdleMode.kBrake)
+      .smartCurrentLimit(50);
     intakeConfig.encoder
-            .positionConversionFactor(intakeFactor) // meters
-            .velocityConversionFactor(intakeFactor / 60.0); // meters per second
+      .positionConversionFactor(intakeFactor) // meters
+      .velocityConversionFactor(intakeFactor / 60.0); // meters per second
     
     angleConfig
-            .idleMode(IdleMode.kBrake)
-            //.inverted(true)
-            .smartCurrentLimit(20);
+      .idleMode(IdleMode.kBrake)
+      //.inverted(true)
+      .smartCurrentLimit(20);
     angleConfig.absoluteEncoder
-            //.inverted(true)
-            .positionConversionFactor(angleFactor) // degrees
-            .velocityConversionFactor(angleFactor / 60.0); // degrees per second
+      //.inverted(true)
+      .positionConversionFactor(angleFactor) // degrees
+      .velocityConversionFactor(angleFactor / 60.0); // degrees per second
     angleConfig.closedLoop
-            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-            // These are example gains you may need to them for your own robot!
-            .pid(Constants.WristConstants.kP, Constants.WristConstants.kI, Constants.WristConstants.kD)
-            .outputRange(-Constants.WristConstants.kAnglePower, Constants.WristConstants.kAnglePower)
-            .positionWrappingInputRange(0, angleFactor);
+      .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+      // These are example gains you may need to them for your own robot!
+      .pid(Constants.WristConstants.kP, Constants.WristConstants.kI, Constants.WristConstants.kD)
+      .outputRange(-Constants.WristConstants.kAnglePower, Constants.WristConstants.kAnglePower)
+      .positionWrappingInputRange(0, angleFactor);
 
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-   }
+  }
 
    // intake
   public void setIntakeSpeed(double speed) {
@@ -121,6 +120,9 @@ public class WristSubsystem extends SubsystemBase {
     return angleEncoder.getVelocity();
   }
 
+  public boolean inPosition(){
+    return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;
+  }
 
   @Override
   public void periodic() {
@@ -132,6 +134,7 @@ public class WristSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
     SmartDashboard.putNumber("Wrist Angle", getWristAngle());
     SmartDashboard.putNumber("Wrist Speed", getWristSpeed());
+    SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
 
     SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
   }

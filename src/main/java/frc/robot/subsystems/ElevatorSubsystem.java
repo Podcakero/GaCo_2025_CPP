@@ -159,6 +159,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 		m_elevatorSetpoint = new TrapezoidProfile.State(m_elevatorEncoder.getPosition(), 0.0);
 	}
 
+  public boolean inPosition(){
+    return Math.abs(m_elevatorGoal.position - m_elevatorEncoder.getPosition()) < Constants.ElevatorConstants.kHeightTollerance.in(Meters);
+  }
+
 
 	@Override
 	public void periodic() {
