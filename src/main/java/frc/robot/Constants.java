@@ -34,14 +34,19 @@ public class Constants {
     }
 
     public class ElevatorConstants {
-        public static final double kP = 0.4;
-        public static final double kI = 0;
-        public static final double kD = 0.023;
 
-        public static final double kS = 0.04435;
-		public static final double kG = 0.257;
-		public static final double kV = 0.117;
-		public static final double kA = 0.00803;
+        // scale factors
+        public static final double kRelativeEncoderScaleRevToMeters = 0.0493;
+        public static final double kAbsoluteEncoderScaleVoltsToMeters = 0.498;
+
+        public static final double kP = 6;  // was 8
+        public static final double kI = 0;
+        public static final double kD = 0.46;
+
+        public static final double kS = 0.04435;    //  these may need to be rescaled for meters by dividing 
+		public static final double kG = 0.257;      //  by kRelativeEncoderScaleRevToMeters
+		public static final double kV = 0.117;      //
+		public static final double kA = 0.00803;    //
 
         public static final Distance kHeightTollerance = Inches.of(1.0);
 
@@ -51,10 +56,12 @@ public class Constants {
         public static final int kElevatorMotorCenterId = 52;
         public static final int kElevatorMotorRightId = 53;
 
-        public static final double kElevatorMaxVelocityRPS = 80; // RPS
-		public static final double kElevatorMaxAccelerationRPSPS = 100; // RPSPS
+
+
+        public static final double kElevatorMaxVelocityRPS = 2.0;  // MPS
+		public static final double kElevatorMaxAccelerationRPSPS = 6.0; // MPSS
 	
-        public static final double kElevatorEncoderPositionConversionFactor = 1.0; // Needs to be empirically measured
-        public static final double kElevatorEncoderVelocityConversionFactor = 1.0; // Needs to be empirically measured. Should be able to be derived from kElevatorEncoderPositionConversionFactor
+        public static final double kElevatorEncoderPositionConversionFactor = kRelativeEncoderScaleRevToMeters; // Needs to be empirically measured
+        public static final double kElevatorEncoderVelocityConversionFactor = kRelativeEncoderScaleRevToMeters; // Needs to be empirically measured. Should be able to be derived from kElevatorEncoderPositionConversionFactor
     }
 }

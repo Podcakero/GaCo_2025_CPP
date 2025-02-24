@@ -65,11 +65,11 @@ public class RobotContainer {
 
     private void configureBindings() {
         //joystick.y().onTrue(new RunWrist(wrist, 1)).onFalse(new RunWrist(wrist, 0));
-        joystick.y().onTrue(new SetElevatorHeight(elevator, Meters.of(25))); // NOTE: Meters = Rotations until position conversion factor is calculated
-        joystick.x().onTrue(new SetElevatorHeight(elevator, Meters.of(10)));
+        joystick.y().onTrue(new SetElevatorHeight(elevator, Meters.of(1.2))); 
+        joystick.x().onTrue(new SetElevatorHeight(elevator, Meters.of(0.1)));
         joystick.a().onTrue(new SetElevatorHeight(elevator, Meters.of(0)));
         joystick.povDown().onTrue(new SetFinAngle(wrist, 3));
-        joystick.povLeft().onTrue(new SetFinAngle(wrist, 40));
+        joystick.povLeft().onTrue(new SetFinAngle(wrist, 30));
         joystick.povUp().onTrue(new SetFinAngle(wrist, 83));
         
 

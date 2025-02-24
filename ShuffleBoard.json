@@ -50,7 +50,7 @@
               "_title": "/SmartDashboard/Field",
               "_glyph": 148,
               "_showGlyph": false,
-              "Game/Game": "k2025Reefscape",
+              "Game/Game": "k2024Crescendo",
               "Visuals/Robot Icon Size": 50.0,
               "Visuals/Show Outside Circles": false
             }
@@ -129,6 +129,19 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Wrist Goal",
               "_title": "/SmartDashboard/Wrist Goal",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,6": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/ElevatorEncoder",
+              "_title": "/SmartDashboard/ElevatorEncoder",
               "_glyph": 148,
               "_showGlyph": false
             }
