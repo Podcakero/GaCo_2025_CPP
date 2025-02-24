@@ -37,10 +37,16 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     Telemetry.displayAutoPaths(); // Display the selected auto path on the dashboard while robot is disabled
+    // Make the wrist safe.
+    m_robotContainer.wrist.resetWristControl();
   }
 
   @Override
-  public void disabledExit() {}
+  public void disabledExit() {
+    m_robotContainer.elevator.resetRelativeEncoder();
+    m_robotContainer.elevator.clearGoalPosition();
+    m_robotContainer.elevator.resetSetPoint();
+  }
 
   @Override
   public void autonomousInit() {
@@ -62,6 +68,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+   
   }
 
   @Override
