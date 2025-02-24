@@ -127,13 +127,6 @@ public class WristSubsystem extends SubsystemBase {
     return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;
   }
 
-  public Command runWristClosedLoop() {
-    return Commands.run(() -> {
-      angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
-		  angleController.setReference(angleSetpoint.position, ControlType.kPosition);
-    });
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -143,5 +136,15 @@ public class WristSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
 
     SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
+  }
+
+  //----------//
+  // Commands //
+  //----------//
+  public Command runWristClosedLoop() {
+    return Commands.run(() -> {
+      angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
+		  angleController.setReference(angleSetpoint.position, ControlType.kPosition);
+    });
   }
 }

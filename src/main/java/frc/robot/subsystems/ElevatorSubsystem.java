@@ -176,19 +176,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     return Math.abs(m_elevatorGoal.position - m_elevatorEncoder.getPosition()) < Constants.ElevatorConstants.kHeightTollerance.in(Meters);
   }
 
-  public Command runElevatorClosedLoop() {
-   return Commands.run(() -> {
-    m_elevatorSetpoint = m_elevatorTrapezoidProfile.calculate(Constants.kDt, m_elevatorSetpoint, m_elevatorGoal);
-  
-    double arbFF = m_elevatorFeedforward.calculate(m_elevatorSetpoint.velocity);
-      
-    m_elevatorController.setReference(
-      m_elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
-  
-    SmartDashboard.putNumber("Elevator FeedForward", arbFF);
-   });
-  }
-
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
@@ -200,4 +187,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Elevator Voltage", m_centerElevatorMotor.getAppliedOutput() );
 		SmartDashboard.putNumber("Elevator Absolute", m_elevatorAbs.getVoltage());
 	}
+
+  //----------//
+  // Commands //
+  //----------//
+  public Command runElevatorClosedLoop() {
+    return Commands.run(() -> {
+     m_elevatorSetpoint = m_elevatorTrapezoidProfile.calculate(Constants.kDt, m_elevatorSetpoint, m_elevatorGoal);
+   
+     double arbFF = m_elevatorFeedforward.calculate(m_elevatorSetpoint.velocity);
+       
+     m_elevatorController.setReference(
+       m_elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
+   
+     SmartDashboard.putNumber("Elevator FeedForward", arbFF);
+    });
+   }
 }
