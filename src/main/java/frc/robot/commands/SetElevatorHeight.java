@@ -17,7 +17,6 @@ public class SetElevatorHeight extends Command {
   /** Creates a new RunElevator. */
   public SetElevatorHeight(ElevatorSubsystem elevatorSubsystem, Distance position) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(elevatorSubsystem);
 
     this.elevatorSubsystem = elevatorSubsystem;
     this.position = position;

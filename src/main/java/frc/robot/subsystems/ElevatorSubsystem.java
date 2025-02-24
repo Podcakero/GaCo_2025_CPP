@@ -35,12 +35,13 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.commands.DefaultElevatorCommand;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private final SparkFlex leftElevatorMotor;
@@ -137,7 +138,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     centerElevatorMotor.configure(centerElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightElevatorMotor.configure(rightElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    setDefaultCommand(runElevatorClosedLoop());
+    setDefaultCommand(new DefaultElevatorCommand(this));
   }
 
   public Command sysIdQuasistatic(Direction direction) {
@@ -146,6 +147,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public Command sysIdDynamic(Direction direction) {
     return sysIdRoutine.dynamic(direction);
+  }
+
+  public void resetElevatorControl() {
+	  elevatorGoal = new TrapezoidProfile.State(getPosition().in(Meters), 0.0);
+    resetSetPoint();
+  }
+
+  public void stopElevator() {
+    centerElevatorMotor.set(0);
   }
 
   public void setVoltage(Voltage voltage) {
@@ -164,9 +174,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 	  elevatorGoal = new TrapezoidProfile.State(goalPosition.in(Meters), 0.0);
 	}
 
-	public void clearGoalPosition() {
-		elevatorGoal = new TrapezoidProfile.State();
-	}
+	//public void clearGoalPosition() {     /// This seems dangerous to me.   
+	//	elevatorGoal = new TrapezoidProfile.State();
+	//}
 
 	public void resetSetPoint() {
 		elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), 0.0);
@@ -188,19 +198,19 @@ public class ElevatorSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Elevator Absolute", elevatorAbs.getVoltage());
 	}
 
+  public void runClosedLoop() {
+    elevatorSetpoint = elevatorTrapezoidProfile.calculate(Constants.kDt, elevatorSetpoint, elevatorGoal);
+  
+    double arbFF = elevatorFeedforward.calculate(elevatorSetpoint.velocity);
+      
+    elevatorController.setReference(
+      elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
+  
+    SmartDashboard.putNumber("Elevator FeedForward", arbFF);
+  }
+
   //----------//
   // Commands //
   //----------//
-  public Command runElevatorClosedLoop() {
-    return Commands.run(() -> {
-     elevatorSetpoint = elevatorTrapezoidProfile.calculate(Constants.kDt, elevatorSetpoint, elevatorGoal);
-   
-     double arbFF = elevatorFeedforward.calculate(elevatorSetpoint.velocity);
-       
-     elevatorController.setReference(
-       elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
-   
-     SmartDashboard.putNumber("Elevator FeedForward", arbFF);
-    });
-   }
+  
 }
