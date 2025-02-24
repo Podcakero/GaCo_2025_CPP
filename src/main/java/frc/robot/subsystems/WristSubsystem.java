@@ -6,28 +6,23 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ElevatorConstants;
+import frc.robot.commands.DefaultWristCommand;
 
 public class WristSubsystem extends SubsystemBase {
 
@@ -93,7 +88,7 @@ public class WristSubsystem extends SubsystemBase {
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    setDefaultCommand(runWristClosedLoop());
+    setDefaultCommand( new DefaultWristCommand(this));
   }
 
    // intake
@@ -123,6 +118,10 @@ public class WristSubsystem extends SubsystemBase {
     return angleEncoder.getVelocity();
   }
 
+  public void stopWrist() {
+    angleSpark.set(0);
+  }
+
   public boolean inPosition(){
     return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;
   }
@@ -138,13 +137,13 @@ public class WristSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
   }
 
+  public void runWristClosedLoop() {
+      angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
+		  angleController.setReference(angleSetpoint.position, ControlType.kPosition);
+  }
+
   //----------//
   // Commands //
   //----------//
-  public Command runWristClosedLoop() {
-    return Commands.run(() -> {
-      angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
-		  angleController.setReference(angleSetpoint.position, ControlType.kPosition);
-    });
-  }
+
 }

@@ -12,7 +12,6 @@ public class StopFin extends InstantCommand {
   WristSubsystem wrist;
 
   public StopFin(WristSubsystem wrist) {
-    addRequirements(wrist) ;
     this.wrist = wrist;
   }
 

@@ -13,7 +13,6 @@ public class SetFinAngle extends InstantCommand {
   double angle;
 
   public SetFinAngle(WristSubsystem wrist, double angle) {
-    addRequirements(wrist) ;
     this.wrist = wrist;
     this.angle = angle;
   }
