@@ -65,12 +65,14 @@ public class RobotContainer {
 
     private void configureBindings() {
         //joystick.y().onTrue(new RunWrist(wrist, 1)).onFalse(new RunWrist(wrist, 0));
+        /*
         joystick.y().onTrue(new SetElevatorHeight(elevator, Meters.of(1.2))); 
         joystick.x().onTrue(new SetElevatorHeight(elevator, Meters.of(0.1)));
         joystick.a().onTrue(new SetElevatorHeight(elevator, Meters.of(0)));
         joystick.povDown().onTrue(new SetFinAngle(wrist, 3));
         joystick.povLeft().onTrue(new SetFinAngle(wrist, 30));
         joystick.povUp().onTrue(new SetFinAngle(wrist, 83));
+        */
         
 
 
@@ -91,6 +93,7 @@ public class RobotContainer {
         //    point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         //));
 
+        /*
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0.5).withVelocityY(0))
         );
@@ -103,6 +106,7 @@ public class RobotContainer {
         joystick.pov(270).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0).withVelocityY(0.5))
         );
+        */
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -111,12 +115,8 @@ public class RobotContainer {
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        joystick.rightTrigger().onTrue(wrist.runOnce(() -> wrist.setIntakeSpeed(-0.2)))
-                              .onFalse(wrist.runOnce(() -> wrist.setIntakeSpeed(0.0)));
-
-
         // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.back().and(joystick.start()).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
