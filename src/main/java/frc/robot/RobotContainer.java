@@ -26,6 +26,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.TowerEvent;
 import frc.robot.subsystems.TowerSubsystem;;
 
 public class RobotContainer {
@@ -55,27 +56,19 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        NamedCommands.registerCommand("stop", drivetrain.applyRequest(() -> brake));
+
+        
+        NamedCommands.registerCommand("INTAKE_CORAL", tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
+        NamedCommands.registerCommand("GOTO_L1", tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
+        NamedCommands.registerCommand("GOTO_L2", tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
+        NamedCommands.registerCommand("GOTO_L3", tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L3)));
+        NamedCommands.registerCommand("GOTO_L4", tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L4)));
+        NamedCommands.registerCommand("SCORE_CORAL", tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
 
         configureBindings();
-    }
-
-    private void configureBindings() {
-        //joystick.y().onTrue(new RunWrist(wrist, 1)).onFalse(new RunWrist(wrist, 0));
-        /*
-        joystick.y().onTrue(new SetElevatorHeight(elevator, Meters.of(1.2))); 
-        joystick.x().onTrue(new SetElevatorHeight(elevator, Meters.of(0.1)));
-        joystick.a().onTrue(new SetElevatorHeight(elevator, Meters.of(0)));
-        joystick.povDown().onTrue(new SetFinAngle(wrist, 3));
-        joystick.povLeft().onTrue(new SetFinAngle(wrist, 30));
-        */
-        joystick.povUp().onTrue(new SetFinAngle(wrist, 30));
-        
-        
-
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
@@ -87,20 +80,34 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate / 5) // Drive counterclockwise with negative X (left)
             )
         );
+    }
+
+    private void configureBindings() {
 
 
-        //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        //joystick.b().whileTrue(drivetrain.applyRequest(() ->
-        //    point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        //));
+        // Tower State Machine Events
+        joystick.leftBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
 
+        joystick.pov(180).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
+        joystick.pov(270).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
+        joystick.pov(90).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L3)));
+        joystick.pov(0).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L4)));
+
+        joystick.rightBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
+
+        // reset the field-centric heading on left bumper press
+        joystick.back().and(joystick.start()).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        
+         
         /*
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0.5).withVelocityY(0))
         );
+
         joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(-0.5).withVelocityY(0))
         );
+
         joystick.pov(90).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0).withVelocityY(-0.5))
         );
@@ -109,15 +116,14 @@ public class RobotContainer {
         );
         */
 
+        /* 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-        // reset the field-centric heading on left bumper press
-        joystick.back().and(joystick.start()).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        */
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

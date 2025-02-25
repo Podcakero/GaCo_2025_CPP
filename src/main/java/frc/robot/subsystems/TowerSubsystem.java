@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -13,11 +12,11 @@ import frc.robot.Constants;
 public class TowerSubsystem extends SubsystemBase {
 	private TowerState currentState = TowerState.INIT;
 
-	private final XboxController joystick = new XboxController(0);
 	private Timer stateTimer = new Timer();
 
 	private ElevatorSubsystem elevator;
 	private WristSubsystem wrist;
+	private TowerEvent pendingEvent = TowerEvent.NONE;   
 
 	/** Creates a new Tower. */
 	public TowerSubsystem(ElevatorSubsystem elevator, WristSubsystem wrist) {
@@ -45,7 +44,7 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 			
 			case HOME: {
-				if (joystick.getLeftBumperButton()){
+				if (isTriggered(TowerEvent.INTAKE_CORAL)){
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);
 					setState(TowerState.INTAKING);
 				}
@@ -69,14 +68,14 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case GOT_CORAL: {
-				if (joystick.getPOV() == 90) {
+				if (isTriggered(TowerEvent.GOTO_L3)) {
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL3Height);
 					setState(TowerState.RAISING);
-				} else if (joystick.getPOV() == 180){
-					elevator.setGoalPosition(Constants.ElevatorConstants.kL1Height);
-					setState(TowerState.RAISING);
-				} else if (joystick.getPOV() == 270){
+				} else if (isTriggered(TowerEvent.GOTO_L2)){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL2Height);
+					setState(TowerState.RAISING);
+				} else if (isTriggered(TowerEvent.GOTO_L1)){
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL1Height);
 					setState(TowerState.RAISING);
 				}
 				break;
@@ -90,7 +89,7 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case READY_TO_SCORE: {
-				if (joystick.getRightBumperButton()) {
+				if (isTriggered(TowerEvent.SCORE_CORAL)) {
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralScoringPower);
 					setState(TowerState.SCORING_CORAL);
 				}
@@ -122,10 +121,24 @@ public class TowerSubsystem extends SubsystemBase {
 		}
 	}
 
+	public void triggerEvent(TowerEvent event){
+		pendingEvent = event;
+	}
+
+	// -- Private Methods  ----------------------------------------------------
+
 	private void updateDashboard() {
 		SmartDashboard.putString("Tower State", currentState.toString());
 	}
 	
+	private Boolean isTriggered(TowerEvent event){
+		if (pendingEvent == event) {
+			pendingEvent = TowerEvent.NONE;
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	private void setState(TowerState newState){
 		currentState = newState;
