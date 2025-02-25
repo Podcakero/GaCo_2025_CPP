@@ -50,7 +50,7 @@
               "_title": "/SmartDashboard/Field",
               "_glyph": 148,
               "_showGlyph": false,
-              "Game/Game": "k2024Crescendo",
+              "Game/Game": "k2025Reefscape",
               "Visuals/Robot Icon Size": 50.0,
               "Visuals/Show Outside Circles": false
             }
@@ -64,19 +64,6 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Pose 2d",
               "_title": "/SmartDashboard/Pose 2d",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "8,2": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Intake Speed",
-              "_title": "/SmartDashboard/Intake Speed",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -142,6 +129,32 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/ElevatorEncoder",
               "_title": "/SmartDashboard/ElevatorEncoder",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,5": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Coral Sensor",
+              "_title": "/SmartDashboard/Coral Sensor",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "8,2": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Tower State",
+              "_title": "/SmartDashboard/Tower State",
               "_glyph": 148,
               "_showGlyph": false
             }

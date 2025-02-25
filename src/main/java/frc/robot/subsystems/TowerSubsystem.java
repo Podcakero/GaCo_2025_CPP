@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -25,7 +26,9 @@ public class TowerSubsystem extends SubsystemBase {
 		stateTimer.start();
 	}
 
-	public void initialize() {}
+	public void initialize() {
+		setState(TowerState.INIT);
+	}
 
 	@Override
 	public void periodic() {
@@ -88,7 +91,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case READY_TO_SCORE: {
 				if (joystick.getRightBumperButton()) {
-					wrist.setIntakeSpeed(Constants.WristConstants.kCoralOutputPower);
+					wrist.setIntakeSpeed(Constants.WristConstants.kCoralScoringPower);
 					setState(TowerState.SCORING_CORAL);
 				}
 				break;
@@ -119,7 +122,10 @@ public class TowerSubsystem extends SubsystemBase {
 		}
 	}
 
-	private void updateDashboard() {}
+	private void updateDashboard() {
+		SmartDashboard.putString("Tower State", currentState.toString());
+	}
+	
 
 	private void setState(TowerState newState){
 		currentState = newState;

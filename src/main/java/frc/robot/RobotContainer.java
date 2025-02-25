@@ -71,8 +71,9 @@ public class RobotContainer {
         joystick.a().onTrue(new SetElevatorHeight(elevator, Meters.of(0)));
         joystick.povDown().onTrue(new SetFinAngle(wrist, 3));
         joystick.povLeft().onTrue(new SetFinAngle(wrist, 30));
-        joystick.povUp().onTrue(new SetFinAngle(wrist, 83));
         */
+        joystick.povUp().onTrue(new SetFinAngle(wrist, 30));
+        
         
 
 

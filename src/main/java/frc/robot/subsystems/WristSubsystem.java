@@ -160,6 +160,7 @@ public class WristSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
 
     SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
+    SmartDashboard.putNumber("Coral Sensor", getRangeMM());
   }
 
   public void runWristClosedLoop() {
