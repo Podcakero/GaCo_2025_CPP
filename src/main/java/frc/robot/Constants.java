@@ -31,6 +31,8 @@ public class Constants {
         public static final double kAngleMaxVelocityDPS = 400; // 
 		public static final double kAngleMaxAccelerationDPSPS = 1000; // 
 
+        public static final double kMaxCoralDetectRangeMM = 40;
+
     }
 
     public class ElevatorConstants {
