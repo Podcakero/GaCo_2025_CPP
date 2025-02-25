@@ -1,0 +1,55 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BBtoI"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ItoCL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CLtoJ"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "JtoCL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CLtoK"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "KtoCL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CLtoL"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
