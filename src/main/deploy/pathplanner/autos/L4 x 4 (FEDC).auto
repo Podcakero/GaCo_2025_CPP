@@ -21,6 +21,30 @@
           "data": {
             "pathName": "CRtoE"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "EtoCR"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CRtoD"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DtoCR"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CRtoC"
+          }
         }
       ]
     }
