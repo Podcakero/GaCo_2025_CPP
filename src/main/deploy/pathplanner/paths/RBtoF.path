@@ -4,15 +4,15 @@
     {
       "anchor": {
         "x": 7.16625,
-        "y": 4.0445
+        "y": 1.8897500000000003
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.28155737704918,
-        "y": 3.44359631147541
+        "x": 6.513,
+        "y": 1.8605000000000005
       },
-      "isLocked": false,
-      "linkedName": "Center"
+      "isLocked": true,
+      "linkedName": "Barge Red"
     },
     {
       "anchor": {
@@ -20,12 +20,12 @@
         "y": 3.010873815129252
       },
       "prevControl": {
-        "x": 5.694159836065573,
-        "y": 2.700358606557377
+        "x": 5.399229044257767,
+        "y": 2.552623815129251
       },
       "nextControl": null,
-      "isLocked": false,
-      "linkedName": "2b"
+      "isLocked": true,
+      "linkedName": "F"
     }
   ],
   "rotationTargets": [],

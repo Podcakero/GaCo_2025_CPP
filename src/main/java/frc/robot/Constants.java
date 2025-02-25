@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.units.measure.Distance;
 
@@ -24,12 +25,17 @@ public class Constants {
 		
         public static final double kAnglePower = 1;
 		
-		public static final double kCoralIntakePower = 1;
-		public static final double kCoralOutputPower = -0.5;
-		public static final double kCoralScoringPower = 0.5;
+		public static final double kCoralIntakePower = -0.2;
+		public static final double kCoralOutputPower =  0.5;
+		public static final double kCoralScoringPower = -0.5;
 
         public static final double kAngleMaxVelocityDPS = 400; // 
 		public static final double kAngleMaxAccelerationDPSPS = 1000; // 
+
+        public static final double kMaxCoralDetectRangeMM = 40;
+        public static final double kSafeAngle = 30;
+        public static final double kIntakeAngle = 3;
+        public static final double kL4Angle = 83;
 
     }
 
@@ -56,7 +62,11 @@ public class Constants {
         public static final int kElevatorMotorCenterId = 52;
         public static final int kElevatorMotorRightId = 53;
 
-
+        public static final Distance kL1Height = Meters.of(0.1);
+        public static final Distance kL2Height = Meters.of(0.6);
+        public static final Distance kL3Height = Meters.of(1.2);
+        public static final Distance kL4Height = Meters.of(1.2);
+        public static final Distance kIntakeHeight = Meters.of(0); 
 
         public static final double kElevatorMaxVelocityRPS = 2.0;  // MPS
 		public static final double kElevatorMaxAccelerationRPSPS = 6.0; // MPSS
