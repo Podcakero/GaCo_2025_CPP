@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bto6"
+            "pathName": "BBtoI"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "6ato5a"
+            "pathName": "ItoK"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "5ato4a"
+            "pathName": "KtoA"
           }
         },
         {
@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "4atoLS"
+            "pathName": "AtoCR"
           }
         },
         {
@@ -79,7 +79,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Pto2a"
+            "pathName": "PtoF"
           }
         },
         {
@@ -91,7 +91,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2atoC"
+            "pathName": "FtoC"
           }
         }
       ]

@@ -19,10 +19,12 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.DefaultWristCommand;
+
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 public class WristSubsystem extends SubsystemBase {
 
@@ -36,6 +38,8 @@ public class WristSubsystem extends SubsystemBase {
   private final TrapezoidProfile angleTrapezoidProfile;
 	private TrapezoidProfile.State angleGoal = new TrapezoidProfile.State();
 	private TrapezoidProfile.State angleSetpoint;
+
+  TimeOfFlight TOF;
   
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
@@ -88,10 +92,31 @@ public class WristSubsystem extends SubsystemBase {
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
+    TOF = new TimeOfFlight(63);
+    TOF.setRangingMode(RangingMode.Short, 30);
+    TOF.setRangeOfInterest(0, 0, 15, 15);
+
     setDefaultCommand( new DefaultWristCommand(this));
   }
 
-   // intake
+
+  // The configuration interfaces may be accessed by typing in the IP address of the roboRIO into a web
+  //  browser followed by :5812.
+
+  // TOF sensor
+  public void setViewZone(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+    TOF.setRangeOfInterest(topLeftX, topLeftY, bottomRightX, bottomRightY);
+  }
+
+  public boolean gotCoral() {
+    return (TOF.getRange() < Constants.WristConstants.kMaxCoralDetectRangeMM);
+  }
+
+  public double getRangeMM() {
+    return TOF.getRange();
+   }
+      
+  // intake
   public void setIntakeSpeed(double speed) {
     intakeSpark.set(speed);
   }
