@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.513,
-        "y": 1.8605000000000005
+        "x": 6.626639633344106,
+        "y": 2.0467891813962114
       },
       "isLocked": true,
       "linkedName": "Barge Red"
@@ -20,8 +20,8 @@
         "y": 3.010873815129252
       },
       "prevControl": {
-        "x": 5.399229044257767,
-        "y": 2.552623815129251
+        "x": 5.394458004931401,
+        "y": 2.720767118851545
       },
       "nextControl": null,
       "isLocked": true,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 4.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
