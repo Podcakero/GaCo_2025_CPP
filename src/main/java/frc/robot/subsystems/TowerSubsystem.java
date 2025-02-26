@@ -27,7 +27,6 @@ public class TowerSubsystem extends SubsystemBase {
 
 	public void initialize() {
 		setState(TowerState.INIT);
-		
 	}
 
 	@Override
@@ -143,6 +142,10 @@ public class TowerSubsystem extends SubsystemBase {
 		pendingEvent = event;
 	}
 
+	public TowerEvent getPendingEvent() {
+		return pendingEvent;
+	}
+
 	// -- Private Methods  ----------------------------------------------------
 
 	private void updateDashboard() {
@@ -157,6 +160,8 @@ public class TowerSubsystem extends SubsystemBase {
 			return false;
 		}
 	}
+
+
 
 	private void setState(TowerState newState){
 		currentState = newState;

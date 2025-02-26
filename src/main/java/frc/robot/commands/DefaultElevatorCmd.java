@@ -9,12 +9,12 @@ import frc.robot.subsystems.ElevatorSubsystem;
 
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class DefaultElevatorCommand extends Command {
+public class DefaultElevatorCmd extends Command {
 
   ElevatorSubsystem elevator;
 
   /** Creates a new DefaultWristCommand. */
-  public DefaultElevatorCommand(ElevatorSubsystem elevator) {
+  public DefaultElevatorCmd(ElevatorSubsystem elevator) {
     addRequirements(elevator);
     this.elevator = elevator;
   }
