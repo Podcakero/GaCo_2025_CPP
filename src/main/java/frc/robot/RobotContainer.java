@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.commands.TriggerEventCmd;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
@@ -55,12 +55,12 @@ public class RobotContainer {
     public RobotContainer() {
 
         
-        NamedCommands.registerCommand("INTAKE_CORAL", tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
-        NamedCommands.registerCommand("GOTO_L1", tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
-        NamedCommands.registerCommand("GOTO_L2", tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
-        NamedCommands.registerCommand("GOTO_L3", tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L3)));
-        NamedCommands.registerCommand("GOTO_L4", tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L4)));
-        NamedCommands.registerCommand("SCORE_CORAL", tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
+        NamedCommands.registerCommand("INTAKE_CORAL",   new TriggerEventCmd(tower, TowerEvent.INTAKE_CORAL));
+        NamedCommands.registerCommand("GOTO_L1",        new TriggerEventCmd(tower, TowerEvent.GOTO_L1));
+        NamedCommands.registerCommand("GOTO_L2",        new TriggerEventCmd(tower, TowerEvent.GOTO_L2));
+        NamedCommands.registerCommand("GOTO_L3",        new TriggerEventCmd(tower, TowerEvent.GOTO_L3));
+        NamedCommands.registerCommand("GOTO_L4",        new TriggerEventCmd(tower, TowerEvent.GOTO_L4));
+        NamedCommands.registerCommand("SCORE_CORAL",    new TriggerEventCmd(tower, TowerEvent.SCORE_CORAL));
 
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);

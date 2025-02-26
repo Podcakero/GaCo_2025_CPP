@@ -21,7 +21,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.commands.DefaultWristCommand;
+import frc.robot.commands.DefaultWristCmd;
 
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
@@ -96,7 +96,7 @@ public class WristSubsystem extends SubsystemBase {
     TOF.setRangingMode(RangingMode.Short, 30);
     TOF.setRangeOfInterest(0, 0, 15, 15);
 
-    setDefaultCommand( new DefaultWristCommand(this));
+    setDefaultCommand( new DefaultWristCmd(this));
   }
 
 
