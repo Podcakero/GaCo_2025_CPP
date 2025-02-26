@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 /** Add your docs here. */
 public enum TowerEvent {
     NONE,
+    HOME_TOWER,
     GOTO_INTAKE_CORAL,
     GOTO_L1,
     GOTO_L2,

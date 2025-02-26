@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "INTAKE_CORAL"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "StraightShot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GOTO_L3"
           }
         }
       ]

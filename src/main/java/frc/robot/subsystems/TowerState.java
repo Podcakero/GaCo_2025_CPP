@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 public enum TowerState {
 	//Start
 	INIT,
+	HOMING,
 	HOME,
 
 	//Scoring

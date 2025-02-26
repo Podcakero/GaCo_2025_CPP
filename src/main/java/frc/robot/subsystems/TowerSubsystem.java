@@ -27,6 +27,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 	public void initialize() {
 		setState(TowerState.INIT);
+		
 	}
 
 	@Override
@@ -36,12 +37,29 @@ public class TowerSubsystem extends SubsystemBase {
 		updateDashboard();
 	}
 
+	public void homeTower() {
+		wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
+		elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
+	}
+
 	public void runStateMachine() {
 		switch(currentState){
 			case INIT: {
-				setState(TowerState.HOME);
+				if (isTriggered(TowerEvent.HOME_TOWER)){
+					wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
+					elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
+					setState(TowerState.HOMING);
+				}
 				break;
 			}
+
+			case HOMING: {
+				if (wrist.inPosition() && elevator.inPosition()){
+					setState(TowerState.HOME);
+				}
+				break;
+			}
+
 			
 			case HOME: {
 				if (isTriggered(TowerEvent.INTAKE_CORAL)){

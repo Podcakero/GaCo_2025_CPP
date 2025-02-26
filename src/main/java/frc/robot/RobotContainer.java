@@ -18,9 +18,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
-import frc.robot.commands.SetElevatorHeight;
-import frc.robot.commands.SetFinAngle;
-
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
@@ -86,6 +83,8 @@ public class RobotContainer {
 
 
         // Tower State Machine Events
+        joystick.start().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
+        
         joystick.leftBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
 
         joystick.pov(180).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
@@ -96,7 +95,7 @@ public class RobotContainer {
         joystick.rightBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
 
         // reset the field-centric heading on left bumper press
-        joystick.back().and(joystick.start()).onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
          
         /*
