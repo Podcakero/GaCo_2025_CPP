@@ -11,21 +11,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "runWristHalfSpeed"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "FtoI"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stopWrist"
           }
         },
         {
@@ -37,7 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "stop"
+            "name": null
           }
         },
         {

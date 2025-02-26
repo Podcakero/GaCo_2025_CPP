@@ -35,7 +35,7 @@ public class Constants {
         public static final double kMaxCoralDetectRangeMM = 40;
         public static final double kSafeAngle = 30;
         public static final double kIntakeAngle = 3;
-        public static final double kL4Angle = 83;
+        public static final double kL4Angle = 40;
 
     }
 
@@ -56,7 +56,7 @@ public class Constants {
 
         public static final Distance kHeightTollerance = Inches.of(1.0);
 
-        public static final int kElevatorCurrentLimit = 40;
+        public static final int kElevatorCurrentLimit = 60;
 
         public static final int kElevatorMotorLeftId = 51;
         public static final int kElevatorMotorCenterId = 52;
@@ -64,8 +64,8 @@ public class Constants {
 
         public static final Distance kL1Height = Meters.of(0.1);
         public static final Distance kL2Height = Meters.of(0.6);
-        public static final Distance kL3Height = Meters.of(1.2);
-        public static final Distance kL4Height = Meters.of(1.2);
+        public static final Distance kL3Height = Meters.of(1.10);
+        public static final Distance kL4Height = Meters.of(2.10);
         public static final Distance kIntakeHeight = Meters.of(0); 
 
         public static final double kElevatorMaxVelocityRPS = 2.0;  // MPS

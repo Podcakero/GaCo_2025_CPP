@@ -41,6 +41,18 @@
           "data": {
             "name": "SCORE_CORAL"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WAIT_FOR_LOWERING"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Staight Back"
+          }
         }
       ]
     }

@@ -38,14 +38,12 @@ public class VisionSubsystem extends SubsystemBase{
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(1.0, 1.0, Units.degreesToRadians(10));
 
 
-    static final Transform3d robotToCam = new Transform3d(new Translation3d(-0.12, 0.05, 0.44), 
-                                                          new Rotation3d(0,Math.toRadians(30),0)); 
-                                                          
-                                            //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
+    static final Transform3d robotToCam = new Transform3d(new Translation3d(0.26, 0.00, 0.20), 
+                                                          new Rotation3d(0,Math.toRadians(0),0)); 
 
     public VisionSubsystem(CommandSwerveDrivetrain  drivetrain){
         this.drivetrain = drivetrain;
-        lowerCamera = new PhotonCamera("PC_Camera Left");
+        lowerCamera = new PhotonCamera("LowerTagCamera");
 
         // Construct PhotonPoseEstimator
         poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);

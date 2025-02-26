@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,13 +20,22 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
+  private final Timer m_gcTimer = new Timer();
+
+
   public Robot() {
     m_robotContainer = new RobotContainer();
+    m_gcTimer.start();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run(); 
+
+    // run the garbage collector every 5 seconds (New added by Phil)
+    //if (m_gcTimer.advanceIfElapsed(5)) {
+    // System.gc();
+    //}
   }
 
   @Override
@@ -37,14 +47,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    // Make the wrist safe.
-    m_robotContainer.wrist.resetWristControl();
+  
   }
 
   @Override
   public void disabledExit() {
     m_robotContainer.elevator.resetRelativeEncoder();
     m_robotContainer.elevator.resetElevatorControl();
+    m_robotContainer.wrist.resetWristControl();
   }
 
   @Override
