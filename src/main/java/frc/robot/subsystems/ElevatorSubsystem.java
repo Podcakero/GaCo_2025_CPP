@@ -35,13 +35,12 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
-import frc.robot.commands.DefaultElevatorCommand;
+import frc.robot.commands.DefaultElevatorCmd;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private final SparkFlex leftElevatorMotor;
@@ -138,7 +137,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     centerElevatorMotor.configure(centerElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     rightElevatorMotor.configure(rightElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    setDefaultCommand(new DefaultElevatorCommand(this));
+    setDefaultCommand(new DefaultElevatorCmd(this));
   }
 
   public Command sysIdQuasistatic(Direction direction) {

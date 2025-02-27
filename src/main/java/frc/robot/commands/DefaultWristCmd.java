@@ -7,12 +7,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.WristSubsystem;
 
-public class DefaultWristCommand extends Command {
+public class DefaultWristCmd extends Command {
 
   WristSubsystem wrist;
 
   /** Creates a new DefaultWristCommand. */
-  public DefaultWristCommand(WristSubsystem wrist) {
+  public DefaultWristCmd(WristSubsystem wrist) {
     addRequirements(wrist);
     this.wrist = wrist;
   }
@@ -20,7 +20,7 @@ public class DefaultWristCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    wrist.resetWristControl();
+    // wrist.resetWristControl();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

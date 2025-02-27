@@ -39,22 +39,6 @@
               "_showGlyph": false
             }
           },
-          "12,0": {
-            "size": [
-              12,
-              8
-            ],
-            "content": {
-              "_type": "Field",
-              "_source0": "network_table:///SmartDashboard/Field",
-              "_title": "/SmartDashboard/Field",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Game/Game": "k2025Reefscape",
-              "Visuals/Robot Icon Size": 50.0,
-              "Visuals/Show Outside Circles": false
-            }
-          },
           "4,0": {
             "size": [
               8,
@@ -68,7 +52,7 @@
               "_showGlyph": false
             }
           },
-          "4,4": {
+          "8,4": {
             "size": [
               4,
               2
@@ -81,7 +65,7 @@
               "_showGlyph": false
             }
           },
-          "4,2": {
+          "4,4": {
             "size": [
               4,
               2
@@ -94,7 +78,7 @@
               "_showGlyph": false
             }
           },
-          "8,4": {
+          "4,8": {
             "size": [
               3,
               2
@@ -146,7 +130,7 @@
               "_showGlyph": false
             }
           },
-          "8,2": {
+          "4,2": {
             "size": [
               4,
               2
@@ -155,6 +139,35 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Tower State",
               "_title": "/SmartDashboard/Tower State",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "13,0": {
+            "size": [
+              11,
+              8
+            ],
+            "content": {
+              "_type": "Field",
+              "_source0": "network_table:///SmartDashboard/Field",
+              "_title": "SmartDashboard/Field",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Game/Game": "k2025Reefscape",
+              "Visuals/Robot Icon Size": 50.0,
+              "Visuals/Show Outside Circles": false
+            }
+          },
+          "8,2": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/pose Disp",
+              "_title": "/SmartDashboard/pose Disp",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -177,9 +190,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -6.400000095367432,
-    "y": 1.600000023841858,
+    "x": -7.199999809265137,
+    "y": -7.199999809265137,
     "width": 1550.4000244140625,
-    "height": 627.2000122070312
+    "height": 830.4000244140625
   }
 }
