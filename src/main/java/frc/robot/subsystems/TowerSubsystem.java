@@ -28,6 +28,9 @@ public class TowerSubsystem extends SubsystemBase {
 	public void initialize() {
 		setState(TowerState.INIT);
 		pendingEvent = TowerEvent.NONE;
+		wrist.setIntakeSpeed(0);
+		// wrist.resetWristControl();  // possiblly need here
+		// elevator.resetElevatorControl();
 	}
 
 	@Override
@@ -135,7 +138,6 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case SCORING_CORAL: {
 				if (!wrist.gotCoral()) {
-					wrist.setIntakeSpeed(0);
 					setState(TowerState.PAUSING);
 				}
 				break;
@@ -143,6 +145,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case PAUSING: {
 				if (stateTimer.hasElapsed(0.5)) {
+					wrist.setIntakeSpeed(0);
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
 					elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
 					setState(TowerState.LOWERING);

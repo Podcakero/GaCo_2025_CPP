@@ -20,22 +20,14 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
-  private final Timer m_gcTimer = new Timer();
-
-
   public Robot() {
     m_robotContainer = new RobotContainer();
-    m_gcTimer.start();
   }
 
   @Override
   public void robotPeriodic() {
+    SignalLogger.stop();
     CommandScheduler.getInstance().run(); 
-
-    // run the garbage collector every 5 seconds (New added by Phil)
-    //if (m_gcTimer.advanceIfElapsed(5)) {
-    // System.gc();
-    //}
   }
 
   @Override
@@ -59,6 +51,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {

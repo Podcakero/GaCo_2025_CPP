@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "INTAKE_AND_GOTO_L4"
+                  "name": "INTAKE_AND_GOTO_L3"
                 }
               }
             ]
@@ -50,7 +50,7 @@
         {
           "type": "named",
           "data": {
-            "name": "INTAKE_AND_GOTO_L4"
+            "name": "INTAKE_AND_GOTO_L3"
           }
         },
         {
