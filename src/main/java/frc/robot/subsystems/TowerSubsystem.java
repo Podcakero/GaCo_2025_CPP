@@ -60,7 +60,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 			
 			case HOME: {
-				if (isTriggered(TowerEvent.INTAKE_CORAL)){
+				if (isTriggered(TowerEvent.INTAKE_CORAL) || isHoldingGoTo()){
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);
 					setState(TowerState.INTAKING);
 				}
@@ -196,6 +196,14 @@ public class TowerSubsystem extends SubsystemBase {
 		}
 	}
 
+	private Boolean isHoldingGoTo(){
+		if ((pendingEvent == TowerEvent.GOTO_L1) || (pendingEvent == TowerEvent.GOTO_L1) || 
+		    (pendingEvent == TowerEvent.GOTO_L1) || (pendingEvent == TowerEvent.GOTO_L1)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 
 	private void setState(TowerState newState){

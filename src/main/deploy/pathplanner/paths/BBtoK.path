@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.30825,
-        "y": 6.131
+        "x": 6.340839041097078,
+        "y": 6.091031678078947
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "Barge Blue"
     },
     {
       "anchor": {
-        "x": 5.294877983626134,
-        "y": 5.0504436376083035
+        "x": 4.00752294120363,
+        "y": 5.207991732111343
       },
       "prevControl": {
-        "x": 5.665377983626134,
-        "y": 5.781693637608305
+        "x": 3.6378903748059055,
+        "y": 6.040107051569923
       },
       "nextControl": null,
-      "isLocked": true,
-      "linkedName": "I"
+      "isLocked": false,
+      "linkedName": "k"
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -121.42956561483854
+    "rotation": -61.232350661156225
   },
   "reversed": false,
   "folder": null,
