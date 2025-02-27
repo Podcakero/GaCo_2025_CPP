@@ -27,6 +27,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 	public void initialize() {
 		setState(TowerState.INIT);
+		pendingEvent = TowerEvent.NONE;
 	}
 
 	@Override
@@ -40,14 +41,13 @@ public class TowerSubsystem extends SubsystemBase {
 		wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
 		elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
 	}
+	
 
 	public void runStateMachine() {
 		switch(currentState){
 			case INIT: {
-				wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
-				elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
+				homeTower();
 				setState(TowerState.HOMING);
-			
 				break;
 			}
 
@@ -197,8 +197,8 @@ public class TowerSubsystem extends SubsystemBase {
 	}
 
 	private Boolean isHoldingGoTo(){
-		if ((pendingEvent == TowerEvent.GOTO_L1) || (pendingEvent == TowerEvent.GOTO_L1) || 
-		    (pendingEvent == TowerEvent.GOTO_L1) || (pendingEvent == TowerEvent.GOTO_L1)) {
+		if ((pendingEvent == TowerEvent.GOTO_L1) || (pendingEvent == TowerEvent.GOTO_L2) || 
+		    (pendingEvent == TowerEvent.GOTO_L3) || (pendingEvent == TowerEvent.GOTO_L4)) {
 			return true;
 		} else {
 			return false;

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.340839041097078,
-        "y": 6.091031678078947
+        "x": 5.730122950819672,
+        "y": 6.20076844262295
       },
       "isLocked": false,
       "linkedName": "Barge Blue"
@@ -20,8 +20,8 @@
         "y": 5.207991732111343
       },
       "prevControl": {
-        "x": 3.6378903748059055,
-        "y": 6.040107051569923
+        "x": 3.524385245901639,
+        "y": 6.260706967213114
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.5,
+    "maxVelocity": 3.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -89.77772342399372
   },
   "useDefaultConstraints": true
 }

@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
@@ -47,7 +48,7 @@ public class VisionSubsystem extends SubsystemBase{
 
         // Construct PhotonPoseEstimator
         poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
-        poseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.AVERAGE_BEST_TARGETS);
+        poseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
     }
 
     public void periodic(){
@@ -56,21 +57,21 @@ public class VisionSubsystem extends SubsystemBase{
         if (estimatedRobotPose.isPresent()){
             EstimatedRobotPose estPose = estimatedRobotPose.get();   
             
-            Pose3d pose   = estPose.estimatedPose;
             double timestampSeconds = estPose.timestampSeconds;
-            Pose2d robotPose = pose.toPose2d();
+            Pose2d robotPose = estPose.estimatedPose.toPose2d();
 
-            // send this new vision position to drivetrain to adjust odometry
-            drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
+            // send this new vision position to drivetrain to adjust odometry if we are within 1 M of out last position
+            Translation2d newPosition = robotPose.getTranslation();
+            Translation2d oldPosition = drivetrain.getState().Pose.getTranslation();
+            double displacement = oldPosition.getDistance(newPosition);
 
-            SmartDashboard.putBoolean("pose Present", true);
-            SmartDashboard.putString("Pose 3d", pose.toString());
+            if (displacement <= 1.0) {
+                drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
+            }
+
+            SmartDashboard.putNumber("pose Disp", displacement);
             SmartDashboard.putString("Pose 2d", robotPose.toString());
 
-
-
-        } else {
-            SmartDashboard.putBoolean("pose Present", false);
 
         }
     }
