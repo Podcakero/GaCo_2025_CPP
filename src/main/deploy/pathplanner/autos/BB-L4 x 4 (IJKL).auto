@@ -5,19 +5,13 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BLtoK"
+                  "pathName": "BLtoI"
                 }
               },
               {
@@ -39,6 +33,54 @@
           "type": "named",
           "data": {
             "name": "WAIT_FOR_LOWERING"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ItoCL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "INTAKE_AND_GOTO_L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CLtoJ"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "JtoCL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "INTAKE_AND_GOTO_L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CLtoK"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL"
           }
         },
         {
