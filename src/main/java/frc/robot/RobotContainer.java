@@ -26,6 +26,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.TowerEvent;
 import frc.robot.subsystems.TowerState;
 import frc.robot.subsystems.TowerSubsystem;;
@@ -54,6 +55,7 @@ public class RobotContainer {
     public final WristSubsystem wrist = new WristSubsystem();
     public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist);
     public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
+    public final LEDSubsystem led = new LEDSubsystem(0);
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;

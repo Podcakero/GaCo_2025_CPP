@@ -40,6 +40,7 @@ public class WristSubsystem extends SubsystemBase {
 	private TrapezoidProfile.State angleSetpoint;
 
   TimeOfFlight TOF;
+  double frontCoralRange = 0;
   
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
@@ -66,6 +67,7 @@ public class WristSubsystem extends SubsystemBase {
     // Use module constants to calculate conversion factors and feed forward gain.
     double intakeFactor = 1;
     double angleFactor = 360 * 24 / 52;  // Sprocket reduction
+
 
     intakeConfig
       .idleMode(IdleMode.kBrake)
@@ -109,12 +111,14 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public boolean gotCoral() {
-    return (TOF.getRange() < Constants.WristConstants.kMaxCoralDetectRangeMM);
+    Globals.gotCoral = (frontCoralRange < Constants.WristConstants.kMaxCoralDetectRangeMM); 
+    return Globals.gotCoral;
   }
 
   public double getRangeMM() {
-    return TOF.getRange();
-   }
+    frontCoralRange = TOF.getRange();
+    return frontCoralRange ;
+  }
       
   // intake
   public void setIntakeSpeed(double speed) {
@@ -153,14 +157,17 @@ public class WristSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    getRangeMM();
+    gotCoral();
+
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
     SmartDashboard.putNumber("Wrist Angle", getWristAngle());
     SmartDashboard.putNumber("Wrist Speed", getWristSpeed());
     SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
 
-    SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
-    SmartDashboard.putNumber("Coral Sensor", getRangeMM());
+    SmartDashboard.putNumber("Coral Sensor", frontCoralRange);
   }
 
   public void runWristClosedLoop() {
