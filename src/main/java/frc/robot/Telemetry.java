@@ -253,6 +253,7 @@ public class Telemetry {
             }
         }
 
+        /*
         if(poses != null){
             // Animate the auto by moving through the list of poses each cycle
             if(autoAnimationStep >= poses.size()-1){
@@ -270,6 +271,7 @@ public class Telemetry {
             }
     
         }
+        */
         pathsLast = paths; // Store last path to see if path has been changed
     }
 
