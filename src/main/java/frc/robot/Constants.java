@@ -35,7 +35,7 @@ public class Constants {
         public static final double kMaxCoralDetectRangeMM = 40;
         public static final double kSafeAngle = 30;
         public static final double kIntakeAngle = 3;
-        public static final double kL4Angle = 40;
+        public static final double kL4Angle = 48;
 
     }
 
@@ -51,8 +51,8 @@ public class Constants {
 
         public static final double kS = 0.04435;    //  these may need to be rescaled for meters by dividing 
 		public static final double kG = 0.257;      //  by kRelativeEncoderScaleRevToMeters
-		public static final double kV = 0.117;      //
-		public static final double kA = 0.00803;    //
+		public static final double kV = 0.117 ;      //
+		public static final double kA = 0.00803 ;    //
 
         public static final Distance kHeightTollerance = Inches.of(1.0);
 
@@ -65,7 +65,7 @@ public class Constants {
         public static final Distance kL1Height = Meters.of(0.1);
         public static final Distance kL2Height = Meters.of(0.6);
         public static final Distance kL3Height = Meters.of(1.10);
-        public static final Distance kL4Height = Meters.of(2.10);
+        public static final Distance kL4Height = Meters.of(2.2); // was 2.1
         public static final Distance kIntakeHeight = Meters.of(0); 
 
         public static final double kElevatorMaxVelocityRPS = 2.0;  // MPS

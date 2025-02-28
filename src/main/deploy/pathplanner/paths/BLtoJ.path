@@ -8,27 +8,32 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.310632560549361,
-        "y": 6.33082997366472
+        "x": 5.7525,
+        "y": 6.17
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "Barge Blue"
     },
     {
       "anchor": {
-        "x": 5.294877983626134,
-        "y": 5.0504436376083035
+        "x": 4.992000000000001,
+        "y": 5.204749999999999
       },
       "prevControl": {
-        "x": 5.665377983626134,
-        "y": 5.781693637608305
+        "x": 5.3660491201894125,
+        "y": 5.85907399529157
       },
       "nextControl": null,
-      "isLocked": true,
-      "linkedName": "I"
+      "isLocked": false,
+      "linkedName": "J"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.34035087719298623,
+      "rotationDegrees": -119.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,7 +47,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -121.42956561483854
+    "rotation": -119.74488129694228
   },
   "reversed": false,
   "folder": "Barge Left",
