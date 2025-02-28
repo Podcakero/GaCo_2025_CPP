@@ -139,12 +139,15 @@ public class TowerSubsystem extends SubsystemBase {
 			case SCORING_CORAL: {
 				if (!wrist.gotCoral()) {
 					setState(TowerState.PAUSING);
+				} else if ( stateTimer.hasElapsed(0.3)) {
+					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+					setState(TowerState.PAUSING);
 				}
 				break;
 			}
 
 			case PAUSING: {
-				if (stateTimer.hasElapsed(0.5)) {
+				if (stateTimer.hasElapsed(0.25)) {
 					wrist.setIntakeSpeed(0);
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
 					elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
