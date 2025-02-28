@@ -18,10 +18,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.TriggerEventCmd;
 import frc.robot.commands.WaitForTowerStateCmd;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ApproachSubsystem;
+import frc.robot.subsystems.ApproachTarget;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
@@ -36,17 +39,18 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.02).withRotationalDeadband(MaxAngularRate * 0.02) // Add a 2% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    // private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
-    //        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    private final Joystick              copilot_1 = new Joystick(1);
-    private final Joystick              copilot_2 = new Joystick(2);
+    private final CommandJoystick       copilot_1 = new CommandJoystick(1);
+    private final CommandJoystick       copilot_2 = new CommandJoystick(2);
 
     // Instanciate subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -54,6 +58,8 @@ public class RobotContainer {
     public final WristSubsystem wrist = new WristSubsystem();
     public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist);
     public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
+    public final ApproachSubsystem approach = new ApproachSubsystem();
+    
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
@@ -61,7 +67,7 @@ public class RobotContainer {
     public RobotContainer() {
 
         
-        NamedCommands.registerCommand("INTAKE_CORAL",   new TriggerEventCmd(tower, TowerEvent.INTAKE_CORAL));
+        NamedCommands.registerCommand("INTAKE_CORAL",    new TriggerEventCmd(tower, TowerEvent.INTAKE_CORAL));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L1",        new TriggerEventCmd(tower, TowerEvent.GOTO_L1));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L2",        new TriggerEventCmd(tower, TowerEvent.GOTO_L2));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L3",        new TriggerEventCmd(tower, TowerEvent.GOTO_L3));
@@ -94,8 +100,7 @@ public class RobotContainer {
               builder.addDoubleProperty("Robot Angle", () -> drivetrain.getRotation3d().getMeasureAngle().baseUnitMagnitude(), null);
             }
           });
-    
-
+  
         configureBindings();
 
         // Note that X is defined as forward according to WPILib convention,
@@ -125,21 +130,24 @@ public class RobotContainer {
 
         joystick.rightBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
 
-        
-
         // reset the field-centric heading on left bumper press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
-         
+        // ==== Approach Buttons ================================
+        joystick.a().onTrue(approach.runOnce(() -> approach.startApproach()))
+        .onFalse(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0)));
+
+        joystick.x().onTrue(approach.runOnce(() -> approach.setTarget(ApproachTarget.REEF_A)));
+        joystick.b().onTrue(approach.runOnce(() -> approach.setTarget(ApproachTarget.REEF_G)));
+        // ==== Approach Buttons ================================
+        
         /*
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0.5).withVelocityY(0))
         );
-
         joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(-0.5).withVelocityY(0))
         );
-
         joystick.pov(90).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0).withVelocityY(-0.5))
         );
