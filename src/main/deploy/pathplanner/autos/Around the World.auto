@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CtoB"
+            "pathName": "CtoBB"
           }
         },
         {
@@ -67,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "LStoP"
+            "pathName": "RBtoP"
           }
         },
         {
