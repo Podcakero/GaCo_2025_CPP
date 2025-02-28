@@ -5,8 +5,8 @@
   "pathFolders": [
     "A",
     "B",
-    "Blue Barge",
-    "C",
+    "Barge Left",
+    "Barge Right",
     "Center",
     "Collect Left",
     "Collect Right",
@@ -19,9 +19,9 @@
     "J",
     "K",
     "L",
-    "Straight",
+    "C",
     "Processor",
-    "Red Barge"
+    "Straight"
   ],
   "autoFolders": [],
   "defaultMaxVel": 2.5,

@@ -12,7 +12,7 @@
         "y": 1.4314999999999998
       },
       "isLocked": false,
-      "linkedName": "LS"
+      "linkedName": "CR"
     },
     {
       "anchor": {
@@ -45,7 +45,7 @@
     "rotation": -90.0
   },
   "reversed": false,
-  "folder": "Red Barge",
+  "folder": "Collect Right",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 52.59464336859144
