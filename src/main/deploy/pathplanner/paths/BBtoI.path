@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.29425,
-        "y": 2.9915000000000003
+        "x": 7.252561475409835,
+        "y": 6.20076844262295
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.30825,
-        "y": 3.244999999999999
+        "x": 6.394561475409835,
+        "y": 6.220268442622969
       },
-      "isLocked": false,
-      "linkedName": "2a"
+      "isLocked": true,
+      "linkedName": "Barge Blue"
     },
     {
       "anchor": {
-        "x": 7.16625,
-        "y": 4.0445
+        "x": 5.294877983626134,
+        "y": 5.0504436376083035
       },
       "prevControl": {
-        "x": 6.97125,
-        "y": 3.771499999999999
+        "x": 5.665377983626134,
+        "y": 5.781693637608305
       },
       "nextControl": null,
-      "isLocked": false,
-      "linkedName": "Center"
+      "isLocked": true,
+      "linkedName": "I"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
+    "maxVelocity": 2.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -121.42956561483854
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 121.7151335150978
+    "rotation": -89.77772342399372
   },
   "useDefaultConstraints": true
 }

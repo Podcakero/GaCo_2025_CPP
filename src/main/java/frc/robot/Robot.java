@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,12 +25,13 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    SignalLogger.stop();
     CommandScheduler.getInstance().run(); 
   }
 
   @Override
   public void disabledInit() {
-    //SignalLogger.enableAutoLogging(false);
+    SignalLogger.enableAutoLogging(false);
     m_robotContainer.elevator.resetRelativeEncoder();
     SmartDashboard.putData("Field", m_field);
     SmartDashboard.putData("AutoField", Telemetry.m_field2);
@@ -37,24 +40,25 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     Telemetry.displayAutoPaths(); // Display the selected auto path on the dashboard while robot is disabled
-    // Make the wrist safe.
-    m_robotContainer.wrist.resetWristControl();
   }
 
   @Override
   public void disabledExit() {
     m_robotContainer.elevator.resetRelativeEncoder();
-    m_robotContainer.elevator.clearGoalPosition();
-    m_robotContainer.elevator.resetSetPoint();
+    m_robotContainer.elevator.resetElevatorControl();
+    m_robotContainer.wrist.resetWristControl();
   }
 
   @Override
   public void autonomousInit() {
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    m_robotContainer.tower.homeTower();
   }
 
   @Override
@@ -68,7 +72,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-   
+    m_robotContainer.tower.initialize();
   }
 
   @Override

@@ -5,18 +5,18 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class TowerSubsystem extends SubsystemBase {
 	private TowerState currentState = TowerState.INIT;
 
-	private final XboxController joystick = new XboxController(0);
 	private Timer stateTimer = new Timer();
 
 	private ElevatorSubsystem elevator;
 	private WristSubsystem wrist;
+	private TowerEvent pendingEvent = TowerEvent.NONE;   
 
 	/** Creates a new Tower. */
 	public TowerSubsystem(ElevatorSubsystem elevator, WristSubsystem wrist) {
@@ -25,7 +25,13 @@ public class TowerSubsystem extends SubsystemBase {
 		stateTimer.start();
 	}
 
-	public void initialize() {}
+	public void initialize() {
+		setState(TowerState.INIT);
+		pendingEvent = TowerEvent.NONE;
+		wrist.setIntakeSpeed(0);
+		// wrist.resetWristControl();  // possiblly need here
+		// elevator.resetElevatorControl();
+	}
 
 	@Override
 	public void periodic() {
@@ -34,26 +40,174 @@ public class TowerSubsystem extends SubsystemBase {
 		updateDashboard();
 	}
 
+	public void homeTower() {
+		wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
+		elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
+	}
+	
+
 	public void runStateMachine() {
 		switch(currentState){
 			case INIT: {
-				setState(TowerState.HOME);
+				homeTower();
+				setState(TowerState.HOMING);
 				break;
 			}
+
+			case HOMING: {
+				if (wrist.inPosition() && elevator.inPosition()){
+					setState(TowerState.HOME);
+				}
+				break;
+			}
+
 			
 			case HOME: {
-				if (joystick.getLeftBumperButton()){
+				if (isTriggered(TowerEvent.INTAKE_CORAL) || isHoldingGoTo()){
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);
 					setState(TowerState.INTAKING);
 				}
 				break;
 			}
 
-	
+			case INTAKING: {
+				if (wrist.gotCoral()){
+					wrist.setIntakeSpeed(0);
+					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+					setState(TowerState.GOING_TO_SAFE);
+				}
+				break;
+			}
+
+			case GOING_TO_SAFE: {
+				if (wrist.inPosition()){
+					setState(TowerState.GOT_CORAL);
+				}
+				break;
+			}
+
+			case GOT_CORAL: {
+				if (isTriggered(TowerEvent.GOTO_L3)) {
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL3Height);
+					setState(TowerState.RAISING);
+				} else if (isTriggered(TowerEvent.GOTO_L2)){
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL2Height);
+					setState(TowerState.RAISING);
+				} else if (isTriggered(TowerEvent.GOTO_L1)){
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL1Height);
+					setState(TowerState.RAISING);
+				} else if (isTriggered(TowerEvent.GOTO_L4)){
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL4Height);
+					setState(TowerState.RAISING_TO_L4);
+				}
+				break;
+			}
+
+			
+
+			case RAISING: {
+				if (elevator.inPosition()) {
+					setState(TowerState.READY_TO_SCORE);
+				}
+				break;
+			}
+
+			case RAISING_TO_L4: {
+				if (elevator.inPosition()) {
+					wrist.setGoalAngle(Constants.WristConstants.kL4Angle);
+					setState(TowerState.TILTING_TO_SCORE_L4);
+				}
+				break;
+			}
+
+			case TILTING_TO_SCORE_L4: {
+				if (wrist.inPosition()) {
+					setState(TowerState.READY_TO_SCORE);
+				}
+				break;
+			}
+
+
+			case READY_TO_SCORE: {
+				if (isTriggered(TowerEvent.SCORE_CORAL)) {
+					wrist.setIntakeSpeed(Constants.WristConstants.kCoralScoringPower);
+					setState(TowerState.SCORING_CORAL);
+				}
+				break;
+			}
+
+			case SCORING_CORAL: {
+				if (!wrist.gotCoral()) {
+					setState(TowerState.PAUSING);
+				}
+				break;
+			}
+
+			case PAUSING: {
+				if (stateTimer.hasElapsed(0.5)) {
+					wrist.setIntakeSpeed(0);
+					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+					elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
+					setState(TowerState.LOWERING);
+				}
+				break;
+			}
+
+			case LOWERING: {
+				if (elevator.inPosition()){
+					wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
+					// wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);
+					setState(TowerState.GOING_TO_INTAKE);
+				}
+				break;
+			}
+			
+			case GOING_TO_INTAKE: {
+				if (wrist.inPosition()){
+					setState(TowerState.HOME);
+				}
+			}
 		}
 	}
 
-	private void updateDashboard() {}
+	public void triggerEvent(TowerEvent event){
+		pendingEvent = event;
+	}
+
+	public TowerEvent getPendingEvent() {
+		return pendingEvent;
+	}
+	
+	public TowerState getState() {
+		return currentState;
+	}
+
+	
+
+	// -- Private Methods  ----------------------------------------------------
+
+	private void updateDashboard() {
+		SmartDashboard.putString("Tower State", currentState.toString() + " <- " + pendingEvent.toString());
+	}
+	
+	private Boolean isTriggered(TowerEvent event){
+		if (pendingEvent == event) {
+			pendingEvent = TowerEvent.NONE;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private Boolean isHoldingGoTo(){
+		if ((pendingEvent == TowerEvent.GOTO_L1) || (pendingEvent == TowerEvent.GOTO_L2) || 
+		    (pendingEvent == TowerEvent.GOTO_L3) || (pendingEvent == TowerEvent.GOTO_L4)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 	private void setState(TowerState newState){
 		currentState = newState;

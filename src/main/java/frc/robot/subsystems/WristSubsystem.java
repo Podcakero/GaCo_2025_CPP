@@ -6,46 +6,46 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkFlexConfig;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ElevatorConstants;
+import frc.robot.commands.DefaultWristCmd;
+
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 public class WristSubsystem extends SubsystemBase {
 
-  private final SparkMax intakeSpark;
-  private final SparkMax angleSpark;
+  private final SparkFlex intakeSpark;
+  private final SparkFlex angleSpark;
 
   private final RelativeEncoder intakeEncoder;
   private final AbsoluteEncoder angleEncoder;
 
   private final SparkClosedLoopController angleController;
-  private TrapezoidProfile angleTrapezoidProfile;
+  private final TrapezoidProfile angleTrapezoidProfile;
 	private TrapezoidProfile.State angleGoal = new TrapezoidProfile.State();
 	private TrapezoidProfile.State angleSetpoint;
 
+  TimeOfFlight TOF;
   
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
 
-    intakeSpark = new SparkMax(Constants.WristConstants.kIntakeMotorId, MotorType.kBrushless);
-    angleSpark = new SparkMax(Constants.WristConstants.kAngleMotorId, MotorType.kBrushless);
+    intakeSpark = new SparkFlex(Constants.WristConstants.kIntakeMotorId, MotorType.kBrushless);
+    angleSpark = new SparkFlex(Constants.WristConstants.kAngleMotorId, MotorType.kBrushless);
 
     intakeEncoder = intakeSpark.getEncoder();
     angleEncoder = angleSpark.getAbsoluteEncoder();
@@ -60,8 +60,8 @@ public class WristSubsystem extends SubsystemBase {
     // applying the configuration to bring the SPARK to a known good state. Persist
     // the settings to the SPARK to avoid losing them on a power cycle.
 
-    SparkMaxConfig intakeConfig = new SparkMaxConfig();
-    SparkMaxConfig angleConfig = new SparkMaxConfig();
+    SparkFlexConfig intakeConfig = new SparkFlexConfig();
+    SparkFlexConfig angleConfig = new SparkFlexConfig();
 
     // Use module constants to calculate conversion factors and feed forward gain.
     double intakeFactor = 1;
@@ -91,9 +91,32 @@ public class WristSubsystem extends SubsystemBase {
 
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    TOF = new TimeOfFlight(63);
+    TOF.setRangingMode(RangingMode.Short, 30);
+    TOF.setRangeOfInterest(0, 0, 15, 15);
+
+    setDefaultCommand( new DefaultWristCmd(this));
   }
 
-   // intake
+
+  // The configuration interfaces may be accessed by typing in the IP address of the roboRIO into a web
+  //  browser followed by :5812.
+
+  // TOF sensor
+  public void setViewZone(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
+    TOF.setRangeOfInterest(topLeftX, topLeftY, bottomRightX, bottomRightY);
+  }
+
+  public boolean gotCoral() {
+    return (TOF.getRange() < Constants.WristConstants.kMaxCoralDetectRangeMM);
+  }
+
+  public double getRangeMM() {
+    return TOF.getRange();
+   }
+      
+  // intake
   public void setIntakeSpeed(double speed) {
     intakeSpark.set(speed);
   }
@@ -120,16 +143,16 @@ public class WristSubsystem extends SubsystemBase {
     return angleEncoder.getVelocity();
   }
 
+  public void stopWrist() {
+    angleSpark.set(0);
+  }
+
   public boolean inPosition(){
     return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;
   }
 
   @Override
   public void periodic() {
-
-    angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
-		angleController.setReference(angleSetpoint.position, ControlType.kPosition);
-
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
     SmartDashboard.putNumber("Wrist Angle", getWristAngle());
@@ -137,5 +160,16 @@ public class WristSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
 
     SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
+    SmartDashboard.putNumber("Coral Sensor", getRangeMM());
   }
+
+  public void runWristClosedLoop() {
+      angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
+		  angleController.setReference(angleSetpoint.position, ControlType.kPosition);
+  }
+
+  //----------//
+  // Commands //
+  //----------//
+
 }

@@ -7,43 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Cto2b"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "runWristHalfSpeed"
+            "pathName": "RBtoF"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "2bto6a"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stopWrist"
+            "pathName": "FtoCR"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "6atoC"
+            "pathName": "CRtoE"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "stop"
+            "pathName": "EtoCR"
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 1.0
+            "pathName": "CRtoD"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DtoCR"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CRtoC"
           }
         }
       ]

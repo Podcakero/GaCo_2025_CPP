@@ -7,13 +7,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.WristSubsystem;
 
-public class SetFinAngle extends InstantCommand {
+public class SetFinAngleCmd extends InstantCommand {
 
   WristSubsystem wrist;
   double angle;
 
-  public SetFinAngle(WristSubsystem wrist, double angle) {
-    addRequirements(wrist) ;
+  public SetFinAngleCmd(WristSubsystem wrist, double angle) {
     this.wrist = wrist;
     this.angle = angle;
   }
