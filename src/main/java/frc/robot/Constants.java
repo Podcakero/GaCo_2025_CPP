@@ -41,6 +41,10 @@ public class Constants {
 
     public class ElevatorConstants {
 
+
+        public static final Distance kElevatorMaxHeight = Inches.of(96);
+        public static final Distance kElevatorMinHeight = Inches.of(17.5);
+
         // scale factors
         public static final double kRelativeEncoderScaleRevToMeters = 0.0315;  // 25 turns for 31 inches of travel
         public static final double kAbsoluteEncoderScaleVoltsToMeters = 0.498;
@@ -64,10 +68,10 @@ public class Constants {
         public static final int kElevatorMotorRightId = 53;
 
         public static final Distance kL1Height = Inches.of(21);
-        public static final Distance kL2Height = Inches.of(24);
-        public static final Distance kL3Height = Inches.of(28);
-        public static final Distance kL4Height = Inches.of(36); // was 2.1m
-        public static final Distance kIntakeHeight = Meters.of(18); 
+        public static final Distance kL2Height = Inches.of(31);
+        public static final Distance kL3Height = Inches.of(46);
+        public static final Distance kL4Height = Inches.of(73); // was 2.1m
+        public static final Distance kIntakeHeight = Inches.of(19); 
 
         public static final double kElevatorMaxVelocityRPS = 2.0;  // MPS
 		public static final double kElevatorMaxAccelerationRPSPS = 6.0; // MPSS

@@ -104,8 +104,7 @@ public class TowerSubsystem extends SubsystemBase {
 				}
 				break;
 			}
-
-			
+		
 
 			case RAISING: {
 				if (elevator.inPosition()) {

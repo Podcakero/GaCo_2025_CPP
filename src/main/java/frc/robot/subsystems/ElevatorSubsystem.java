@@ -31,6 +31,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -58,6 +59,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double   stringPotVoltage = 0;
   private Distance stringPotHeight = Meters.of(0);
   private Distance relativeEncoderHeight =  Meters.of(0);
+  private Distance lastGoalPosition = Constants.ElevatorConstants.kElevatorMinHeight;
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
@@ -118,6 +120,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     readSensors();
 
+    if (DriverStation.getStickButtonPressed(1,2)){
+      bumpElevator(0.1016);
+    } else if (DriverStation.getStickButtonPressed(1,3)){
+      bumpElevator(0.0254);
+    } else if (DriverStation.getStickButtonPressed(1,4)){
+      bumpElevator(-0.0254);
+    } else if (DriverStation.getStickButtonPressed(1,5)){
+      bumpElevator(-0.1016);
+    }
+
 		// This method will be called once per scheduler run
     SmartDashboard.putNumber("Elev Rel Hgt", relativeEncoderHeight.in(Inches));
 
@@ -125,6 +137,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elev Abs Hgt", stringPotHeight.in(Inches));
 
 		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
+    SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
 	}
 
   public void readSensors() {
@@ -135,6 +148,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     relativeEncoderHeight = Meters.of(elevatorEncoder.getPosition()); 
   }
   
+  public void bumpElevator(double changeMeters) {
+    setGoalPosition(Meters.of(lastGoalPosition.in(Meters) + changeMeters));
+  }
+
   public void resetElevatorControl() {
     stopElevator();
 	  loadCurrentPositionAsSetpoint();
@@ -155,6 +172,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
   	
   public void setGoalPosition(Distance goalPosition) {
+    if (goalPosition.lt(Constants.ElevatorConstants.kElevatorMinHeight)) {
+      goalPosition = Constants.ElevatorConstants.kElevatorMinHeight;
+    } else if (goalPosition.gt(Constants.ElevatorConstants.kElevatorMaxHeight)) {
+      goalPosition = Constants.ElevatorConstants.kElevatorMaxHeight;
+    }
+
+    lastGoalPosition = goalPosition;
 	  elevatorGoal = new TrapezoidProfile.State(goalPosition.in(Meters), 0.0);
     elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), 0.0);
 	}
@@ -176,7 +200,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
   
       SmartDashboard.putNumber("Elevator FeedForward", arbFF);
-      SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
+      
   }
 
   //----------//
