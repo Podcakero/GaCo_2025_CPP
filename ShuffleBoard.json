@@ -52,71 +52,6 @@
               "_showGlyph": false
             }
           },
-          "8,4": {
-            "size": [
-              4,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Wrist Angle",
-              "_title": "/SmartDashboard/Wrist Angle",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,4": {
-            "size": [
-              4,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Elevator Absolute",
-              "_title": "/SmartDashboard/Elevator Absolute",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,8": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Wrist Speed",
-              "_title": "/SmartDashboard/Wrist Speed",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,6": {
-            "size": [
-              4,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Wrist Goal",
-              "_title": "/SmartDashboard/Wrist Goal",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "8,6": {
-            "size": [
-              4,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/ElevatorEncoder",
-              "_title": "/SmartDashboard/ElevatorEncoder",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "0,5": {
             "size": [
               3,
@@ -138,7 +73,7 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Tower State",
-              "_title": "/SmartDashboard/Tower State",
+              "_title": "Tower State",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -168,6 +103,84 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/pose Disp",
               "_title": "/SmartDashboard/pose Disp",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,6": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Elev Abs Hgt",
+              "_title": "Elev Abs Hgt",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,4": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/ElevatorGoal",
+              "_title": "ElevatorGoal",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,6": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Elev Abs Volt",
+              "_title": "Elev Abs Volt",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,4": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Elev Rel Hgt",
+              "_title": "Elev Rel Hgt",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,8": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Wrist Angle",
+              "_title": "Wrist Angle",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "7,8": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Wrist Goal",
+              "_title": "Wrist Goal",
               "_glyph": 148,
               "_showGlyph": false
             }

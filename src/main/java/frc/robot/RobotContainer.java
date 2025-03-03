@@ -127,8 +127,6 @@ public class RobotContainer {
 
         joystick.rightBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
 
-        
-
         // reset the field-centric heading on left bumper press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         

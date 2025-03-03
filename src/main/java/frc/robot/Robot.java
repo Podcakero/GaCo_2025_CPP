@@ -27,26 +27,30 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     SignalLogger.stop();
     CommandScheduler.getInstance().run(); 
+
   }
 
   @Override
   public void disabledInit() {
     SignalLogger.enableAutoLogging(false);
-    m_robotContainer.elevator.resetRelativeEncoder();
+    m_robotContainer.elevator.SyncronizeRelativeEncoder();
     SmartDashboard.putData("Field", m_field);
     SmartDashboard.putData("AutoField", Telemetry.m_field2);
+    m_robotContainer.tower.initialize();
   }
 
   @Override
   public void disabledPeriodic() {
+    m_robotContainer.tower.initialize();
     Telemetry.displayAutoPaths(); // Display the selected auto path on the dashboard while robot is disabled
   }
 
   @Override
   public void disabledExit() {
-    m_robotContainer.elevator.resetRelativeEncoder();
-    m_robotContainer.elevator.resetElevatorControl();
-    m_robotContainer.wrist.resetWristControl();
+    m_robotContainer.tower.initialize();
+    //m_robotContainer.elevator.SyncronizeRelativeEncoder();
+    //m_robotContainer.elevator.resetElevatorControl();
+    //m_robotContainer.wrist.resetWristControl();
   }
 
   @Override

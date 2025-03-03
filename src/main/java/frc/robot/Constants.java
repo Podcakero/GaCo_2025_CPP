@@ -42,8 +42,9 @@ public class Constants {
     public class ElevatorConstants {
 
         // scale factors
-        public static final double kRelativeEncoderScaleRevToMeters = 0.0493;
+        public static final double kRelativeEncoderScaleRevToMeters = 0.0315;  // 25 turns for 31 inches of travel
         public static final double kAbsoluteEncoderScaleVoltsToMeters = 0.498;
+        public static final double kAbsoluteEncoderOffsetVoltsToMeters = 0.43;
 
         public static final double kP = 6;  // was 8
         public static final double kI = 0;
@@ -62,16 +63,18 @@ public class Constants {
         public static final int kElevatorMotorCenterId = 52;
         public static final int kElevatorMotorRightId = 53;
 
-        public static final Distance kL1Height = Meters.of(0.1);
-        public static final Distance kL2Height = Meters.of(0.6);
-        public static final Distance kL3Height = Meters.of(1.10);
-        public static final Distance kL4Height = Meters.of(2.2); // was 2.1
-        public static final Distance kIntakeHeight = Meters.of(0); 
+        public static final Distance kL1Height = Inches.of(21);
+        public static final Distance kL2Height = Inches.of(24);
+        public static final Distance kL3Height = Inches.of(28);
+        public static final Distance kL4Height = Inches.of(36); // was 2.1m
+        public static final Distance kIntakeHeight = Meters.of(18); 
 
         public static final double kElevatorMaxVelocityRPS = 2.0;  // MPS
 		public static final double kElevatorMaxAccelerationRPSPS = 6.0; // MPSS
 	
         public static final double kElevatorEncoderPositionConversionFactor = kRelativeEncoderScaleRevToMeters; // Needs to be empirically measured
         public static final double kElevatorEncoderVelocityConversionFactor = kRelativeEncoderScaleRevToMeters; // Needs to be empirically measured. Should be able to be derived from kElevatorEncoderPositionConversionFactor
+
+        
     }
 }

@@ -101,6 +101,9 @@ public class WristSubsystem extends SubsystemBase {
     setDefaultCommand( new DefaultWristCmd(this));
   }
 
+  public void initialize() {
+    setIntakeSpeed(0);
+  }
 
   // The configuration interfaces may be accessed by typing in the IP address of the roboRIO into a web
   //  browser followed by :5812.
@@ -164,9 +167,8 @@ public class WristSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
     SmartDashboard.putNumber("Wrist Angle", getWristAngle());
-    SmartDashboard.putNumber("Wrist Speed", getWristSpeed());
-    SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
 
+    SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
     SmartDashboard.putNumber("Coral Sensor", frontCoralRange);
   }
 
