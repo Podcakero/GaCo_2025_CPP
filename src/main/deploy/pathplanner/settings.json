@@ -6,7 +6,7 @@
     "A",
     "B",
     "Barge Left",
-    "Barge Right",
+    "C",
     "Center",
     "Collect Left",
     "Collect Right",
@@ -19,8 +19,8 @@
     "J",
     "K",
     "L",
-    "C",
     "Processor",
+    "Barge Right",
     "Straight"
   ],
   "autoFolders": [],

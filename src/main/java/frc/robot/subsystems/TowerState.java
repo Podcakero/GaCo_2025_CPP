@@ -8,6 +8,7 @@ public enum TowerState {
 
 	//Scoring
 	INTAKING,
+	GETTING_CORAL,
 	GOING_TO_SAFE,
 	GOT_CORAL,
 	RAISING,

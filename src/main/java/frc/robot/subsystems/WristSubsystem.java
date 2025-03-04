@@ -18,6 +18,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -39,7 +40,10 @@ public class WristSubsystem extends SubsystemBase {
 	private TrapezoidProfile.State angleGoal = new TrapezoidProfile.State();
 	private TrapezoidProfile.State angleSetpoint;
 
-  TimeOfFlight TOF;
+  TimeOfFlight enterTOF;
+  TimeOfFlight exitTOF;
+  double exitCoralRange = 0;
+  double enterCoralRange = 0;
   
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
@@ -67,6 +71,7 @@ public class WristSubsystem extends SubsystemBase {
     double intakeFactor = 1;
     double angleFactor = 360 * 24 / 52;  // Sprocket reduction
 
+
     intakeConfig
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(50);
@@ -92,29 +97,66 @@ public class WristSubsystem extends SubsystemBase {
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    TOF = new TimeOfFlight(63);
-    TOF.setRangingMode(RangingMode.Short, 30);
-    TOF.setRangeOfInterest(0, 0, 15, 15);
+    exitTOF = new TimeOfFlight(63);
+    exitTOF.setRangingMode(RangingMode.Short, 30);
+    exitTOF.setRangeOfInterest(0, 0, 15, 15);
+    enterTOF = new TimeOfFlight(64);
+    enterTOF.setRangingMode(RangingMode.Short, 30);
+    enterTOF.setRangeOfInterest(0, 0, 15, 15);
 
     setDefaultCommand( new DefaultWristCmd(this));
   }
 
+  public void initialize() {
+    setIntakeSpeed(0);
+  }
 
   // The configuration interfaces may be accessed by typing in the IP address of the roboRIO into a web
   //  browser followed by :5812.
+  @Override
+  public void periodic() {
+
+    getRangeMM();
+
+    Globals.gotCoral = gotExitCoral() && !gotEnterCoral();
+
+     /*if (DriverStation.getStickButtonPressed(1,2)){
+      bumpWrist(0.1016);
+    } else if (DriverStation.getStickButtonPressed(1,3)){
+      bumpWrist(0.0254);
+    } else if (DriverStation.getStickButtonPressed(1,4)){
+      bumpWrist(-0.0254);
+    } else if (DriverStation.get(1,5)){
+      bumpWrist(-0.1016);
+    }*/
+
+    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
+    SmartDashboard.putNumber("Wrist Angle", getWristAngle());
+
+    SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
+    SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRange);
+    SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRange);
+  }
 
   // TOF sensor
   public void setViewZone(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
-    TOF.setRangeOfInterest(topLeftX, topLeftY, bottomRightX, bottomRightY);
+    exitTOF.setRangeOfInterest(topLeftX, topLeftY, bottomRightX, bottomRightY);
+    enterTOF.setRangeOfInterest(topLeftX, topLeftY, bottomRightX, bottomRightY);
   }
 
-  public boolean gotCoral() {
-    return (TOF.getRange() < Constants.WristConstants.kMaxCoralDetectRangeMM);
+  public boolean gotExitCoral() {
+    return (exitCoralRange < Constants.WristConstants.kMaxCoralDetectRangeMM);
   }
 
-  public double getRangeMM() {
-    return TOF.getRange();
-   }
+  public boolean gotEnterCoral() {
+    return (enterCoralRange < Constants.WristConstants.kMaxCoralDetectRangeMM);
+  }
+
+  public void getRangeMM() {
+    exitCoralRange = exitTOF.getRange();
+    enterCoralRange = enterTOF.getRange();
+  }
       
   // intake
   public void setIntakeSpeed(double speed) {
@@ -151,22 +193,13 @@ public class WristSubsystem extends SubsystemBase {
     return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
-    SmartDashboard.putNumber("Wrist Angle", getWristAngle());
-    SmartDashboard.putNumber("Wrist Speed", getWristSpeed());
-    SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
-
-    SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
-    SmartDashboard.putNumber("Coral Sensor", getRangeMM());
-  }
-
+  
   public void runWristClosedLoop() {
       angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
 		  angleController.setReference(angleSetpoint.position, ControlType.kPosition);
   }
+
+
 
   //----------//
   // Commands //

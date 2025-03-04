@@ -22,6 +22,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class VisionSubsystem extends SubsystemBase{
 
@@ -65,7 +66,7 @@ public class VisionSubsystem extends SubsystemBase{
             Translation2d oldPosition = drivetrain.getState().Pose.getTranslation();
             double displacement = oldPosition.getDistance(newPosition);
 
-            if (displacement <= 1.0) {
+            if ((displacement <= 1.0) || (DriverStation.isDisabled())) {
                 drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
             }
 

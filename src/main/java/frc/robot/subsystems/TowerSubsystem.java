@@ -28,9 +28,8 @@ public class TowerSubsystem extends SubsystemBase {
 	public void initialize() {
 		setState(TowerState.INIT);
 		pendingEvent = TowerEvent.NONE;
-		wrist.setIntakeSpeed(0);
-		// wrist.resetWristControl();  // possiblly need here
-		// elevator.resetElevatorControl();
+		wrist.initialize();
+		elevator.initialize();
 	}
 
 	@Override
@@ -71,7 +70,15 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case INTAKING: {
-				if (wrist.gotCoral()){
+				if (wrist.gotEnterCoral()){
+					wrist.setIntakeSpeed(Constants.WristConstants.kCoralSlowIntakePower);
+					setState(TowerState.GETTING_CORAL);
+				}
+				break;
+			}
+			
+			case GETTING_CORAL: {
+				if (wrist.gotExitCoral() && !wrist.gotEnterCoral()){
 					wrist.setIntakeSpeed(0);
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
 					setState(TowerState.GOING_TO_SAFE);
@@ -89,21 +96,30 @@ public class TowerSubsystem extends SubsystemBase {
 			case GOT_CORAL: {
 				if (isTriggered(TowerEvent.GOTO_L3)) {
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL3Height);
+					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING);
 				} else if (isTriggered(TowerEvent.GOTO_L2)){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL2Height);
+					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING);
 				} else if (isTriggered(TowerEvent.GOTO_L1)){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL1Height);
+					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING);
 				} else if (isTriggered(TowerEvent.GOTO_L4)){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL4Height);
+					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING_TO_L4);
+				}else {
+					if (!wrist.gotEnterCoral()) {
+						wrist.setIntakeSpeed(Constants.WristConstants.kCoralRetractPower);
+					} else {
+						wrist.setIntakeSpeed(0);
+					}
 				}
 				break;
 			}
-
-			
+		
 
 			case RAISING: {
 				if (elevator.inPosition()) {
@@ -137,14 +153,17 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case SCORING_CORAL: {
-				if (!wrist.gotCoral()) {
+				if (!wrist.gotExitCoral()) {
+					setState(TowerState.PAUSING);
+				} else if ( stateTimer.hasElapsed(0.3)) {
+					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
 					setState(TowerState.PAUSING);
 				}
 				break;
 			}
 
 			case PAUSING: {
-				if (stateTimer.hasElapsed(0.5)) {
+				if (stateTimer.hasElapsed(0.25)) {
 					wrist.setIntakeSpeed(0);
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
 					elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
@@ -182,10 +201,10 @@ public class TowerSubsystem extends SubsystemBase {
 		return currentState;
 	}
 
-	
 
 	// -- Private Methods  ----------------------------------------------------
 
+	
 	private void updateDashboard() {
 		SmartDashboard.putString("Tower State", currentState.toString() + " <- " + pendingEvent.toString());
 	}

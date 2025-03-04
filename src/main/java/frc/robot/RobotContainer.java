@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.JustIntakeCmd;
 import frc.robot.commands.TriggerEventCmd;
 import frc.robot.commands.WaitForTowerStateCmd;
 import frc.robot.generated.TunerConstants;
@@ -29,6 +30,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.TowerEvent;
 import frc.robot.subsystems.TowerState;
 import frc.robot.subsystems.TowerSubsystem;
@@ -40,7 +42,7 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.02).withRotationalDeadband(MaxAngularRate * 0.02) // Add a 2% deadband
+            .withDeadband(MaxSpeed * 0.025).withRotationalDeadband(MaxAngularRate * 0.025) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -50,8 +52,8 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandJoystick            copilot_1 = new CommandJoystick(1);
-    private final CommandJoystick            copilot_2 = new CommandJoystick(2);
+    private final CommandJoystick       copilot_1 = new CommandJoystick(1);
+    private final CommandJoystick       copilot_2 = new CommandJoystick(2);
 
     // Instanciate subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -61,18 +63,18 @@ public class RobotContainer {
     public final VisionSubsystem vision = new VisionSubsystem(drivetrain);
     public final ApproachSubsystem approach = new ApproachSubsystem();
     
+    public final LEDSubsystem led = new LEDSubsystem(0);
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-
         
-        NamedCommands.registerCommand("INTAKE_CORAL",    new TriggerEventCmd(tower, TowerEvent.INTAKE_CORAL));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L1",        new TriggerEventCmd(tower, TowerEvent.GOTO_L1));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L2",        new TriggerEventCmd(tower, TowerEvent.GOTO_L2));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L3",        new TriggerEventCmd(tower, TowerEvent.GOTO_L3));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L4",        new TriggerEventCmd(tower, TowerEvent.GOTO_L4));
+        NamedCommands.registerCommand("INTAKE_CORAL",   new TriggerEventCmd(tower, TowerEvent.INTAKE_CORAL));
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L1",        new JustIntakeCmd(tower, TowerEvent.GOTO_L1));
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L2",        new JustIntakeCmd(tower, TowerEvent.GOTO_L2));
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L3",        new JustIntakeCmd(tower, TowerEvent.GOTO_L3));
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L4",        new JustIntakeCmd(tower, TowerEvent.GOTO_L4));
         NamedCommands.registerCommand("SCORE_CORAL",    new TriggerEventCmd(tower, TowerEvent.SCORE_CORAL));
 
         NamedCommands.registerCommand("WAIT_FOR_LOWERING",         new WaitForTowerStateCmd(tower, TowerState.LOWERING));
@@ -109,9 +111,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed / 5) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed / 5) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate / 5) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed / 3) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed / 3) // Drive left with negative X (left)
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate / 3) // Drive counterclockwise with negative X (left)
             )
         );
     }
