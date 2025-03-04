@@ -31,7 +31,8 @@ import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.TowerEvent;
 import frc.robot.subsystems.TowerState;
-import frc.robot.subsystems.TowerSubsystem;;
+import frc.robot.subsystems.TowerSubsystem;
+import frc.robot.Constants.DriverConstants;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -49,8 +50,8 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandJoystick       copilot_1 = new CommandJoystick(1);
-    private final CommandJoystick       copilot_2 = new CommandJoystick(2);
+    private final CommandJoystick            copilot_1 = new CommandJoystick(1);
+    private final CommandJoystick            copilot_2 = new CommandJoystick(2);
 
     // Instanciate subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -129,6 +130,12 @@ public class RobotContainer {
         joystick.pov(0).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L4)));
 
         joystick.rightBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
+
+        
+        copilot_1.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
+        
+
+        
 
         // reset the field-centric heading on left bumper press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
