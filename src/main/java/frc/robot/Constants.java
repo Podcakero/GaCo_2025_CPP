@@ -25,9 +25,12 @@ public class Constants {
 		
         public static final double kAnglePower = 1;
 		
-		public static final double kCoralIntakePower = -0.2;
+		public static final double kCoralIntakePower = -0.3;
+        public static final double kCoralSlowIntakePower = -0.1;
+        public static final double kCoralRetractPower = 0.075;
 		public static final double kCoralOutputPower =  0.5;
 		public static final double kCoralScoringPower = -1.0;
+    
 
         public static final double kAngleMaxVelocityDPS = 400; // 
 		public static final double kAngleMaxAccelerationDPSPS = 1000; // 
@@ -42,7 +45,7 @@ public class Constants {
     public class ElevatorConstants {
 
 
-        public static final Distance kElevatorMaxHeight = Inches.of(96);
+        public static final Distance kElevatorMaxHeight = Inches.of(73);
         public static final Distance kElevatorMinHeight = Inches.of(17.5);
 
         // scale factors
@@ -70,15 +73,14 @@ public class Constants {
         public static final Distance kL1Height = Inches.of(21);
         public static final Distance kL2Height = Inches.of(31);
         public static final Distance kL3Height = Inches.of(46);
-        public static final Distance kL4Height = Inches.of(73); // was 2.1m
+        public static final Distance kL4Height = Inches.of(72); // was 2.1m
         public static final Distance kIntakeHeight = Inches.of(19); 
 
         public static final double kElevatorMaxVelocityRPS = 2.0;  // MPS
-		public static final double kElevatorMaxAccelerationRPSPS = 6.0; // MPSS
+		public static final double kElevatorMaxAccelerationRPSPS = 4.0; // MPSS  was 6
 	
         public static final double kElevatorEncoderPositionConversionFactor = kRelativeEncoderScaleRevToMeters; // Needs to be empirically measured
         public static final double kElevatorEncoderVelocityConversionFactor = kRelativeEncoderScaleRevToMeters; // Needs to be empirically measured. Should be able to be derived from kElevatorEncoderPositionConversionFactor
-
-        
+   
     }
 }

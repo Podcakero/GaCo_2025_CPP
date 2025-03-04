@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.JustIntakeCmd;
 import frc.robot.commands.TriggerEventCmd;
 import frc.robot.commands.WaitForTowerStateCmd;
 import frc.robot.generated.TunerConstants;
@@ -64,10 +65,10 @@ public class RobotContainer {
     public RobotContainer() {
         
         NamedCommands.registerCommand("INTAKE_CORAL",   new TriggerEventCmd(tower, TowerEvent.INTAKE_CORAL));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L1",        new TriggerEventCmd(tower, TowerEvent.GOTO_L1));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L2",        new TriggerEventCmd(tower, TowerEvent.GOTO_L2));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L3",        new TriggerEventCmd(tower, TowerEvent.GOTO_L3));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L4",        new TriggerEventCmd(tower, TowerEvent.GOTO_L4));
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L1",        new JustIntakeCmd(tower, TowerEvent.GOTO_L1));
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L2",        new JustIntakeCmd(tower, TowerEvent.GOTO_L2));
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L3",        new JustIntakeCmd(tower, TowerEvent.GOTO_L3));
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L4",        new JustIntakeCmd(tower, TowerEvent.GOTO_L4));
         NamedCommands.registerCommand("SCORE_CORAL",    new TriggerEventCmd(tower, TowerEvent.SCORE_CORAL));
 
         NamedCommands.registerCommand("WAIT_FOR_LOWERING",         new WaitForTowerStateCmd(tower, TowerState.LOWERING));
