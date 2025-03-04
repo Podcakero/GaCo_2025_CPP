@@ -118,7 +118,7 @@ public class RobotContainer {
 
     private void configureBindings() {
 
-
+        // Driver Buttons
         // Tower State Machine Events
         joystick.start().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
         
@@ -131,12 +131,26 @@ public class RobotContainer {
 
         joystick.rightBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
 
-        
-        copilot_1.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
-        
 
+        // CoPilot 1 Buttons
+        copilot_1.button(DriverConstants.pose_i).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_I)));
+        copilot_1.button(DriverConstants.pose_j).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_J)));
+        copilot_1.button(DriverConstants.pose_k).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_K)));
+        copilot_1.button(DriverConstants.pose_l).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_L)));
         
+        // CoPilot 2 Buttons
+        copilot_2.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
+        copilot_2.button(DriverConstants.pose_a).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_A)));
+        copilot_2.button(DriverConstants.pose_b).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_B)));
+        copilot_2.button(DriverConstants.pose_c).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_C)));
+        copilot_2.button(DriverConstants.pose_d).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_D)));
+        copilot_2.button(DriverConstants.pose_e).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_E)));
+        copilot_2.button(DriverConstants.pose_f).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_F)));
+        copilot_2.button(DriverConstants.pose_g).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_G)));
+        copilot_2.button(DriverConstants.pose_h).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_H)));
 
+              
+       
         // reset the field-centric heading on left bumper press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         

@@ -14,10 +14,8 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -30,6 +28,7 @@ public class ApproachSubsystem extends SubsystemBase {
   private CommandScheduler scheduler = CommandScheduler.getInstance();
   private AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
   Optional<Alliance> alliance = DriverStation.getAlliance();
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -97,7 +96,7 @@ public class ApproachSubsystem extends SubsystemBase {
   }
 
   /* Update the command stored in "approachCommand" to navigate to the specified position **/
-  private void createPathCmd(ApproachTarget targetPos){
+  public void createPathCmd(ApproachTarget targetPos){
     // Distance in meters
     double spacing = 0.45;
     double offset = 0.2;
