@@ -25,8 +25,9 @@ public class Constants {
 		
         public static final double kAnglePower = 1;
 		
-		public static final double kCoralIntakePower = -0.5;
-        public static final double kCoralSlowIntakePower = -0.15;
+		public static final double kCoralIntakePower = -0.3;
+        public static final double kCoralSlowIntakePower = -0.1;
+        public static final double kCoralRetractPower = 0.075;
 		public static final double kCoralOutputPower =  0.5;
 		public static final double kCoralScoringPower = -1.0;
     

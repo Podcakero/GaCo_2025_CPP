@@ -4,9 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Meters;
-
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -81,11 +78,12 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 			
 			case GETTING_CORAL: {
-				if (wrist.gotExitCoral()){
+				if (wrist.gotExitCoral() && !wrist.gotEnterCoral()){
 					wrist.setIntakeSpeed(0);
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
 					setState(TowerState.GOING_TO_SAFE);
 				}
+				break;
 			}
 
 			case GOING_TO_SAFE: {
@@ -98,16 +96,26 @@ public class TowerSubsystem extends SubsystemBase {
 			case GOT_CORAL: {
 				if (isTriggered(TowerEvent.GOTO_L3)) {
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL3Height);
+					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING);
 				} else if (isTriggered(TowerEvent.GOTO_L2)){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL2Height);
+					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING);
 				} else if (isTriggered(TowerEvent.GOTO_L1)){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL1Height);
+					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING);
 				} else if (isTriggered(TowerEvent.GOTO_L4)){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL4Height);
+					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING_TO_L4);
+				}else {
+					if (!wrist.gotEnterCoral()) {
+						wrist.setIntakeSpeed(Constants.WristConstants.kCoralRetractPower);
+					} else {
+						wrist.setIntakeSpeed(0);
+					}
 				}
 				break;
 			}
