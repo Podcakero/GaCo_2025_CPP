@@ -18,6 +18,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -112,6 +113,31 @@ public class WristSubsystem extends SubsystemBase {
 
   // The configuration interfaces may be accessed by typing in the IP address of the roboRIO into a web
   //  browser followed by :5812.
+  @Override
+  public void periodic() {
+
+    getRangeMM();
+
+    Globals.gotCoral = gotExitCoral() && !gotEnterCoral();
+
+     /*if (DriverStation.getStickButtonPressed(1,2)){
+      bumpWrist(0.1016);
+    } else if (DriverStation.getStickButtonPressed(1,3)){
+      bumpWrist(0.0254);
+    } else if (DriverStation.getStickButtonPressed(1,4)){
+      bumpWrist(-0.0254);
+    } else if (DriverStation.get(1,5)){
+      bumpWrist(-0.1016);
+    }*/
+
+    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
+    SmartDashboard.putNumber("Wrist Angle", getWristAngle());
+
+    SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
+    SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRange);
+    SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRange);
+  }
 
   // TOF sensor
   public void setViewZone(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
@@ -167,26 +193,13 @@ public class WristSubsystem extends SubsystemBase {
     return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;
   }
 
-  @Override
-  public void periodic() {
-
-    getRangeMM();
-
-    Globals.gotCoral = gotExitCoral() && !gotEnterCoral();
-
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
-    SmartDashboard.putNumber("Wrist Angle", getWristAngle());
-
-    SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
-    SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRange);
-    SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRange);
-  }
-
+  
   public void runWristClosedLoop() {
       angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
 		  angleController.setReference(angleSetpoint.position, ControlType.kPosition);
   }
+
+
 
   //----------//
   // Commands //
