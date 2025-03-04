@@ -200,6 +200,42 @@
         "titleType": 0,
         "tiles": {}
       }
+    },
+    {
+      "title": "Tab 3",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "0,0": {
+            "size": [
+              10,
+              4
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/Elev Rel Hgt",
+              "_source1": "network_table:///SmartDashboard/ElevatorGoal",
+              "_title": "/SmartDashboard/Elev Rel Hgt",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Graph/Visible time": 30.0,
+              "Graph/X-axis auto scrolling": true,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Y-axis/Unit": "ul",
+              "Visible data//SmartDashboard/Elev Rel Hgt": true,
+              "Visible data//SmartDashboard/ElevatorGoal": true
+            }
+          }
+        }
+      }
     }
   ],
   "windowGeometry": {

@@ -11,7 +11,9 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -28,16 +30,10 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.MutAngle;
-import edu.wpi.first.units.measure.MutAngularVelocity;
-import edu.wpi.first.units.measure.MutVoltage;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.commands.DefaultElevatorCmd;
@@ -60,36 +56,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 	private TrapezoidProfile.State elevatorGoal = new TrapezoidProfile.State();
 	private TrapezoidProfile.State elevatorSetpoint;
 
-  // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
-  private final MutVoltage appliedVoltage = Volts.mutable(0);
-  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
-  private final MutAngle distance = Rotations.mutable(0);
-  // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
-  private final MutAngularVelocity velocity = RotationsPerSecond.mutable(0);
-
-  private final SysIdRoutine sysIdRoutine = new SysIdRoutine(
-    new SysIdRoutine.Config(
-      Volts.of(0.5).per(Seconds),
-      Volts.of(2),
-      Seconds.of(5),
-      null
-    ),
-    new SysIdRoutine.Mechanism(
-      output -> setVoltage(output),
-      log -> {
-        // Record a frame for the left motors.  Since these share an encoder, we consider
-        // the entire group to be one motor.
-        log.motor("elevator")
-            .voltage(
-                appliedVoltage.mut_replace(
-                    centerElevatorMotor.get() * RobotController.getBatteryVoltage(), Volts))
-            .angularPosition(distance.mut_replace(centerElevatorMotor.getEncoder().getPosition(), Rotations))
-            .angularVelocity(
-                velocity.mut_replace(centerElevatorMotor.getEncoder().getVelocity(), RotationsPerSecond));
-      },
-      this
-    )
-  );
+  private double   stringPotVoltage = 0;
+  private Distance stringPotHeight = Meters.of(0);
+  private Distance relativeEncoderHeight =  Meters.of(0);
+  private Distance lastGoalPosition = Constants.ElevatorConstants.kElevatorMinHeight;
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
@@ -140,63 +110,87 @@ public class ElevatorSubsystem extends SubsystemBase {
     setDefaultCommand(new DefaultElevatorCmd(this));
   }
 
-  public Command sysIdQuasistatic(Direction direction) {
-    return sysIdRoutine.quasistatic(direction);
+  public void initialize(){
+    readSensors();
+    resetElevatorControl();
   }
 
-  public Command sysIdDynamic(Direction direction) {
-    return sysIdRoutine.dynamic(direction);
+  @Override
+	public void periodic() {
+
+    readSensors();
+
+    if (DriverStation.getStickButtonPressed(1,2)){
+      bumpElevator(0.1016);
+    } else if (DriverStation.getStickButtonPressed(1,3)){
+      bumpElevator(0.0254);
+    } else if (DriverStation.getStickButtonPressed(1,4)){
+      bumpElevator(-0.0254);
+    } else if (DriverStation.getStickButtonPressed(1,5)){
+      bumpElevator(-0.1016);
+    }
+
+		// This method will be called once per scheduler run
+    SmartDashboard.putNumber("Elev Rel Hgt", relativeEncoderHeight.in(Inches));
+
+    SmartDashboard.putNumber("Elev Abs Volt", stringPotVoltage);
+    SmartDashboard.putNumber("Elev Abs Hgt", stringPotHeight.in(Inches));
+
+		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
+    SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
+	}
+
+  public void readSensors() {
+    stringPotVoltage  = elevatorAbs.getPosition();
+    stringPotHeight   = Meters.of((stringPotVoltage * Constants.ElevatorConstants.kAbsoluteEncoderScaleVoltsToMeters)  + 
+                                       Constants.ElevatorConstants.kAbsoluteEncoderOffsetVoltsToMeters); 
+
+    relativeEncoderHeight = Meters.of(elevatorEncoder.getPosition()); 
+  }
+  
+  public void bumpElevator(double changeMeters) {
+    setGoalPosition(Meters.of(lastGoalPosition.in(Meters) + changeMeters));
   }
 
   public void resetElevatorControl() {
-	  elevatorGoal = new TrapezoidProfile.State(getPosition().in(Meters), 0.0);
-    resetSetPoint();
+    stopElevator();
+	  loadCurrentPositionAsSetpoint();
   }
 
   public void stopElevator() {
     centerElevatorMotor.set(0);
   }
 
-  public void setVoltage(Voltage voltage) {
-    centerElevatorMotor.setVoltage(voltage.in(Volts));
+  public void loadCurrentPositionAsSetpoint() {
+    setGoalPosition(SyncronizeRelativeEncoder());
+	}
+  
+  public Distance SyncronizeRelativeEncoder() {
+    Distance elevatorHeight = stringPotHeight;
+    elevatorEncoder.setPosition(elevatorHeight.in(Meters)); 
+    return elevatorHeight;
   }
+  	
+  public void setGoalPosition(Distance goalPosition) {
+    if (goalPosition.lt(Constants.ElevatorConstants.kElevatorMinHeight)) {
+      goalPosition = Constants.ElevatorConstants.kElevatorMinHeight;
+    } else if (goalPosition.gt(Constants.ElevatorConstants.kElevatorMaxHeight)) {
+      goalPosition = Constants.ElevatorConstants.kElevatorMaxHeight;
+    }
 
-  public Distance getPosition(){
-    return Meters.of(elevatorEncoder.getPosition());
-  }
-
-  public void resetRelativeEncoder() {
-    elevatorEncoder.setPosition(0.0); // Change 0.0 to instead get the value of the absolute encoder
-  }
-
-	public void setGoalPosition(Distance goalPosition) {
+    lastGoalPosition = goalPosition;
 	  elevatorGoal = new TrapezoidProfile.State(goalPosition.in(Meters), 0.0);
+    elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), 0.0);
 	}
 
-	//public void clearGoalPosition() {     /// This seems dangerous to me.   
-	//	elevatorGoal = new TrapezoidProfile.State();
-	//}
-
-	public void resetSetPoint() {
-		elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), 0.0);
-	}
+  public Distance getHeight(){
+    return relativeEncoderHeight;
+  }
 
   public boolean inPosition(){
     return Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Constants.ElevatorConstants.kHeightTollerance.in(Meters);
   }
-
-	@Override
-	public void periodic() {
-		// This method will be called once per scheduler run
-		SmartDashboard.putNumber("ElevatorEncoder", elevatorEncoder.getPosition());
-		SmartDashboard.putNumber("Elevator Velocity", elevatorEncoder.getVelocity() / 60);
-		SmartDashboard.putNumber("ElevatorSetpoint", elevatorSetpoint.position);
-		SmartDashboard.putNumber("ElevatorProfileVelocity", elevatorSetpoint.velocity);
-		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position);
-		SmartDashboard.putNumber("Elevator Voltage", centerElevatorMotor.getAppliedOutput() );
-		SmartDashboard.putNumber("Elevator Absolute", elevatorAbs.getVoltage());
-	}
-
+	
   public void runClosedLoop() {
     elevatorSetpoint = elevatorTrapezoidProfile.calculate(Constants.kDt, elevatorSetpoint, elevatorGoal);
   
@@ -205,7 +199,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorController.setReference(
       elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
   
-    SmartDashboard.putNumber("Elevator FeedForward", arbFF);
+      SmartDashboard.putNumber("Elevator FeedForward", arbFF);
+      
   }
 
   //----------//

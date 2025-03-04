@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Meters;
+
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,9 +31,8 @@ public class TowerSubsystem extends SubsystemBase {
 	public void initialize() {
 		setState(TowerState.INIT);
 		pendingEvent = TowerEvent.NONE;
-		wrist.setIntakeSpeed(0);
-		// wrist.resetWristControl();  // possiblly need here
-		// elevator.resetElevatorControl();
+		wrist.initialize();
+		elevator.initialize();
 	}
 
 	@Override
@@ -102,8 +104,7 @@ public class TowerSubsystem extends SubsystemBase {
 				}
 				break;
 			}
-
-			
+		
 
 			case RAISING: {
 				if (elevator.inPosition()) {
@@ -185,10 +186,10 @@ public class TowerSubsystem extends SubsystemBase {
 		return currentState;
 	}
 
-	
 
 	// -- Private Methods  ----------------------------------------------------
 
+	
 	private void updateDashboard() {
 		SmartDashboard.putString("Tower State", currentState.toString() + " <- " + pendingEvent.toString());
 	}
