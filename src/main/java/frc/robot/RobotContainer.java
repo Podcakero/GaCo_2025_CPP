@@ -135,10 +135,10 @@ public class RobotContainer {
         
         // ==== Approach Buttons ================================
         joystick.a().onTrue(approach.runOnce(() -> approach.startApproach()))
-        .onFalse(drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0)));
+        .onFalse(drivetrain.runOnce(() -> drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0))));
 
-        joystick.x().onTrue(approach.runOnce(() -> approach.setTarget(ApproachTarget.REEF_A)));
-        joystick.b().onTrue(approach.runOnce(() -> approach.setTarget(ApproachTarget.REEF_G)));
+        joystick.x().onTrue(approach.runOnce(() -> approach.setTarget(ApproachTarget.REEF_B)));
+        joystick.b().onTrue(approach.runOnce(() -> approach.setTarget(ApproachTarget.REEF_K)));
         // ==== Approach Buttons ================================
         
         /*
