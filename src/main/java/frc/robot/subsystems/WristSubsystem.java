@@ -39,8 +39,10 @@ public class WristSubsystem extends SubsystemBase {
 	private TrapezoidProfile.State angleGoal = new TrapezoidProfile.State();
 	private TrapezoidProfile.State angleSetpoint;
 
-  TimeOfFlight TOF;
-  double frontCoralRange = 0;
+  TimeOfFlight enterTOF;
+  TimeOfFlight exitTOF;
+  double exitCoralRange = 0;
+  double enterCoralRange = 0;
   
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
@@ -94,9 +96,12 @@ public class WristSubsystem extends SubsystemBase {
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    TOF = new TimeOfFlight(63);
-    TOF.setRangingMode(RangingMode.Short, 30);
-    TOF.setRangeOfInterest(0, 0, 15, 15);
+    exitTOF = new TimeOfFlight(63);
+    exitTOF.setRangingMode(RangingMode.Short, 30);
+    exitTOF.setRangeOfInterest(0, 0, 15, 15);
+    enterTOF = new TimeOfFlight(64);
+    enterTOF.setRangingMode(RangingMode.Short, 30);
+    enterTOF.setRangeOfInterest(0, 0, 15, 15);
 
     setDefaultCommand( new DefaultWristCmd(this));
   }
@@ -110,17 +115,21 @@ public class WristSubsystem extends SubsystemBase {
 
   // TOF sensor
   public void setViewZone(int topLeftX, int topLeftY, int bottomRightX, int bottomRightY) {
-    TOF.setRangeOfInterest(topLeftX, topLeftY, bottomRightX, bottomRightY);
+    exitTOF.setRangeOfInterest(topLeftX, topLeftY, bottomRightX, bottomRightY);
+    enterTOF.setRangeOfInterest(topLeftX, topLeftY, bottomRightX, bottomRightY);
   }
 
-  public boolean gotCoral() {
-    Globals.gotCoral = (frontCoralRange < Constants.WristConstants.kMaxCoralDetectRangeMM); 
-    return Globals.gotCoral;
+  public boolean gotExitCoral() {
+    return (exitCoralRange < Constants.WristConstants.kMaxCoralDetectRangeMM);
   }
 
-  public double getRangeMM() {
-    frontCoralRange = TOF.getRange();
-    return frontCoralRange ;
+  public boolean gotEnterCoral() {
+    return (enterCoralRange < Constants.WristConstants.kMaxCoralDetectRangeMM);
+  }
+
+  public void getRangeMM() {
+    exitCoralRange = exitTOF.getRange();
+    enterCoralRange = enterTOF.getRange();
   }
       
   // intake
@@ -162,14 +171,16 @@ public class WristSubsystem extends SubsystemBase {
   public void periodic() {
 
     getRangeMM();
-    gotCoral();
+
+    Globals.gotCoral = gotExitCoral() && !gotEnterCoral();
 
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
     SmartDashboard.putNumber("Wrist Angle", getWristAngle());
 
     SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
-    SmartDashboard.putNumber("Coral Sensor", frontCoralRange);
+    SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRange);
+    SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRange);
   }
 
   public void runWristClosedLoop() {
