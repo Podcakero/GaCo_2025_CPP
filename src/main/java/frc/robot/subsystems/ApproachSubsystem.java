@@ -26,7 +26,7 @@ public class ApproachSubsystem extends SubsystemBase {
 
   private Command  approachCommand;
   private CommandScheduler scheduler = CommandScheduler.getInstance();
-  private AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+  private AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
   Optional<Alliance> alliance = DriverStation.getAlliance();
   
   @Override
@@ -98,8 +98,8 @@ public class ApproachSubsystem extends SubsystemBase {
   /* Update the command stored in "approachCommand" to navigate to the specified position **/
   public void createPathCmd(ApproachTarget targetPos){
     // Distance in meters
-    double spacing = 0.45;
-    double offset = 0.2;
+    double spacing = 0.45; // 1/2 length of robot
+    double offset = 0.2;   // Offset to pole from center
 
     if(targetPos.isLeft){
       offset = -offset;
@@ -113,7 +113,7 @@ public class ApproachSubsystem extends SubsystemBase {
 
     approachCommand = AutoBuilder.pathfindToPose(
       new Pose2d(x, y, new Rotation2d(coords[2] + Math.PI)),
-      new PathConstraints( 4.0, 3.0,
+      new PathConstraints( 2.0, 4.0,
       Math.PI, Math.PI * 2),
       0.0 );
   }
