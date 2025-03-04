@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -69,7 +70,7 @@ public class ApproachSubsystem extends SubsystemBase {
       }
 
       case REEF_K: {
-        createPathCmd(19, true);
+        createPathCmd(ApproachTarget.REEF_K);
         break;
       }
 
@@ -95,8 +96,38 @@ public class ApproachSubsystem extends SubsystemBase {
       0.0 );
   }
 
+  /* Update the command stored in "approachCommand" to navigate to the specified position **/
+  private void createPathCmd(ApproachTarget targetPos){
+    // Distance in meters
+    double spacing = 0.45;
+    double offset = 0.2;
+
+    if(targetPos.isLeft){
+      offset = -offset;
+    }
+    
+    double coords[] = getTagCoords(targetPos.tagId);
+    double x = (coords[0] + Math.cos(coords[2])*spacing) + Math.cos(coords[2]+Math.PI/2)*offset;
+    double y = (coords[1] + Math.sin(coords[2])*spacing) + Math.sin(coords[2]+Math.PI/2)*offset;
+
+    System.out.println("[" + coords[0] + "/" + x + ", " + coords[1] + "/" + y + "]; Rot: " + Math.toDegrees(coords[2]));
+
+    approachCommand = AutoBuilder.pathfindToPose(
+      new Pose2d(x, y, new Rotation2d(coords[2] + Math.PI)),
+      new PathConstraints( 4.0, 3.0,
+      Math.PI, Math.PI * 2),
+      0.0 );
+  }
 
   private double[] getTagCoords(int id){
+    try{
+      alliance = DriverStation.getAlliance();
+      if(alliance.get().equals(Alliance.Red)){
+        id = id - 11;
+      }
+    } catch(NoSuchElementException e){
+    System.out.println("No alliance color assigned");
+  }
     double coords[] = new double[3];
     coords[0] = Math.round((tags.getTagPose(id).get().getX()*10000));
     coords[0] = coords[0]/10000;
