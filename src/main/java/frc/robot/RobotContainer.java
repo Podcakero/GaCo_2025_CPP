@@ -247,11 +247,11 @@ public class RobotContainer {
             System.out.println(approach.alliance.get());
         }
         targetAngle = (approach.tags.getTagPose(tagId).get().getRotation().toRotation2d().getDegrees());
-        if(targetAngle > 0){
+        /*if(targetAngle > 0){
             targetAngle = targetAngle - 180;
         } else{
             targetAngle = targetAngle + 180;
-        }
+        }*/
         if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) > 180){
             headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) + 360;
         } else{
