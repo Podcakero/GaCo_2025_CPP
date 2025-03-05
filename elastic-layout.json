@@ -22,10 +22,10 @@
           },
           {
             "title": "AutoField",
-            "x": 0.0,
-            "y": 128.0,
-            "width": 1408.0,
-            "height": 640.0,
+            "x": 320.0,
+            "y": 0.0,
+            "width": 1152.0,
+            "height": 512.0,
             "type": "Field",
             "properties": {
               "topic": "/SmartDashboard/AutoField",
@@ -42,15 +42,16 @@
           },
           {
             "title": "active",
-            "x": 576.0,
-            "y": 0.0,
+            "x": 0.0,
+            "y": 128.0,
             "width": 256.0,
             "height": 128.0,
-            "type": "Large Text Display",
+            "type": "Text Display",
             "properties": {
               "topic": "/SmartDashboard/Auto Mode/active",
               "period": 0.06,
-              "data_type": "string"
+              "data_type": "string",
+              "show_submit_button": false
             }
           }
         ]
@@ -131,7 +132,7 @@
           },
           {
             "title": "Lift Extended",
-            "x": 832.0,
+            "x": 896.0,
             "y": 0.0,
             "width": 192.0,
             "height": 128.0,
@@ -147,23 +148,9 @@
             }
           },
           {
-            "title": "Current State",
-            "x": 256.0,
-            "y": 0.0,
-            "width": 192.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Module 0/backgroundColor",
-              "period": 0.06,
-              "data_type": "string",
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "Side",
             "x": 128.0,
-            "y": 192.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Large Text Display",
@@ -176,7 +163,7 @@
           {
             "title": "Level",
             "x": 384.0,
-            "y": 192.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Large Text Display",
@@ -189,7 +176,7 @@
           {
             "title": "Pole",
             "x": 256.0,
-            "y": 192.0,
+            "y": 256.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Large Text Display",
@@ -247,13 +234,40 @@
             "properties": {
               "topic": "/CameraPublisher/clownfish_Port_1182_Output_MJPEG_Server",
               "period": 0.06,
-              "rotation_turns": 0,
               "compression": 15,
               "fps": 10,
               "resolution": [
                 160.0,
                 120.0
               ]
+            }
+          },
+          {
+            "title": "Pose 2d",
+            "x": 192.0,
+            "y": 0.0,
+            "width": 704.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Pose 2d",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "pose Disp",
+            "x": 192.0,
+            "y": 128.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/pose Disp",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]
@@ -274,27 +288,7 @@
             "properties": {
               "topic": "/CameraPublisher/clownfish_Port_1182_Output_MJPEG_Server",
               "period": 0.06,
-              "rotation_turns": 0,
-              "compression": 15,
-              "fps": 10,
-              "resolution": [
-                160.0,
-                120.0
-              ]
-            }
-          },
-          {
-            "title": "clownfish_Port_1184_Output_MJPEG_Server",
-            "x": 320.0,
-            "y": 0.0,
-            "width": 320.0,
-            "height": 320.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/clownfish_Port_1184_Output_MJPEG_Server",
-              "period": 0.06,
-              "rotation_turns": 0,
-              "compression": 28,
+              "compression": 80,
               "fps": 10,
               "resolution": [
                 160.0,
@@ -305,7 +299,7 @@
           {
             "title": "robotPose",
             "x": 704.0,
-            "y": 192.0,
+            "y": 128.0,
             "width": 576.0,
             "height": 128.0,
             "type": "Text Display",
@@ -353,7 +347,7 @@
           {
             "title": "Field",
             "x": 640.0,
-            "y": 384.0,
+            "y": 256.0,
             "width": 704.0,
             "height": 320.0,
             "type": "Field",
@@ -429,7 +423,7 @@
           {
             "title": "Swerve Drive",
             "x": 320.0,
-            "y": 384.0,
+            "y": 320.0,
             "width": 256.0,
             "height": 256.0,
             "type": "SwerveDrive",
@@ -438,6 +432,32 @@
               "period": 0.06,
               "show_robot_rotation": true,
               "rotation_unit": "Radians"
+            }
+          },
+          {
+            "title": "Approach Target",
+            "x": 1216.0,
+            "y": 0.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Approach Target",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "clownfish_Port_1184_Output_MJPEG_Server",
+            "x": 320.0,
+            "y": 0.0,
+            "width": 320.0,
+            "height": 320.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/clownfish_Port_1184_Output_MJPEG_Server",
+              "period": 0.06
             }
           }
         ]

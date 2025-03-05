@@ -126,21 +126,23 @@ public class RobotContainer {
         
         joystick.leftBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
 
-        joystick.pov(180).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
-        joystick.pov(270).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
-        joystick.pov(90).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L3)));
-        joystick.pov(0).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L4)));
-
         joystick.rightBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
 
 
         // CoPilot 1 Buttons
+
+        copilot_1.button(DriverConstants.l1).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
+        copilot_1.button(DriverConstants.l2).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
+        copilot_1.button(DriverConstants.l3).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L3)));
+        copilot_1.button(DriverConstants.l4).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L4)));
+
         copilot_1.button(DriverConstants.pose_i).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_I)));
         copilot_1.button(DriverConstants.pose_j).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_J)));
         copilot_1.button(DriverConstants.pose_k).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_K)));
         copilot_1.button(DriverConstants.pose_l).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_L)));
         
         // CoPilot 2 Buttons
+        
         copilot_2.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
         copilot_2.button(DriverConstants.pose_a).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_A)));
         copilot_2.button(DriverConstants.pose_b).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_B)));

@@ -120,6 +120,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     readSensors();
 
+    /*
     if (DriverStation.getStickButtonPressed(1,2)){
       bumpElevator(0.1016);
     } else if (DriverStation.getStickButtonPressed(1,3)){
@@ -129,6 +130,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     } else if (DriverStation.getStickButtonPressed(1,5)){
       bumpElevator(-0.1016);
     }
+    */
 
 		// This method will be called once per scheduler run
     SmartDashboard.putNumber("Elev Rel Hgt", relativeEncoderHeight.in(Inches));
