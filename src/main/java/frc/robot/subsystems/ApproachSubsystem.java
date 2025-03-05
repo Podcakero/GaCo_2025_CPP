@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,10 +29,12 @@ public class ApproachSubsystem extends SubsystemBase {
   private CommandScheduler scheduler = CommandScheduler.getInstance();
   private AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
   Optional<Alliance> alliance = DriverStation.getAlliance();
+  ApproachTarget targetPose = ApproachTarget.UNKNOWN;
   
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putString("Approach Target", targetPose.toString());
   }
 
   public void startApproach() {
@@ -97,6 +100,7 @@ public class ApproachSubsystem extends SubsystemBase {
 
   /* Update the command stored in "approachCommand" to navigate to the specified position **/
   public void createPathCmd(ApproachTarget targetPos){
+    targetPose = targetPos;
     // Distance in meters
     double spacing = 0.45; // 1/2 length of robot
     double offset = 0.2;   // Offset to pole from center
@@ -113,7 +117,7 @@ public class ApproachSubsystem extends SubsystemBase {
 
     approachCommand = AutoBuilder.pathfindToPose(
       new Pose2d(x, y, new Rotation2d(coords[2] + Math.PI)),
-      new PathConstraints( 2.0, 4.0,
+      new PathConstraints( 2.0, 2.0,
       Math.PI, Math.PI * 2),
       0.0 );
   }

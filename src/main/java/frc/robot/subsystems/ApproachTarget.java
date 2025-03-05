@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 /** Reef target positions using blue side AprilTag IDs */
 public enum ApproachTarget {
+    UNKNOWN(0,false),
     REEF_A(18, true),
     REEF_B(18, false),
     REEF_AB(18, false),
