@@ -48,7 +48,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final SparkFlexConfig rightElevatorMotorConfig;
   private final SparkClosedLoopController elevatorController;
   private final RelativeEncoder elevatorEncoder;
-  private final SparkAnalogSensor elevatorAbs;
+  //private final SparkAnalogSensor elevatorAbs;
   
   private final ElevatorFeedforward elevatorFeedforward;
 
@@ -69,7 +69,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     elevatorController = centerElevatorMotor.getClosedLoopController();
     elevatorEncoder = centerElevatorMotor.getEncoder();
-    elevatorAbs = centerElevatorMotor.getAnalog();
+    //elevatorAbs = centerElevatorMotor.getAnalog();
      
 	  elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
 
@@ -158,26 +158,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void resetElevatorControl() {
-    stopElevator();
-	  loadCurrentPositionAsSetpoint();
+    setGoalPosition(relativeEncoderHeight);
   }
 
   public void stopElevator() {
-    centerElevatorMotor.set(0);
+    // centerElevatorMotor.set(0);
   }
 
-  public void loadCurrentPositionAsSetpoint() {
-    setGoalPosition(relativeEncoderHeight);
-	}
-  
-  /*
-  public Distance SyncronizeRelativeEncoder() {
-    Distance elevatorHeight = stringPotHeight;
-    elevatorEncoder.setPosition(elevatorHeight.in(Meters)); 
-    return elevatorHeight;
-  }
-  */
-  	
+ 	
   public void setGoalPosition(Distance goalPosition) {
     if (goalPosition.lt(Constants.ElevatorConstants.kElevatorMinHeight)) {
       goalPosition = Constants.ElevatorConstants.kElevatorMinHeight;

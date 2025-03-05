@@ -170,12 +170,12 @@ public class WristSubsystem extends SubsystemBase {
   // wrist
   public void resetWristControl () {
     setIntakeSpeed(0);
-    angleGoal = new TrapezoidProfile.State(getWristAngle(), 0.0);
-    angleSetpoint = new TrapezoidProfile.State(getWristAngle(), 0.0);
+    setGoalAngle(getWristAngle());
   }
 
   public void setGoalAngle(double angle){
     angleGoal = new TrapezoidProfile.State(angle, 0.0);
+    angleSetpoint = new TrapezoidProfile.State(getWristAngle(), 0.0);
   }
 
   public double getWristAngle(){
@@ -186,9 +186,6 @@ public class WristSubsystem extends SubsystemBase {
     return angleEncoder.getVelocity();
   }
 
-  public void stopWrist() {
-    angleSpark.set(0);
-  }
 
   public boolean inPosition(){
     return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;
