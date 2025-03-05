@@ -18,6 +18,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -162,15 +164,16 @@ public class RobotContainer {
 
               
        
-        // reset the field-centric heading on left bumper press
+        // reset the field-centric heading on back btn press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.y().onTrue(drivetrain.runOnce(() -> runCoralStationCmd()));
+        joystick.y().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));
+        joystick.b().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));
         
         
 
         // ==== Approach Buttons ================================
         
-        /*
+        
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0.5).withVelocityY(0))
         );
@@ -183,7 +186,7 @@ public class RobotContainer {
         joystick.pov(270).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0).withVelocityY(0.5))
         );
-        */
+        
 
         /* 
         // Run SysId routines when holding back/start and X/Y.
@@ -204,33 +207,71 @@ public class RobotContainer {
 
     private Command approachCoralStationCommand;
     boolean isAtTarget = false;
-    double targetAngle = 120;
+    double targetAngle = (approach.tags.getTagPose(12).get().getRotation().toRotation2d().getDegrees());
+    double headingError = 0;
 
-    BooleanSupplier atTarget = (() -> {if(Math.abs(targetAngle - drivetrain.getState().Pose.getRotation().getDegrees()) < 1){
-        return true;
-    } else{
-        SmartDashboard.putNumber("Heading" , drivetrain.getState().Pose.getRotation().getDegrees());
-        SmartDashboard.putNumber("Degrees Left to Turn", (targetAngle - drivetrain.getState().Pose.getRotation().getDegrees()));
-        return false;
-    }});
+    BooleanSupplier atTarget = (() -> {
+        
+        if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) > 180){
+            headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) - 360;
+        } else if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) < -180){
+            headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) + 360;
+        } else{
+            headingError = targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees());
+        }
 
-    public void faceCoralStation(){
+        if(Math.abs(targetAngle - drivetrain.getState().Pose.getRotation().getDegrees()) < 1){
+            return true;
+        } else{
+            
+            SmartDashboard.putNumber("Degrees Left to Turn", headingError);
+            //System.out.println("Speed: " + clamp((headingError * MaxAngularRate / 120), -Math.PI * 1.5, Math.PI * 1.5, Math.PI/4));
+            return false;
+        }
+    });
+
+    public void faceCoralStation(boolean isLeft){
+        int tagId = 13;
+        if(!isLeft){
+            tagId -= 1;
+        }
+        approach.alliance = DriverStation.getAlliance();
+        if(approach.alliance.get().equals(Alliance.Red)){
+            tagId -= 11;
+            if(isLeft){
+                tagId -= 1;
+            } else{
+                tagId += 1;
+            }
+        } else{
+            System.out.println(approach.alliance.get());
+        }
+        targetAngle = (approach.tags.getTagPose(tagId).get().getRotation().toRotation2d().getDegrees());
+        if(targetAngle > 0){
+            targetAngle = targetAngle - 180;
+        } else{
+            targetAngle = targetAngle + 180;
+        }
+        if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) > 180){
+            headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) + 360;
+        } else{
+            headingError = targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees());
+        }
         System.out.println("atTarget: " + atTarget.getAsBoolean());
-        //rotSpeed = clamp(((targetAngle - drivetrain.getRotation3d().getAngle()) / 100), 0.2, 0.6);
-            // Drivetrain will execute this command periodically
             approachCoralStationCommand = drivetrain.applyRequest(() ->
                 drive.withVelocityX(-joystick.getLeftY() * MaxSpeed / 2) // Drive forward with negative Y (forward)
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed / 2) // Drive left with negative X (left)
-                    .withRotationalRate(clamp(((targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) * MaxAngularRate / 100), -Math.PI/2, Math.PI/2, Math.PI/4)) // Auto rotate to position
+                    .withRotationalRate(clamp((headingError * MaxAngularRate / 80), -Math.PI, Math.PI, Math.PI/4)) // Auto rotate to position
             ).until(atTarget); // Run until target angle is reached
       }
 
 
     private CommandScheduler scheduler = CommandScheduler.getInstance();
 
-    public void runCoralStationCmd() {
-        faceCoralStation();
+    public void runCoralStationCmd(boolean isLeft) {
+        faceCoralStation(isLeft);
         scheduler.schedule(approachCoralStationCommand);
+        tower.triggerEvent(TowerEvent.INTAKE_CORAL);
     }
 
     private double clamp(double value, double min, double max, double innerBound){
@@ -241,7 +282,7 @@ public class RobotContainer {
         } else if(value < min){
             value = min;
         } else if(value < 0 && value > -innerBound){
-            value = min;
+            value = -innerBound;
         }
         System.out.println("speed" + value);
         return value;

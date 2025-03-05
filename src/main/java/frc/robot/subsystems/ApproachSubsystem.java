@@ -27,8 +27,8 @@ public class ApproachSubsystem extends SubsystemBase {
 
   private Command  approachCommand;
   private CommandScheduler scheduler = CommandScheduler.getInstance();
-  private AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
-  Optional<Alliance> alliance = DriverStation.getAlliance();
+  public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
+  public Optional<Alliance> alliance = DriverStation.getAlliance();
   ApproachTarget targetPose = ApproachTarget.UNKNOWN;
 
   
