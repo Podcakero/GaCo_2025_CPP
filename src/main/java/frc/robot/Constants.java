@@ -85,4 +85,41 @@ public class Constants {
         public static final double kElevatorEncoderVelocityConversionFactor = kRelativeEncoderScaleRevToMeters; // Needs to be empirically measured. Should be able to be derived from kElevatorEncoderPositionConversionFactor
    
     }
+
+    public class DriverConstants{
+        
+        //Co-Pilot 1
+        
+        public static final int reset = 1;
+
+        public static final int l4 = 2;
+        public static final int l3 = 3;
+        public static final int l2 = 4;
+        public static final int l1 = 5;
+
+        public static final int unknown = 6;
+
+        public static final int pose_ija = 7;
+        public static final int pose_i = 8;
+        public static final int pose_j = 9;
+        public static final int pose_kla = 10;
+        public static final int pose_k = 11;
+        public static final int pose_l = 12;
+
+        //Co-pilot 2
+
+        public static final int pose_h = 1;
+        public static final int pose_hga = 2;
+        public static final int pose_g = 3;
+        public static final int pose_f = 4;
+        public static final int pose_fea = 5;
+        public static final int pose_e = 6;
+        public static final int pose_dca = 7;
+        public static final int pose_d = 8;
+        public static final int pose_c = 9;
+        public static final int pose_b = 10;
+        public static final int pose_aba = 11;
+        public static final int pose_a = 12;
+
+    }
 }

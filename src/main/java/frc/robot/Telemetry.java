@@ -142,9 +142,10 @@ public class Telemetry {
     private static List<PathPlannerPath> pathsLast;
     private static List<Pose2d> poses;
     private static double autoAnimationStep = 0;
-    private static final double AUTO_ANIMATION_SPEED = 0.25; // Speed of the animation. Default = 0.25 *Animation speed not to scale with the actual autonomous speed
+    private static final double AUTO_ANIMATION_SPEED = 0.4; // Speed of the animation. Default = 0.25 *Animation speed not to scale with the actual autonomous speed
     private static final int AUTO_ANIMATION_FREEZE_TIME = 10; // How long to wait before restarting the animation. Default = 10
     public static final Field2d m_field2 = new Field2d(); // Autonomous animation field
+    private static boolean firstAnimation = true;
     
     /** Display the currently selected autonomous path on the dashboard */
     public static void displayAutoPaths(){
@@ -173,7 +174,8 @@ public class Telemetry {
 
         // Only runs this section once, when the selected auto changes
         if(paths != null && !paths.equals(pathsLast)){
-
+            
+            firstAnimation = true;
             autoAnimationStep = -10;   // Give a slight delay after changing paths
             poses = new ArrayList<>(); // Clear the pose list
             m_field2.getObject("path").setPose(new Pose2d()); // Clear old paths
@@ -253,11 +255,13 @@ public class Telemetry {
             }
         }
 
-        /*
-        if(poses != null){
+        
+        if(poses != null && firstAnimation){
             // Animate the auto by moving through the list of poses each cycle
             if(autoAnimationStep >= poses.size()-1){
                 autoAnimationStep = -AUTO_ANIMATION_FREEZE_TIME; // Wait this many cycles before restarting the animation
+                m_field2.getObject("Robot").setPose(poses.get(0));
+                firstAnimation = false;
             } else{
                 autoAnimationStep = autoAnimationStep + AUTO_ANIMATION_SPEED; // Increment the animation counter
             }
@@ -271,7 +275,7 @@ public class Telemetry {
             }
     
         }
-        */
+        
         pathsLast = paths; // Store last path to see if path has been changed
     }
 
