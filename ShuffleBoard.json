@@ -52,19 +52,6 @@
               "_showGlyph": false
             }
           },
-          "0,5": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Coral Sensor",
-              "_title": "/SmartDashboard/Coral Sensor",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "4,2": {
             "size": [
               4,
@@ -181,6 +168,32 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Wrist Goal",
               "_title": "Wrist Goal",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,4": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Enter Coral Sensor",
+              "_title": "/SmartDashboard/Enter Coral Sensor",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,4": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Exit Coral Sensor",
+              "_title": "/SmartDashboard/Exit Coral Sensor",
               "_glyph": 148,
               "_showGlyph": false
             }

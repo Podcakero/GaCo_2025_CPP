@@ -118,7 +118,7 @@ public class WristSubsystem extends SubsystemBase {
 
     getRangeMM();
 
-    Globals.gotCoral = gotExitCoral() && !gotEnterCoral();
+    Globals.gotCoral = gotExitCoral() && gotEnterCoral();
 
      /*if (DriverStation.getStickButtonPressed(1,2)){
       bumpWrist(0.1016);
@@ -169,6 +169,7 @@ public class WristSubsystem extends SubsystemBase {
 
   // wrist
   public void resetWristControl () {
+    setIntakeSpeed(0);
     angleGoal = new TrapezoidProfile.State(getWristAngle(), 0.0);
     angleSetpoint = new TrapezoidProfile.State(getWristAngle(), 0.0);
   }

@@ -26,8 +26,8 @@ public class Constants {
         public static final double kAnglePower = 1;
 		
 		public static final double kCoralIntakePower = -0.3;
-        public static final double kCoralSlowIntakePower = -0.1;
-        public static final double kCoralRetractPower = 0.075;
+        public static final double kCoralSlowIntakePower = -0.05;
+        public static final double kCoralRetractPower = 0.02;
 		public static final double kCoralOutputPower =  0.5;
 		public static final double kCoralScoringPower = -1.0;
     
@@ -43,10 +43,6 @@ public class Constants {
     }
 
     public class ElevatorConstants {
-
-
-        public static final Distance kElevatorMaxHeight = Inches.of(73);
-        public static final Distance kElevatorMinHeight = Inches.of(17.5);
 
         // scale factors
         public static final double kRelativeEncoderScaleRevToMeters = 0.0315;  // 25 turns for 31 inches of travel
@@ -70,11 +66,17 @@ public class Constants {
         public static final int kElevatorMotorCenterId = 52;
         public static final int kElevatorMotorRightId = 53;
 
+        public static final Distance kElevatorMaxHeight = Inches.of(73);
+        public static final Distance kElevatorMinHeight = Inches.of(17.5);
+
         public static final Distance kL1Height = Inches.of(21);
         public static final Distance kL2Height = Inches.of(31);
         public static final Distance kL3Height = Inches.of(46);
-        public static final Distance kL4Height = Inches.of(72); // was 2.1m
-        public static final Distance kIntakeHeight = Inches.of(19); 
+        public static final Distance kL4Height = Inches.of(70); 
+        public static final Distance kIntakeHeight = Inches.of(17.5); 
+
+        public static final Distance kSafeHomeHeight = Inches.of(19);
+        
 
         public static final double kElevatorMaxVelocityRPS = 2.0;  // MPS
 		public static final double kElevatorMaxAccelerationRPSPS = 4.0; // MPSS  was 6
