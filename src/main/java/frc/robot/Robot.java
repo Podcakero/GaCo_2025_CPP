@@ -33,7 +33,6 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     SignalLogger.enableAutoLogging(false);
-    m_robotContainer.elevator.SyncronizeRelativeEncoder();
     SmartDashboard.putData("Field", m_field);
     SmartDashboard.putData("AutoField", Telemetry.m_field2);
     m_robotContainer.tower.initialize();

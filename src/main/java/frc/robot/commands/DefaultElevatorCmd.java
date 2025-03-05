@@ -33,7 +33,6 @@ public class DefaultElevatorCmd extends Command {
   @Override
   public void end(boolean interrupted) {
     elevator.resetElevatorControl();
-    elevator.stopElevator();
   }
 
   // Returns true when the command should end.

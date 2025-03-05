@@ -88,6 +88,11 @@ public class Constants {
 
     public class DriverConstants{
         
+        // driver
+        public static final double kMaxDriveSpeed = 0.6;
+        public static final double kMaxTurnSpeed  = 0.65;
+        
+
         //Co-Pilot 1
         
         public static final int reset = 1;

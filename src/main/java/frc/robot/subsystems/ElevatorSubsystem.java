@@ -13,15 +13,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkAnalogSensor;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -30,8 +24,6 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -48,7 +40,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final SparkFlexConfig rightElevatorMotorConfig;
   private final SparkClosedLoopController elevatorController;
   private final RelativeEncoder elevatorEncoder;
-  private final SparkAnalogSensor elevatorAbs;
   
   private final ElevatorFeedforward elevatorFeedforward;
 
@@ -56,8 +47,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 	private TrapezoidProfile.State elevatorGoal = new TrapezoidProfile.State();
 	private TrapezoidProfile.State elevatorSetpoint;
 
-  private double   stringPotVoltage = 0;
-  private Distance stringPotHeight = Meters.of(0);
   private Distance relativeEncoderHeight =  Meters.of(0);
   private Distance lastGoalPosition = Constants.ElevatorConstants.kElevatorMinHeight;
 
@@ -69,8 +58,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     elevatorController = centerElevatorMotor.getClosedLoopController();
     elevatorEncoder = centerElevatorMotor.getEncoder();
-    elevatorAbs = centerElevatorMotor.getAnalog();
-     
+  
 	  elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
 
 	  elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(ElevatorConstants.kElevatorMaxVelocityRPS,
@@ -79,14 +67,17 @@ public class ElevatorSubsystem extends SubsystemBase {
 	  elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), elevatorEncoder.getVelocity());
 
     centerElevatorMotorConfig = new SparkFlexConfig();
+
     centerElevatorMotorConfig.closedLoop
       .p(ElevatorConstants.kP)
       .i(ElevatorConstants.kI)
       .d(ElevatorConstants.kD)
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+
     centerElevatorMotorConfig.encoder
       .positionConversionFactor(ElevatorConstants.kElevatorEncoderPositionConversionFactor)
       .velocityConversionFactor(ElevatorConstants.kElevatorEncoderVelocityConversionFactor);
+
     centerElevatorMotorConfig
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit);
@@ -108,6 +99,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.configure(rightElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     setDefaultCommand(new DefaultElevatorCmd(this));
+
+    Distance elevatorHeight = Inches.of(17.5);  // only valid when elevator is homed;
+    elevatorEncoder.setPosition(elevatorHeight.in(Meters)); 
   }
 
   public void initialize(){
@@ -120,33 +114,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     readSensors();
 
-    /*
-    if (DriverStation.getStickButtonPressed(1,2)){
-      bumpElevator(0.1016);
-    } else if (DriverStation.getStickButtonPressed(1,3)){
-      bumpElevator(0.0254);
-    } else if (DriverStation.getStickButtonPressed(1,4)){
-      bumpElevator(-0.0254);
-    } else if (DriverStation.getStickButtonPressed(1,5)){
-      bumpElevator(-0.1016);
-    }
-    */
-
 		// This method will be called once per scheduler run
     SmartDashboard.putNumber("Elev Rel Hgt", relativeEncoderHeight.in(Inches));
-
-    SmartDashboard.putNumber("Elev Abs Volt", stringPotVoltage);
-    SmartDashboard.putNumber("Elev Abs Hgt", stringPotHeight.in(Inches));
-
 		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
     SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
 	}
 
   public void readSensors() {
-    stringPotVoltage  = elevatorAbs.getPosition();
-    stringPotHeight   = Meters.of((stringPotVoltage * Constants.ElevatorConstants.kAbsoluteEncoderScaleVoltsToMeters)  + 
-                                       Constants.ElevatorConstants.kAbsoluteEncoderOffsetVoltsToMeters); 
-
     relativeEncoderHeight = Meters.of(elevatorEncoder.getPosition()); 
   }
   
@@ -155,24 +129,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void resetElevatorControl() {
-    stopElevator();
-	  loadCurrentPositionAsSetpoint();
+    setGoalPosition(relativeEncoderHeight);
   }
 
-  public void stopElevator() {
-    centerElevatorMotor.set(0);
-  }
-
-  public void loadCurrentPositionAsSetpoint() {
-    setGoalPosition(SyncronizeRelativeEncoder());
-	}
-  
-  public Distance SyncronizeRelativeEncoder() {
-    Distance elevatorHeight = stringPotHeight;
-    elevatorEncoder.setPosition(elevatorHeight.in(Meters)); 
-    return elevatorHeight;
-  }
-  	
   public void setGoalPosition(Distance goalPosition) {
     if (goalPosition.lt(Constants.ElevatorConstants.kElevatorMinHeight)) {
       goalPosition = Constants.ElevatorConstants.kElevatorMinHeight;
