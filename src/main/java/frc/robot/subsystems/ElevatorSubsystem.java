@@ -57,7 +57,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	private TrapezoidProfile.State elevatorSetpoint;
 
   private double   stringPotVoltage = 0;
-  private Distance stringPotHeight = Meters.of(0);
+  //private Distance stringPotHeight = Meters.of(0);
   private Distance relativeEncoderHeight =  Meters.of(0);
   private Distance lastGoalPosition = Constants.ElevatorConstants.kElevatorMinHeight;
 
@@ -108,6 +108,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightElevatorMotor.configure(rightElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     setDefaultCommand(new DefaultElevatorCmd(this));
+
+    //stringPotVoltage  = elevatorAbs.getPosition();
+    //stringPotHeight   = Meters.of((stringPotVoltage * Constants.ElevatorConstants.kAbsoluteEncoderScaleVoltsToMeters)  + 
+    //                                   Constants.ElevatorConstants.kAbsoluteEncoderOffsetVoltsToMeters); 
+
+    Distance elevatorHeight = Inches.of(17.5);  // only valid when elevator is homed;
+    elevatorEncoder.setPosition(elevatorHeight.in(Meters)); 
   }
 
   public void initialize(){
@@ -136,17 +143,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elev Rel Hgt", relativeEncoderHeight.in(Inches));
 
     SmartDashboard.putNumber("Elev Abs Volt", stringPotVoltage);
-    SmartDashboard.putNumber("Elev Abs Hgt", stringPotHeight.in(Inches));
+    //SmartDashboard.putNumber("Elev Abs Hgt", stringPotHeight.in(Inches));
 
 		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
     SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
 	}
 
   public void readSensors() {
-    stringPotVoltage  = elevatorAbs.getPosition();
-    stringPotHeight   = Meters.of((stringPotVoltage * Constants.ElevatorConstants.kAbsoluteEncoderScaleVoltsToMeters)  + 
-                                       Constants.ElevatorConstants.kAbsoluteEncoderOffsetVoltsToMeters); 
-
     relativeEncoderHeight = Meters.of(elevatorEncoder.getPosition()); 
   }
   
@@ -164,14 +167,16 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void loadCurrentPositionAsSetpoint() {
-    setGoalPosition(SyncronizeRelativeEncoder());
+    setGoalPosition(relativeEncoderHeight);
 	}
   
+  /*
   public Distance SyncronizeRelativeEncoder() {
     Distance elevatorHeight = stringPotHeight;
     elevatorEncoder.setPosition(elevatorHeight.in(Meters)); 
     return elevatorHeight;
   }
+  */
   	
   public void setGoalPosition(Distance goalPosition) {
     if (goalPosition.lt(Constants.ElevatorConstants.kElevatorMinHeight)) {
