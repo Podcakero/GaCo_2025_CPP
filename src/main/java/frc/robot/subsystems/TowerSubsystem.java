@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,16 +42,39 @@ public class TowerSubsystem extends SubsystemBase {
 	}
 
 	public void homeTower() {
-		wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
-		elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
+		elevator.resetElevatorControl();
+		wrist.resetWristControl();
+		setState(TowerState.INIT);
 	}
 	
 
 	public void runStateMachine() {
 		switch(currentState){
 			case INIT: {
-				homeTower();
-				setState(TowerState.HOMING);
+				if (elevator.getHeight().lt(Constants.ElevatorConstants.kSafeHomeHeight)) {
+					wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
+					elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);	
+					setState(TowerState.HOMING);
+				} else {
+					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+					setState(TowerState.PREPARING_TO_HOME);
+				}
+				break;
+			}
+
+			case PREPARING_TO_HOME: {
+				if (wrist.inPosition()) {
+					elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);	
+					setState(TowerState.LOWERING_TO_HOME);
+				}
+				break;
+			}
+
+			case LOWERING_TO_HOME: {
+				if (elevator.inPosition()) {
+					wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
+					setState(TowerState.HOMING);
+				}
 				break;
 			}
 
@@ -71,24 +96,21 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case INTAKING: {
 				if (wrist.gotEnterCoral()){
-					wrist.setIntakeSpeed(Constants.WristConstants.kCoralSlowIntakePower);
-					setState(TowerState.GETTING_CORAL);
-				}
-				break;
-			}
-			
-			case GETTING_CORAL: {
-				if (wrist.gotExitCoral() && !wrist.gotEnterCoral()){
-					wrist.setIntakeSpeed(0);
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+					wrist.setIntakeSpeed(Constants.WristConstants.kCoralSlowIntakePower);
 					setState(TowerState.GOING_TO_SAFE);
 				}
 				break;
 			}
-
+			
 			case GOING_TO_SAFE: {
 				if (wrist.inPosition()){
+					wrist.setIntakeSpeed(0);
 					setState(TowerState.GOT_CORAL);
+				} else {
+					if (wrist.gotExitCoral()) {
+						wrist.setIntakeSpeed(0);
+					}
 				}
 				break;
 			}
@@ -110,10 +132,8 @@ public class TowerSubsystem extends SubsystemBase {
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL4Height);
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING_TO_L4);
-				}else {
-					if (!wrist.gotEnterCoral()) {
-						wrist.setIntakeSpeed(Constants.WristConstants.kCoralRetractPower);
-					} else {
+				} else {
+					if (wrist.gotExitCoral()) {
 						wrist.setIntakeSpeed(0);
 					}
 				}
