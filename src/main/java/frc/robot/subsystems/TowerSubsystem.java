@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class TowerSubsystem extends SubsystemBase {
+
+	private boolean AUTO_SCORE = true;  //  <<<   SET THIS TO AUTOMATICALLY SCORE after LIFT
+
 	private TowerState currentState = TowerState.INIT;
 
 	private Timer stateTimer = new Timer();
@@ -163,9 +166,8 @@ public class TowerSubsystem extends SubsystemBase {
 				break;
 			}
 
-
 			case READY_TO_SCORE: {
-				if (isTriggered(TowerEvent.SCORE_CORAL)) {
+				if (isTriggered(TowerEvent.SCORE_CORAL)  || AUTO_SCORE) {
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralScoringPower);
 					setState(TowerState.SCORING_CORAL);
 				}
