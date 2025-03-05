@@ -164,7 +164,7 @@ public class RobotContainer {
 
         // ==== Approach Buttons ================================
         
-        /*
+        
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0.5).withVelocityY(0))
         );
@@ -177,7 +177,7 @@ public class RobotContainer {
         joystick.pov(270).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0).withVelocityY(0.5))
         );
-        */
+        
 
         /* 
         // Run SysId routines when holding back/start and X/Y.
