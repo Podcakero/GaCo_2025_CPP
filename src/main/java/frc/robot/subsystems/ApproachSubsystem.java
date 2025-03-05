@@ -103,7 +103,7 @@ public class ApproachSubsystem extends SubsystemBase {
     targetPose = targetPos;
     // Distance in meters
     double spacing = 0.45; // 1/2 length of robot
-    double offset = 0.2;   // Offset to pole from center
+    double offset = 0.165;   // Offset from the center to the pole
 
     if(targetPos.isLeft){
       offset = -offset;
