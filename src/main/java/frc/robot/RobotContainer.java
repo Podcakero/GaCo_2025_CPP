@@ -111,9 +111,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed / 3) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed / 3) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate / 3) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed / 2) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed / 2) // Drive left with negative X (left)
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.65) // Drive counterclockwise with negative X (left)
             )
         );
     }
@@ -122,14 +122,16 @@ public class RobotContainer {
 
         // Driver Buttons
         // Tower State Machine Events
-        joystick.start().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
-        
         joystick.leftBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
+        joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
 
-        joystick.rightBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
-
+        // ==== Approach Buttons ================================
+        joystick.leftTrigger(0.5).onTrue(approach.runOnce(() -> approach.startApproach()))
+        .onFalse(drivetrain.runOnce(() -> drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0))));
 
         // CoPilot 1 Buttons
+
+        copilot_1.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.homeTower()));
 
         copilot_1.button(DriverConstants.l1).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
         copilot_1.button(DriverConstants.l2).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
@@ -142,7 +144,7 @@ public class RobotContainer {
         copilot_1.button(DriverConstants.pose_l).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_L)));
         
         // CoPilot 2 Buttons
-        
+
         copilot_2.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
         copilot_2.button(DriverConstants.pose_a).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_A)));
         copilot_2.button(DriverConstants.pose_b).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_B)));
@@ -158,12 +160,8 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         
-        // ==== Approach Buttons ================================
-        joystick.a().onTrue(approach.runOnce(() -> approach.startApproach()))
-        .onFalse(drivetrain.runOnce(() -> drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0))));
+        
 
-        joystick.x().onTrue(approach.runOnce(() -> approach.setTarget(ApproachTarget.REEF_B)));
-        joystick.b().onTrue(approach.runOnce(() -> approach.setTarget(ApproachTarget.REEF_K)));
         // ==== Approach Buttons ================================
         
         /*
