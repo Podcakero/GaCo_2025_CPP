@@ -6,6 +6,10 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.BooleanSupplier;
+
+import org.ejml.equation.IntegerSequence.Range;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -18,6 +22,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.JustIntakeCmd;
@@ -42,7 +47,7 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.025).withRotationalDeadband(MaxAngularRate * 0.025) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 7% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -159,6 +164,7 @@ public class RobotContainer {
        
         // reset the field-centric heading on left bumper press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.y().onTrue(drivetrain.runOnce(() -> runCoralStationCmd()));
         
         
 
@@ -195,4 +201,50 @@ public class RobotContainer {
         /* Run the path selected from the auto chooser */
         return autoChooser.getSelected();
     }
+
+    private Command approachCoralStationCommand;
+    boolean isAtTarget = false;
+    double targetAngle = 120;
+
+    BooleanSupplier atTarget = (() -> {if(Math.abs(targetAngle - drivetrain.getState().Pose.getRotation().getDegrees()) < 1){
+        return true;
+    } else{
+        SmartDashboard.putNumber("Heading" , drivetrain.getState().Pose.getRotation().getDegrees());
+        SmartDashboard.putNumber("Degrees Left to Turn", (targetAngle - drivetrain.getState().Pose.getRotation().getDegrees()));
+        return false;
+    }});
+
+    public void faceCoralStation(){
+        System.out.println("atTarget: " + atTarget.getAsBoolean());
+        //rotSpeed = clamp(((targetAngle - drivetrain.getRotation3d().getAngle()) / 100), 0.2, 0.6);
+            // Drivetrain will execute this command periodically
+            approachCoralStationCommand = drivetrain.applyRequest(() ->
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed / 2) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed / 2) // Drive left with negative X (left)
+                    .withRotationalRate(clamp(((targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) * MaxAngularRate / 100), -Math.PI/2, Math.PI/2, Math.PI/4)) // Auto rotate to position
+            ).until(atTarget); // Run until target angle is reached
+      }
+
+
+    private CommandScheduler scheduler = CommandScheduler.getInstance();
+
+    public void runCoralStationCmd() {
+        faceCoralStation();
+        scheduler.schedule(approachCoralStationCommand);
+    }
+
+    private double clamp(double value, double min, double max, double innerBound){
+        if(value > max){
+            value = max;
+        } else if(value > 0 && value < innerBound){
+            value = innerBound;
+        } else if(value < min){
+            value = min;
+        } else if(value < 0 && value > -innerBound){
+            value = min;
+        }
+        System.out.println("speed" + value);
+        return value;
+    }
+
 }
