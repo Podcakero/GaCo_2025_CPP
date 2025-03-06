@@ -158,16 +158,16 @@ public class RobotContainer {
         copilot_2.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
         copilot_2.button(DriverConstants.pose_a).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_A)));
         copilot_2.button(DriverConstants.pose_b).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_B)));
-        copilot_1.button(DriverConstants.pose_aba).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_AB)));
+        copilot_2.button(DriverConstants.pose_aba).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_AB)));
         copilot_2.button(DriverConstants.pose_c).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_C)));
         copilot_2.button(DriverConstants.pose_d).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_D)));
-        copilot_1.button(DriverConstants.pose_cda).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_CD)));
+        copilot_2.button(DriverConstants.pose_cda).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_CD)));
         copilot_2.button(DriverConstants.pose_e).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_E)));
         copilot_2.button(DriverConstants.pose_f).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_F)));
-        copilot_1.button(DriverConstants.pose_efa).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_EF)));
+        copilot_2.button(DriverConstants.pose_efa).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_EF)));
         copilot_2.button(DriverConstants.pose_g).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_G)));
         copilot_2.button(DriverConstants.pose_h).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_H)));
-        copilot_1.button(DriverConstants.pose_gha).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_GH)));
+        copilot_2.button(DriverConstants.pose_gha).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_GH)));
 
               
        
@@ -233,7 +233,6 @@ public class RobotContainer {
         } else{
             
             SmartDashboard.putNumber("Degrees Left to Turn", headingError);
-            //System.out.println("Speed: " + clamp((headingError * MaxAngularRate / 120), -Math.PI * 1.5, Math.PI * 1.5, Math.PI/4));
             return false;
         }
     });
@@ -252,8 +251,6 @@ public class RobotContainer {
             } else{
                 tagId += 1;
             }
-        } else{
-            System.out.println(approach.alliance.get());
         }
         targetAngle = (approach.tags.getTagPose(tagId).get().getRotation().toRotation2d().getDegrees());
 
@@ -262,7 +259,6 @@ public class RobotContainer {
         } else{
             headingError = targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees());
         }
-        System.out.println("atTarget: " + atTarget.getAsBoolean());
             approachCoralStationCommand = drivetrain.applyRequest(() ->
                 drive.withVelocityX(-joystick.getLeftY() * MaxSpeed / 2) // Drive forward with negative Y (forward)
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed / 2) // Drive left with negative X (left)
@@ -289,7 +285,6 @@ public class RobotContainer {
         } else if(value < 0 && value > -innerBound){
             value = -innerBound;
         }
-        // System.out.println("speed" + value);
         return value;
     }
 
