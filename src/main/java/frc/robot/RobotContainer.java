@@ -288,7 +288,7 @@ public class RobotContainer {
         } else if(value < 0 && value > -innerBound){
             value = -innerBound;
         }
-        System.out.println("speed" + value);
+        // System.out.println("speed" + value);
         return value;
     }
 
