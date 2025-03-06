@@ -168,7 +168,7 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case READY_TO_SCORE: {
-				if (isTriggered(TowerEvent.SCORE_CORAL)  || (AUTO_SCORE  && DriverStation.isTeleop())) {
+				if (isTriggered(TowerEvent.SCORE_CORAL)) {
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralScoringPower);
 					setState(TowerState.SCORING_CORAL);
 				}
