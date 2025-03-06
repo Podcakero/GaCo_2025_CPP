@@ -25,6 +25,8 @@ public class TowerSubsystem extends SubsystemBase {
 	private WristSubsystem wrist;
 	private TowerEvent pendingEvent = TowerEvent.NONE;   
 
+	private double safetyFactor = 1;
+
 	/** Creates a new Tower. */
 	public TowerSubsystem(ElevatorSubsystem elevator, WristSubsystem wrist) {
 		this.elevator = elevator;
@@ -169,7 +171,7 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case READY_TO_SCORE: {
-				if (isTriggered(TowerEvent.SCORE_CORAL)  || AUTO_SCORE) {
+				if (isTriggered(TowerEvent.SCORE_CORAL)) {
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralScoringPower);
 					setState(TowerState.SCORING_CORAL);
 				}
@@ -226,7 +228,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 	public double getTowerSpeedSafetyFactor() {
 		//  Determine what portion of full speed can be used based on the tower State
-		double safetyFactor = 1;
+		safetyFactor = 1;
 
 		if ((currentState == TowerState.SCORING_CORAL) || (currentState == TowerState.PAUSING)) {
 			safetyFactor = 0.25;
@@ -245,6 +247,7 @@ public class TowerSubsystem extends SubsystemBase {
 	
 	private void updateDashboard() {
 		SmartDashboard.putString("Tower State", currentState.toString() + " <- " + pendingEvent.toString());
+		SmartDashboard.putNumber("Safety Factor", safetyFactor * 100);
 	}
 	
 	private Boolean isTriggered(TowerEvent event){

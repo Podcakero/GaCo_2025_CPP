@@ -19,7 +19,7 @@
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///FMSInfo/IsRedAlliance",
-              "_title": "/FMSInfo/IsRedAlliance",
+              "_title": "ALLIANCE",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#FF0000FF",
@@ -34,7 +34,7 @@
             "content": {
               "_type": "ComboBox Chooser",
               "_source0": "network_table:///SmartDashboard/Auto Mode",
-              "_title": "/SmartDashboard/Auto Mode",
+              "_title": "AUTO MODE",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -141,7 +141,7 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Enter Coral Sensor",
-              "_title": "/SmartDashboard/Enter Coral Sensor",
+              "_title": "ENTRY",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -154,9 +154,25 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Exit Coral Sensor",
-              "_title": "/SmartDashboard/Exit Coral Sensor",
+              "_title": "EXIT",
               "_glyph": 148,
               "_showGlyph": false
+            }
+          },
+          "10,0": {
+            "size": [
+              3,
+              4
+            ],
+            "content": {
+              "_type": "Simple Dial",
+              "_source0": "network_table:///SmartDashboard/Safety Factor",
+              "_title": "Safety Factor",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Range/Min": 0.0,
+              "Range/Max": 100.0,
+              "Visuals/Show value": true
             }
           }
         }
