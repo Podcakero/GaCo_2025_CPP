@@ -39,7 +39,7 @@
               "_showGlyph": false
             }
           },
-          "4,0": {
+          "13,8": {
             "size": [
               8,
               2
@@ -52,7 +52,7 @@
               "_showGlyph": false
             }
           },
-          "4,2": {
+          "4,0": {
             "size": [
               4,
               2
@@ -81,33 +81,7 @@
               "Visuals/Show Outside Circles": false
             }
           },
-          "8,2": {
-            "size": [
-              4,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/pose Disp",
-              "_title": "/SmartDashboard/pose Disp",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "7,6": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Elev Abs Hgt",
-              "_title": "Elev Abs Hgt",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "7,4": {
+          "7,2": {
             "size": [
               3,
               2
@@ -120,20 +94,7 @@
               "_showGlyph": false
             }
           },
-          "4,6": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Elev Abs Volt",
-              "_title": "Elev Abs Volt",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "4,4": {
+          "4,2": {
             "size": [
               3,
               2
@@ -141,12 +102,12 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Elev Rel Hgt",
-              "_title": "Elev Rel Hgt",
+              "_title": "Elevator Hgt",
               "_glyph": 148,
               "_showGlyph": false
             }
           },
-          "4,8": {
+          "4,4": {
             "size": [
               3,
               2
@@ -159,7 +120,7 @@
               "_showGlyph": false
             }
           },
-          "7,8": {
+          "7,4": {
             "size": [
               3,
               2

@@ -33,7 +33,6 @@ public class DefaultWristCmd extends Command {
   @Override
   public void end(boolean interrupted) {
     wrist.resetWristControl();
-    wrist.stopWrist();
   }
 
   // Returns true when the command should end.

@@ -69,7 +69,7 @@ public class WristSubsystem extends SubsystemBase {
 
     // Use module constants to calculate conversion factors and feed forward gain.
     double intakeFactor = 1;
-    double angleFactor = 360 * 24 / 52;  // Sprocket reduction
+     // Sprocket reduction
 
 
     intakeConfig
@@ -85,14 +85,14 @@ public class WristSubsystem extends SubsystemBase {
       .smartCurrentLimit(20);
     angleConfig.absoluteEncoder
       //.inverted(true)
-      .positionConversionFactor(angleFactor) // degrees
-      .velocityConversionFactor(angleFactor / 60.0); // degrees per second
+      .positionConversionFactor(Constants.WristConstants.kAngleFactor) // degrees
+      .velocityConversionFactor(Constants.WristConstants.kAngleFactor / 60.0); // degrees per second
     angleConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
       // These are example gains you may need to them for your own robot!
       .pid(Constants.WristConstants.kP, Constants.WristConstants.kI, Constants.WristConstants.kD)
       .outputRange(-Constants.WristConstants.kAnglePower, Constants.WristConstants.kAnglePower)
-      .positionWrappingInputRange(0, angleFactor);
+      .positionWrappingInputRange(0, Constants.WristConstants.kAngleFactor);
 
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -133,6 +133,7 @@ public class WristSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
     SmartDashboard.putNumber("Wrist Angle", getWristAngle());
+    SmartDashboard.putNumber("Intake Speed", intakeSpark.getAppliedOutput());
 
     SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
     SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRange);
@@ -170,12 +171,12 @@ public class WristSubsystem extends SubsystemBase {
   // wrist
   public void resetWristControl () {
     setIntakeSpeed(0);
-    angleGoal = new TrapezoidProfile.State(getWristAngle(), 0.0);
-    angleSetpoint = new TrapezoidProfile.State(getWristAngle(), 0.0);
+    setGoalAngle(getWristAngle());
   }
 
   public void setGoalAngle(double angle){
     angleGoal = new TrapezoidProfile.State(angle, 0.0);
+    angleSetpoint = new TrapezoidProfile.State(getWristAngle(), 0.0);
   }
 
   public double getWristAngle(){
@@ -186,9 +187,6 @@ public class WristSubsystem extends SubsystemBase {
     return angleEncoder.getVelocity();
   }
 
-  public void stopWrist() {
-    angleSpark.set(0);
-  }
 
   public boolean inPosition(){
     return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;

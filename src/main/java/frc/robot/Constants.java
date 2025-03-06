@@ -18,6 +18,8 @@ public class Constants {
         public static final int kAngleMotorId = 61;
         public static final int kIntakeMotorId = 62;
 
+        public static final double kAngleFactor = 360 * 24 / 52; // 166 degrees
+
         public static final double kP = 0.02;
         public static final double kI = 0;
         public static final double kD = 0.0;
@@ -30,6 +32,8 @@ public class Constants {
         public static final double kCoralRetractPower = 0.02;
 		public static final double kCoralOutputPower =  0.5;
 		public static final double kCoralScoringPower = -1.0;
+		public static final double kAlgaeIntakePower = 0.25;
+        
     
 
         public static final double kAngleMaxVelocityDPS = 400; // 
@@ -39,6 +43,7 @@ public class Constants {
         public static final double kSafeAngle = 30;
         public static final double kIntakeAngle = 3;
         public static final double kL4Angle = 48;
+        public static final double kAlgaeIntakeAngle = 160;
 
     }
 
@@ -75,6 +80,8 @@ public class Constants {
         public static final Distance kL4Height = Inches.of(70); 
         public static final Distance kIntakeHeight = Inches.of(17.5); 
 
+        public static final Distance kAlgaeHighHight = Inches.of(50.5);
+
         public static final Distance kSafeHomeHeight = Inches.of(19);
         
 
@@ -88,6 +95,11 @@ public class Constants {
 
     public class DriverConstants{
         
+        // driver
+        public static final double kMaxDriveSpeed = 0.6;
+        public static final double kMaxTurnSpeed  = 0.65;
+        
+
         //Co-Pilot 1
         
         public static final int reset = 1;
@@ -109,12 +121,12 @@ public class Constants {
         //Co-pilot 2
 
         public static final int pose_h = 1;
-        public static final int pose_hga = 2;
+        public static final int pose_gha = 2;
         public static final int pose_g = 3;
         public static final int pose_f = 4;
-        public static final int pose_fea = 5;
+        public static final int pose_efa = 5;
         public static final int pose_e = 6;
-        public static final int pose_dca = 7;
+        public static final int pose_cda = 7;
         public static final int pose_d = 8;
         public static final int pose_c = 9;
         public static final int pose_b = 10;
