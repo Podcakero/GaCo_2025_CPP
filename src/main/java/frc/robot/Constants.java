@@ -72,6 +72,7 @@ public class Constants {
         public static final int kElevatorMotorRightId = 53;
 
         public static final Distance kElevatorMaxHeight = Inches.of(73);
+        public static final Distance kElevatorSpeedSafeHeight = Inches.of(40);
         public static final Distance kElevatorMinHeight = Inches.of(17.5);
 
         public static final Distance kL1Height = Inches.of(21);
