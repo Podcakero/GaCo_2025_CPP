@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import java.lang.Thread.State;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -197,7 +199,6 @@ public class TowerSubsystem extends SubsystemBase {
 			case LOWERING: {
 				if (elevator.inPosition()){
 					wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
-					// wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);
 					setState(TowerState.GOING_TO_INTAKE);
 				}
 				break;
@@ -223,6 +224,21 @@ public class TowerSubsystem extends SubsystemBase {
 		return currentState;
 	}
 
+	public double getTowerSpeedSafetyFactor() {
+		//  Determine what portion of full speed can be used based on the tower State
+		double safetyFactor = 1;
+
+		if ((currentState == TowerState.SCORING_CORAL) || (currentState == TowerState.PAUSING)) {
+			safetyFactor = 0.25;
+		} else if (elevator.getHeight().gt(Constants.ElevatorConstants.kElevatorSpeedSafeHeight)) {
+			double span    = Constants.ElevatorConstants.kElevatorMaxHeight.in(Inches) - Constants.ElevatorConstants.kElevatorSpeedSafeHeight.in(Inches); 
+			double overage = elevator.getHeight().in(Inches) - Constants.ElevatorConstants.kElevatorSpeedSafeHeight.in(Inches); 
+			double ratio   = overage / span;
+			safetyFactor   = 1.0 - (0.5 * ratio) ;
+		}
+
+		return safetyFactor;
+	}
 
 	// -- Private Methods  ----------------------------------------------------
 
