@@ -111,6 +111,14 @@ public class WristSubsystem extends SubsystemBase {
     setIntakeSpeed(0);
   }
 
+  public void resetFrameRate() {
+    SparkFlexConfig config = new SparkFlexConfig();
+    config.signals.appliedOutputPeriodMs(10);
+    
+    intakeSpark.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    angleSpark.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+  }
+
   // The configuration interfaces may be accessed by typing in the IP address of the roboRIO into a web
   //  browser followed by :5812.
   @Override

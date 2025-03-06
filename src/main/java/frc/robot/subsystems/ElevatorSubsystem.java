@@ -40,7 +40,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final SparkFlexConfig rightElevatorMotorConfig;
   private final SparkClosedLoopController elevatorController;
   private final RelativeEncoder elevatorEncoder;
-  
+
   private final ElevatorFeedforward elevatorFeedforward;
 
 	private final TrapezoidProfile elevatorTrapezoidProfile;
@@ -108,6 +108,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     readSensors();
     resetElevatorControl();
   }
+
+  public void resetFrameRate() {
+    SparkFlexConfig config = new SparkFlexConfig();
+    config.signals.appliedOutputPeriodMs(10);
+    leftElevatorMotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    centerElevatorMotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    rightElevatorMotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    System.out.println("RESET FRAME RATE");
+  }
+
 
   @Override
 	public void periodic() {

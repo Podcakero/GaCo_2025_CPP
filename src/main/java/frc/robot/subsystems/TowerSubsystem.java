@@ -36,6 +36,11 @@ public class TowerSubsystem extends SubsystemBase {
 		elevator.initialize();
 	}
 
+	public void resetFrameRate() {
+		elevator.resetFrameRate();
+		wrist.resetFrameRate();
+	}
+
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
