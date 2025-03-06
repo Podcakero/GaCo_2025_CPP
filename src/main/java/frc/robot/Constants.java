@@ -32,7 +32,7 @@ public class Constants {
         public static final double kCoralRetractPower = 0.02;
 		public static final double kCoralOutputPower =  0.5;
 		public static final double kCoralScoringPower = -1.0;
-
+		public static final double kAlgaeIntakePower = 0.25;
         
     
 
@@ -43,7 +43,7 @@ public class Constants {
         public static final double kSafeAngle = 30;
         public static final double kIntakeAngle = 3;
         public static final double kL4Angle = 48;
-        public static final double kAlgaeIntakeAngle = 120;
+        public static final double kAlgaeIntakeAngle = 160;
 
     }
 
