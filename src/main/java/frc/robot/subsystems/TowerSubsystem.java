@@ -99,12 +99,12 @@ public class TowerSubsystem extends SubsystemBase {
 					setState(TowerState.INTAKING);
 				} else if (isTriggered(TowerEvent.INTAKE_ALGAE)){
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
-					setState(TowerState.FLIPING_WRIST_TO_STAFE);
+					setState(TowerState.FLIPING_WRIST_TO_SAFE);
 				}
 				break;
 			}
 
-			case FLIPING_WRIST_TO_STAFE: {
+			case FLIPING_WRIST_TO_SAFE: {
 				if(wrist.inPosition()){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kAlgaeHighHight);
 					setState(TowerState.RAISING_LIFT_TO_ALGAE_HIGH);
