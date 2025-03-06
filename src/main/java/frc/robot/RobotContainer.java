@@ -129,7 +129,7 @@ public class RobotContainer {
 
         // Driver Buttons
         // Tower State Machine Events
-        joystick.leftBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
+        //joystick.leftBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
         joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
 
         // ==== Approach Buttons ================================
@@ -166,8 +166,8 @@ public class RobotContainer {
        
         // reset the field-centric heading on back btn press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.y().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));
-        joystick.b().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));
+        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));
+        joystick.rightBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));
         
         
 
