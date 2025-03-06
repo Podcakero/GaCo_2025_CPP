@@ -175,7 +175,7 @@ public class RobotContainer {
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));
         joystick.rightBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));
-        joystick.x().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_ALGAE)));
+        joystick.a().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_ALGAE)));
         
         
 
