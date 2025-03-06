@@ -14,8 +14,6 @@ import frc.robot.Constants;
 
 public class TowerSubsystem extends SubsystemBase {
 
-	private boolean AUTO_SCORE = true;  //  <<<   SET THIS TO AUTOMATICALLY SCORE after LIFT
-
 	private TowerState currentState = TowerState.INIT;
 
 	private Timer stateTimer = new Timer();
