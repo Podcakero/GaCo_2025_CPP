@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -167,7 +168,7 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case READY_TO_SCORE: {
-				if (isTriggered(TowerEvent.SCORE_CORAL)  || AUTO_SCORE) {
+				if (isTriggered(TowerEvent.SCORE_CORAL)) {
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralScoringPower);
 					setState(TowerState.SCORING_CORAL);
 				}
