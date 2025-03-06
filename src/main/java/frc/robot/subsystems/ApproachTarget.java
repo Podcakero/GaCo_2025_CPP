@@ -6,31 +6,32 @@ package frc.robot.subsystems;
 
 /** Reef target positions using blue side AprilTag IDs */
 public enum ApproachTarget {
-    UNKNOWN(0,false),
-    REEF_A(18, true),
-    REEF_B(18, false),
-    REEF_AB(18, false),
-    REEF_C(17, true),
-    REEF_D(17, false),
-    REEF_CD(17, false),
-    REEF_E(22, true),
-    REEF_F(22, false),
-    REEF_EF(22, false),
-    REEF_G(21, true),
-    REEF_H(21, false),
-    REEF_GH(21, false),
-    REEF_I(20, true),
-    REEF_J(20, false),
-    REEF_IJ(20, false),
-    REEF_K(19, true),
-    REEF_L(19, false),
-    REEF_KL(19, false);
+    UNKNOWN(0, ReefSidePosition.CENTER),
+    REEF_A(18, ReefSidePosition.LEFT),
+    REEF_B(18, ReefSidePosition.RIGHT),
+    REEF_AB(18, ReefSidePosition.CENTER),
+    REEF_C(17, ReefSidePosition.LEFT),
+    REEF_D(17, ReefSidePosition.RIGHT),
+    REEF_CD(17, ReefSidePosition.CENTER),
+    REEF_E(22, ReefSidePosition.LEFT),
+    REEF_F(22, ReefSidePosition.RIGHT),
+    REEF_EF(22, ReefSidePosition.CENTER),
+    REEF_G(21, ReefSidePosition.LEFT),
+    REEF_H(21, ReefSidePosition.RIGHT),
+    REEF_GH(21, ReefSidePosition.CENTER),
+    REEF_I(20, ReefSidePosition.LEFT),
+    REEF_J(20, ReefSidePosition.RIGHT),
+    REEF_IJ(20, ReefSidePosition.CENTER),
+    REEF_K(19, ReefSidePosition.LEFT),
+    REEF_L(19, ReefSidePosition.RIGHT),
+    REEF_KL(19, ReefSidePosition.CENTER);
 
+
+    public ReefSidePosition position;
     public final int tagId;
-    public final boolean isLeft;
 
-    ApproachTarget(int tagId, boolean isLeft){
+    ApproachTarget(int tagId, ReefSidePosition position){
         this.tagId = tagId;
-        this.isLeft = isLeft;
+        this.position = position;
     }
 }

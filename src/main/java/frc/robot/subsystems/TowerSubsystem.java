@@ -94,6 +94,48 @@ public class TowerSubsystem extends SubsystemBase {
 				if (isTriggered(TowerEvent.INTAKE_CORAL) || isHoldingGoTo()){
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);
 					setState(TowerState.INTAKING);
+				} else if (isTriggered(TowerEvent.INTAKE_ALGAE)){
+					setState(TowerState.FLIPING_WRIST_TO_STAFE);
+				}
+				break;
+			}
+
+			case FLIPING_WRIST_TO_STAFE: {
+				wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+				if(wrist.inPosition()){
+					setState(TowerState.RAISING_LIFT_TO_ALGAE_HIGH);
+				}
+				break;
+			}
+
+			case RAISING_LIFT_TO_ALGAE_HIGH: {
+				elevator.setGoalPosition(Constants.ElevatorConstants.kAlgaeHighHight);
+				if(elevator.inPosition()){
+					setState(TowerState.FLIPING_WRIST_TO_ALGAE_INTAKE);
+				}
+				break;
+			}
+
+			case FLIPING_WRIST_TO_ALGAE_INTAKE: {
+				wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
+				if(wrist.inPosition()){
+					setState(TowerState.WAITING_FOR_ALGAE);
+				}
+				break;
+			}
+
+			case WAITING_FOR_ALGAE: {
+				wrist.setIntakeSpeed(-0.5);
+				if(isTriggered(TowerEvent.INTAKE_ALGAE)){
+					setState(TowerState.SCORING_ALGAE);
+				}
+				break;
+			}
+
+			case SCORING_ALGAE: {
+				wrist.setIntakeSpeed(0);
+				if(isTriggered(TowerEvent.INTAKE_ALGAE)){
+					setState(TowerState.PAUSING);
 				}
 				break;
 			}
