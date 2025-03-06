@@ -5,7 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.units.measure.Distance;
 
@@ -33,17 +32,19 @@ public class Constants {
 		public static final double kCoralOutputPower =  0.5;
 		public static final double kCoralScoringPower = -1.0;
 		public static final double kAlgaeIntakePower = 0.25;
-        
+        public static final double kLowAlgaeIntakePower = 0.1;
     
 
         public static final double kAngleMaxVelocityDPS = 400; // 
 		public static final double kAngleMaxAccelerationDPSPS = 1000; // 
 
-        public static final double kMaxCoralDetectRangeMM = 40;
-        public static final double kSafeAngle = 30;
-        public static final double kIntakeAngle = 3;
-        public static final double kL4Angle = 48;
-        public static final double kAlgaeIntakeAngle = 160;
+        public static final double kIntakeAngle             = 3;
+        public static final double kSafeAngle               = 30;
+        public static final double kMaxCoralDetectRangeMM   = 40;
+        public static final double kL4Angle                 = 48;
+        public static final double kHighAlgaeAngle          = 60;
+        public static final double kAlgaeIntakeAngle        = 160;
+
 
     }
 

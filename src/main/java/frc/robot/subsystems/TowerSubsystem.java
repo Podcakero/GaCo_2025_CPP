@@ -21,6 +21,7 @@ public class TowerSubsystem extends SubsystemBase {
 	private WristSubsystem wrist;
 	private TowerEvent pendingEvent = TowerEvent.NONE;   
 	private double safetyFactor = 1;
+	private int currentLevel = 0;
 
 	/** Creates a new Tower. */
 	public TowerSubsystem(ElevatorSubsystem elevator, WristSubsystem wrist) {
@@ -100,6 +101,8 @@ public class TowerSubsystem extends SubsystemBase {
 				} else if (isTriggered(TowerEvent.INTAKE_ALGAE)){
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
 					setState(TowerState.FLIPING_WRIST_TO_STAFE);
+				} else {
+					currentLevel = 0;
 				}
 				break;
 			}
@@ -129,16 +132,29 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case WAITING_FOR_ALGAE: {
+		
 				if(isTriggered(TowerEvent.INTAKE_ALGAE)){
-					wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);
-					setState(TowerState.SCORING_ALGAE);
+					wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);  // Score Algae
+					setState(TowerState.PAUSING);
+				} else if (isTriggered(TowerEvent.GOTO_L1)) {
+					currentLevel = 1;
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL1Height);
+					wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
+					setState(TowerState.CHANGING_ALGAE_HEIGHT);
+				} else if (isTriggered(TowerEvent.GOTO_L4)) {
+					currentLevel = 4;
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL4Height);
+					wrist.setGoalAngle(Constants.WristConstants.kHighAlgaeAngle);
+					setState(TowerState.CHANGING_ALGAE_HEIGHT);
+				} else if(wrist.getIntakeCurrent() > 40){
+					wrist.setIntakeSpeed(Constants.WristConstants.kLowAlgaeIntakePower);  // hold lightly
 				}
 				break;
 			}
 
-			case SCORING_ALGAE: {
-				if(isTriggered(TowerEvent.INTAKE_ALGAE)){
-					setState(TowerState.PAUSING);
+			case CHANGING_ALGAE_HEIGHT: {
+				if (elevator.inPosition()) {
+					setState(TowerState.WAITING_FOR_ALGAE);
 				}
 				break;
 			}
@@ -165,20 +181,24 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case GOT_CORAL: {
-				if (isTriggered(TowerEvent.GOTO_L3)) {
-					elevator.setGoalPosition(Constants.ElevatorConstants.kL3Height);
+				if (isTriggered(TowerEvent.GOTO_L1)){
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL1Height);
+					currentLevel = 1;
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING);
 				} else if (isTriggered(TowerEvent.GOTO_L2)){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL2Height);
+					currentLevel = 2;
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING);
-				} else if (isTriggered(TowerEvent.GOTO_L1)){
-					elevator.setGoalPosition(Constants.ElevatorConstants.kL1Height);
+				} else if (isTriggered(TowerEvent.GOTO_L3)) {
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL3Height);
+					currentLevel = 3;
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING);
 				} else if (isTriggered(TowerEvent.GOTO_L4)){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL4Height);
+					currentLevel = 4;
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING_TO_L4);
 				} else {
@@ -216,7 +236,27 @@ public class TowerSubsystem extends SubsystemBase {
 				if (isTriggered(TowerEvent.SCORE_CORAL)) {
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralScoringPower);
 					setState(TowerState.SCORING_CORAL);
-				}				break;
+				} else if ((isTriggered(TowerEvent.GOTO_L4))  && (currentLevel != 4)){
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL4Height);
+					currentLevel = 4;
+					setState(TowerState.RAISING_TO_L4);
+				} else if ((isTriggered(TowerEvent.GOTO_L3))  && (currentLevel != 3)){
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL3Height);
+					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+					currentLevel = 3;
+					setState(TowerState.RAISING);
+				} else if ((isTriggered(TowerEvent.GOTO_L2))  && (currentLevel != 2)){
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL2Height);
+					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+					currentLevel = 2;
+					setState(TowerState.RAISING);
+				} else if ((isTriggered(TowerEvent.GOTO_L1))  && (currentLevel != 1)){
+					elevator.setGoalPosition(Constants.ElevatorConstants.kL1Height);
+					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+					currentLevel = 1;
+					setState(TowerState.RAISING);
+				}
+				break;
 			}
 
 			case SCORING_CORAL: {

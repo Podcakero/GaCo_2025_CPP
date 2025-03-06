@@ -18,7 +18,6 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -174,6 +173,10 @@ public class WristSubsystem extends SubsystemBase {
 
   public double getIntakeSpeed() {
     return intakeEncoder.getVelocity();
+  }
+
+  public double getIntakeCurrent() {
+    return intakeSpark.getOutputCurrent();
   }
 
   // wrist
