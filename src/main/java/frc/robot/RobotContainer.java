@@ -166,7 +166,7 @@ public class RobotContainer {
         copilot_1.button(DriverConstants.pose_efa).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_EF)));
         copilot_2.button(DriverConstants.pose_g).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_G)));
         copilot_2.button(DriverConstants.pose_h).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_H)));
-        copilot_1.button(DriverConstants.pose_kla).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_GH)));
+        copilot_1.button(DriverConstants.pose_gha).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_GH)));
 
               
        

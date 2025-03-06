@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,6 +20,7 @@ public class TowerSubsystem extends SubsystemBase {
 	private ElevatorSubsystem elevator;
 	private WristSubsystem wrist;
 	private TowerEvent pendingEvent = TowerEvent.NONE;   
+	private double safetyFactor = 1;
 
 	/** Creates a new Tower. */
 	public TowerSubsystem(ElevatorSubsystem elevator, WristSubsystem wrist) {
@@ -237,7 +237,6 @@ public class TowerSubsystem extends SubsystemBase {
 			case LOWERING: {
 				if (elevator.inPosition()){
 					wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
-					// wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);
 					setState(TowerState.GOING_TO_INTAKE);
 				}
 				break;
@@ -249,6 +248,22 @@ public class TowerSubsystem extends SubsystemBase {
 				}
 			}
 		}
+	}
+
+	public double getTowerSpeedSafetyFactor() {
+		//  Determine what portion of full speed can be used based on the tower State
+		safetyFactor = 1;
+
+		if ((currentState == TowerState.SCORING_CORAL) || (currentState == TowerState.PAUSING)) {
+			safetyFactor = 0.25;
+		} else if (elevator.getHeight().gt(Constants.ElevatorConstants.kElevatorSpeedSafeHeight)) {
+			double span    = Constants.ElevatorConstants.kElevatorMaxHeight.in(Inches) - Constants.ElevatorConstants.kElevatorSpeedSafeHeight.in(Inches); 
+			double overage = elevator.getHeight().in(Inches) - Constants.ElevatorConstants.kElevatorSpeedSafeHeight.in(Inches); 
+			double ratio   = overage / span;
+			safetyFactor   = 1.0 - (0.5 * ratio) ;
+		}
+
+		return safetyFactor;
 	}
 
 	public void triggerEvent(TowerEvent event){
@@ -269,6 +284,7 @@ public class TowerSubsystem extends SubsystemBase {
 	
 	private void updateDashboard() {
 		SmartDashboard.putString("Tower State", currentState.toString() + " <- " + pendingEvent.toString());
+		SmartDashboard.putNumber("Safety Factor", safetyFactor * 100);
 	}
 	
 	private Boolean isTriggered(TowerEvent event){

@@ -29,13 +29,13 @@ public class ApproachSubsystem extends SubsystemBase {
   private CommandScheduler scheduler = CommandScheduler.getInstance();
   public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
   public Optional<Alliance> alliance = DriverStation.getAlliance();
-  ApproachTarget targetPose = ApproachTarget.UNKNOWN;
+  ApproachTarget targetIdentifier = ApproachTarget.UNKNOWN;
 
   
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putString("Approach Target", targetPose.toString());
+    SmartDashboard.putString("Approach Target", targetIdentifier.toString());
   }
 
   public void startApproach() {
@@ -65,7 +65,7 @@ public class ApproachSubsystem extends SubsystemBase {
 
   /* Update the command stored in "approachCommand" to navigate to the specified position **/
   public void createPathCmd(ApproachTarget targetPos){
-    targetPose = targetPos;
+    targetIdentifier = targetPos;
     // Distance in meters
     double spacing = 0.45; // 1/2 length of robot
     double offset = 0.165;   // Offset from the center to the pole
