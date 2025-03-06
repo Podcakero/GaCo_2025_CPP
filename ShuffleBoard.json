@@ -167,7 +167,7 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Approach Target",
-              "_title": "/SmartDashboard/Approach Target",
+              "_title": "Approach Target",
               "_glyph": 148,
               "_showGlyph": false
             }
