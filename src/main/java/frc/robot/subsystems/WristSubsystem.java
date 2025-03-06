@@ -69,7 +69,7 @@ public class WristSubsystem extends SubsystemBase {
 
     // Use module constants to calculate conversion factors and feed forward gain.
     double intakeFactor = 1;
-    double angleFactor = 360 * 24 / 52;  // Sprocket reduction
+     // Sprocket reduction
 
 
     intakeConfig
@@ -85,14 +85,14 @@ public class WristSubsystem extends SubsystemBase {
       .smartCurrentLimit(20);
     angleConfig.absoluteEncoder
       //.inverted(true)
-      .positionConversionFactor(angleFactor) // degrees
-      .velocityConversionFactor(angleFactor / 60.0); // degrees per second
+      .positionConversionFactor(Constants.WristConstants.kAngleFactor) // degrees
+      .velocityConversionFactor(Constants.WristConstants.kAngleFactor / 60.0); // degrees per second
     angleConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
       // These are example gains you may need to them for your own robot!
       .pid(Constants.WristConstants.kP, Constants.WristConstants.kI, Constants.WristConstants.kD)
       .outputRange(-Constants.WristConstants.kAnglePower, Constants.WristConstants.kAnglePower)
-      .positionWrappingInputRange(0, angleFactor);
+      .positionWrappingInputRange(0, Constants.WristConstants.kAngleFactor);
 
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

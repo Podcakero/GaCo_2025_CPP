@@ -147,20 +147,26 @@ public class RobotContainer {
 
         copilot_1.button(DriverConstants.pose_i).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_I)));
         copilot_1.button(DriverConstants.pose_j).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_J)));
+        copilot_1.button(DriverConstants.pose_ija).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_IJ)));
         copilot_1.button(DriverConstants.pose_k).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_K)));
         copilot_1.button(DriverConstants.pose_l).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_L)));
+        copilot_1.button(DriverConstants.pose_kla).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_KL)));
         
         // CoPilot 2 Buttons
 
         copilot_2.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
         copilot_2.button(DriverConstants.pose_a).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_A)));
         copilot_2.button(DriverConstants.pose_b).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_B)));
+        copilot_1.button(DriverConstants.pose_aba).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_AB)));
         copilot_2.button(DriverConstants.pose_c).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_C)));
         copilot_2.button(DriverConstants.pose_d).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_D)));
+        copilot_1.button(DriverConstants.pose_cda).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_CD)));
         copilot_2.button(DriverConstants.pose_e).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_E)));
         copilot_2.button(DriverConstants.pose_f).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_F)));
+        copilot_1.button(DriverConstants.pose_efa).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_EF)));
         copilot_2.button(DriverConstants.pose_g).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_G)));
         copilot_2.button(DriverConstants.pose_h).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_H)));
+        copilot_1.button(DriverConstants.pose_kla).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_GH)));
 
               
        
@@ -168,6 +174,7 @@ public class RobotContainer {
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));
         joystick.rightBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));
+        joystick.x().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_ALGAE)));
         
         
 
@@ -231,6 +238,7 @@ public class RobotContainer {
     });
 
     public void faceCoralStation(boolean isLeft){
+        // Choose correct tag based on alliance color and side
         int tagId = 13;
         if(!isLeft){
             tagId -= 1;
@@ -247,11 +255,7 @@ public class RobotContainer {
             System.out.println(approach.alliance.get());
         }
         targetAngle = (approach.tags.getTagPose(tagId).get().getRotation().toRotation2d().getDegrees());
-        /*if(targetAngle > 0){
-            targetAngle = targetAngle - 180;
-        } else{
-            targetAngle = targetAngle + 180;
-        }*/
+
         if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) > 180){
             headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) + 360;
         } else{

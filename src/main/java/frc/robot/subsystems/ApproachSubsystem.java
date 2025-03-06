@@ -43,48 +43,8 @@ public class ApproachSubsystem extends SubsystemBase {
   }
 
 
-
-
-
-  public void setTarget(ApproachTarget target){
-    switch (target) {
-      case REEF_A: {
-        approachCommand = AutoBuilder.pathfindToPose(
-                            new Pose2d(3.179, 4.181, new Rotation2d(0)),
-                            new PathConstraints( 1.0, 2.0,
-                            Math.PI, Math.PI * 2),
-                            0.0 );
-        break;
-      }
-
-      case REEF_G: {
-        approachCommand = AutoBuilder.pathfindToPose(
-                            new Pose2d(5.795, 3.825, new Rotation2d(Math.PI)),
-                            new PathConstraints( 1.0, 2.0,
-                            Math.PI, Math.PI * 2),
-                            0.0 );
-        break;
-      }
-
-      case REEF_B: {
-        createPathCmd(18, false);
-        break;
-      }
-      
-      case REEF_H: {
-        createPathCmd(21, false);
-        break;
-      }
-
-      case REEF_K: {
-        createPathCmd(ApproachTarget.REEF_K);
-        break;
-      }
-
-    }
-  }
-
-  private void createPathCmd(int id, boolean isLeft){
+  // Direct call tag without an Enum
+  /*private void createPathCmd(int id, boolean isLeft){
     // Distance in meters
     double spacing = 0.45;
     double offset = 0.2;
@@ -101,7 +61,7 @@ public class ApproachSubsystem extends SubsystemBase {
       new PathConstraints( 4.0, 3.0,
       Math.PI, Math.PI * 2),
       0.0 );
-  }
+  }*/
 
   /* Update the command stored in "approachCommand" to navigate to the specified position **/
   public void createPathCmd(ApproachTarget targetPos){
@@ -110,15 +70,18 @@ public class ApproachSubsystem extends SubsystemBase {
     double spacing = 0.45; // 1/2 length of robot
     double offset = 0.165;   // Offset from the center to the pole
 
-    if(targetPos.isLeft){
+    if(targetPos.position == ReefSidePosition.LEFT){
       offset = -offset;
+    } else if(targetPos.position == ReefSidePosition.CENTER){
+      offset = 0;
+      spacing = 0.45;
     }
     
     double coords[] = getTagCoords(targetPos.tagId);
     double x = (coords[0] + Math.cos(coords[2])*spacing) + Math.cos(coords[2]+Math.PI/2)*offset;
     double y = (coords[1] + Math.sin(coords[2])*spacing) + Math.sin(coords[2]+Math.PI/2)*offset;
 
-    System.out.println("[" + coords[0] + "/" + x + ", " + coords[1] + "/" + y + "]; Rot: " + Math.toDegrees(coords[2]));
+    //System.out.println("[" + coords[0] + "/" + x + ", " + coords[1] + "/" + y + "]; Rot: " + Math.toDegrees(coords[2]));
 
     approachCommand = AutoBuilder.pathfindToPose(
       new Pose2d(x, y, new Rotation2d(coords[2] + Math.PI)),
