@@ -42,7 +42,7 @@ public class Constants {
         public static final double kSafeAngle               = 30;
         public static final double kL4Angle                 = 48;
         public static final double kHighAlgaeAngle          = 60;
-        public static final double kAlgaeIntakeAngle        = 160;
+        public static final double kAlgaeIntakeAngle        = 155;
 
         public static final double kMaxCoralDetectRangeMM   = 50;
     }
@@ -81,7 +81,7 @@ public class Constants {
         public static final Distance kL4Height = Inches.of(70); 
         public static final Distance kIntakeHeight = Inches.of(17.5); 
 
-        public static final Distance kAlgaeHighHight = Inches.of(50.5);
+        public static final Distance kAlgaeHighHight = Inches.of(47.5);
 
         public static final Distance kSafeHomeHeight = Inches.of(19);
         

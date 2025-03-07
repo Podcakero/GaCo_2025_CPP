@@ -81,7 +81,7 @@ public class WristSubsystem extends SubsystemBase {
     angleConfig
       .idleMode(IdleMode.kBrake)
       //.inverted(true)
-      .smartCurrentLimit(20);
+      .smartCurrentLimit(50);
     angleConfig.absoluteEncoder
       //.inverted(true)
       .positionConversionFactor(Constants.WristConstants.kAngleFactor) // degrees

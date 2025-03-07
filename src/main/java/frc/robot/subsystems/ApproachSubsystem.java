@@ -74,7 +74,7 @@ public class ApproachSubsystem extends SubsystemBase {
       offset = -offset;
     } else if(targetPos.position == ReefSidePosition.CENTER){
       offset = 0;
-      spacing = 0.75;
+      spacing = 0.9;
     }
     
     double coords[] = getTagCoords(targetPos.tagId);
