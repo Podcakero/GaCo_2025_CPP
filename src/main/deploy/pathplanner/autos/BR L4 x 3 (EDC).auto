@@ -1,0 +1,98 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BRtoE"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "INTAKE_AND_GOTO_L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WAIT_FOR_LOWERING"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "EtoCR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "INTAKE_AND_GOTO_L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CRtoD"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WAIT_FOR_LOWERING"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DtoCR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "INTAKE_AND_GOTO_L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CRtoC"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

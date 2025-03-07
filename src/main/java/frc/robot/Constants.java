@@ -40,12 +40,11 @@ public class Constants {
 
         public static final double kIntakeAngle             = 3;
         public static final double kSafeAngle               = 30;
-        public static final double kMaxCoralDetectRangeMM   = 40;
         public static final double kL4Angle                 = 48;
         public static final double kHighAlgaeAngle          = 60;
         public static final double kAlgaeIntakeAngle        = 160;
 
-
+        public static final double kMaxCoralDetectRangeMM   = 50;
     }
 
     public class ElevatorConstants {
