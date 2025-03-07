@@ -1,0 +1,80 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CtoG"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "INTAKE_AND_GOTO_L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WAIT_FOR_LOWERING"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Gto0.5C"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GET_ALGAE"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WAIT_FOR_ALGAE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "0.5CtoGH"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "GHto0.5C"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

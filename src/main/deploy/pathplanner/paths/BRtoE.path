@@ -8,27 +8,32 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.626639633344106,
-        "y": 2.0467891813962114
+        "x": 6.405749999999999,
+        "y": 1.8604999999999987
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": "Barge Red"
     },
     {
       "anchor": {
-        "x": 5.2627290442577666,
-        "y": 3.010873815129252
+        "x": 4.962749999999999,
+        "y": 2.8452499999999996
       },
       "prevControl": {
-        "x": 5.394458004931401,
-        "y": 2.720767118851545
+        "x": 5.489249999999999,
+        "y": 1.8994999999999984
       },
       "nextControl": null,
-      "isLocked": true,
-      "linkedName": "F"
+      "isLocked": false,
+      "linkedName": "E"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.6196491228070147,
+      "rotationDegrees": 119.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
