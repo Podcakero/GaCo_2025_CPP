@@ -82,9 +82,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("SCORE_CORAL",    new TriggerEventCmd(tower, TowerEvent.SCORE_CORAL));
         NamedCommands.registerCommand("GET_ALGAE", new TriggerEventCmd(tower, TowerEvent.INTAKE_ALGAE));
 
-        NamedCommands.registerCommand("ENABLE_VISION", vision.runOnce(() -> vision.setVisionDisabled(false)));
-        NamedCommands.registerCommand("DISABLE_VISION", vision.runOnce(() -> vision.setVisionDisabled(true)));
-
         NamedCommands.registerCommand("WAIT_FOR_ALGAE",         new WaitForTowerStateCmd(tower, TowerState.WAITING_FOR_ALGAE));
         NamedCommands.registerCommand("WAIT_FOR_LOWERING",         new WaitForTowerStateCmd(tower, TowerState.LOWERING));
         NamedCommands.registerCommand("WAIT_FOR_HOME",             new WaitForTowerStateCmd(tower, TowerState.HOME));
@@ -141,7 +138,7 @@ public class RobotContainer {
         // CoPilot 1 Buttons
 
         copilot_1.button(DriverConstants.unknown).onTrue(tower.runOnce(() -> tower.homeTower()));
-        copilot_1.button(DriverConstants.reset).onTrue(vision.runOnce(() -> vision.toggleSafetyOverride()));
+        copilot_1.button(DriverConstants.reset).onTrue(vision.runOnce(() -> vision.setSafetyOverride(true)));
 
         copilot_1.button(DriverConstants.l1).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
         copilot_1.button(DriverConstants.l2).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
