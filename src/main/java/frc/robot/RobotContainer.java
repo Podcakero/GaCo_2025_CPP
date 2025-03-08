@@ -141,7 +141,7 @@ public class RobotContainer {
         // CoPilot 1 Buttons
 
         copilot_1.button(DriverConstants.unknown).onTrue(tower.runOnce(() -> tower.homeTower()));
-        copilot_1.button(DriverConstants.reset).onTrue(vision.runOnce(() -> vision.setSafetyOverride(true)));
+        copilot_1.button(DriverConstants.reset).onTrue(vision.runOnce(() -> vision.toggleSafetyOverride()));
 
         copilot_1.button(DriverConstants.l1).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
         copilot_1.button(DriverConstants.l2).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));

@@ -47,6 +47,8 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledExit() {
     m_robotContainer.tower.initialize();
+    m_robotContainer.vision.setSafetyOverride(false);
+    m_robotContainer.vision.setVisionDisabled(false);
     //m_robotContainer.elevator.SyncronizeRelativeEncoder();
     //m_robotContainer.elevator.resetElevatorControl();
     //m_robotContainer.wrist.resetWristControl();

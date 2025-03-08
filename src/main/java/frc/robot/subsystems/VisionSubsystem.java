@@ -58,6 +58,10 @@ public class VisionSubsystem extends SubsystemBase{
         this.safetyOverride = safetyOverride;
     }
 
+    public void toggleSafetyOverride(){
+        this.safetyOverride = !this.safetyOverride;
+    }
+
     public void setVisionDisabled(boolean visionUpdateDisabled){
         this.visionUpdateDisabled = visionUpdateDisabled;
     }

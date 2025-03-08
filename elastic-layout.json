@@ -189,6 +189,40 @@
               "data_type": "double",
               "show_submit_button": false
             }
+          },
+          {
+            "title": "Safety Override",
+            "x": 576.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Safety Override",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4292686386,
+              "false_color": 4283167798,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Vision Disabled",
+            "x": 320.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Vision Disabled",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4291765284,
+              "false_color": 4283167798,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
           }
         ]
       }
