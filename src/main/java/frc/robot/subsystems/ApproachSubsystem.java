@@ -39,6 +39,7 @@ public class ApproachSubsystem extends SubsystemBase {
   }
 
   public void startApproach() {
+    Globals.setLEDMode(LEDmode.APPROACH);
     scheduler.schedule(approachCommand);
   }
 

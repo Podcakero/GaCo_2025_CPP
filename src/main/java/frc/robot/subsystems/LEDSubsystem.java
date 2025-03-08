@@ -26,7 +26,6 @@ public class LEDSubsystem extends SubsystemBase {
   // members for different modes
   private int patternMarker = 0;
   private int direction = 1;
-  private int collectingLEDSpeed = 2;
   private boolean stripOn = false;
    
   public static final int RED      = 0;
@@ -57,10 +56,10 @@ public class LEDSubsystem extends SubsystemBase {
       } else {
         Globals.setLEDMode(LEDmode.SYSTEM_ERROR);
       }
-    }
+    } 
 
     SmartDashboard.putString("LED Mode", Globals.getLEDMode().toString());
-
+   
     if (Globals.getLEDMode() != lastMode) {
       clearStrip();
       ledTimer.restart();
@@ -77,61 +76,17 @@ public class LEDSubsystem extends SubsystemBase {
         showAlliance();
         break;
 
-      case RAINBOW:     // Show a pretty Rainbow
-        showRainbow();
+      case MANUAL:             // Seeling a speaker to score
+        flashStrip(GREEN, 0.25, 0.00);
         break;
 
-      case NOTE_COLLECTING:  // Seeking a Note to collect
-        showCollecting();
-        break;
-
-      case NOTE_DETECTED:      // Note is visible
-        flashStrip(ORANGE, 0.05, 0.05);
-        break;
-
-      case NOTE_HOLDING:       // Note is in robot
-        flashStrip(ORANGE, 0.25, 0.0);
-        break;
-
-      case SEEKING:             // Seeling a speaker to score
-        flashStrip(GREEN, 0.25, 0.25);
-        break;
-
-      case SPEAKER_DETECTED:   // Speaker Apriltag has been detected
-        flashStrip(GREEN, 0.25, 0.0);
-        break;
-
-      case WINDING_UP:
-        showWindup();
-        break;
-
-      case SHOOTING:            // Green
-        flashStrip(GREEN, 0.1, 0.1);
-        break;
-
-      case SHOOTING_TIMEOUT:    // Waiting to shoot Shooting took too long
+      case APPROACH:    // Waiting to shoot Shooting took too long
         flashStrip(BLUE, 0.25, 0.0);
         break;
 
-      case DEFAULT:
-      flashStrip(GREEN, 0.25, 0.0);
-        break;
-
-      case LOWERING:
-        flashStrip(RED, 0.2, 0.05);
-        break;
-
-      case WAITING:
-        flashStrip(PURPLE, 0.1, 0);
-        break;
-
-     case DONE_WAITING:
-        flashStrip(BLUE, 0.1, 0.0);
-        break;
-
-       case SYSTEM_ERROR:       // Displaying system error 
-       default:
-        flashStrip(RED, 0.2, 0.2);
+      case SYSTEM_ERROR:       // Displaying system error 
+        default:
+        flashStrip(PURPLE, 0.2, 0.2);
         break;
     }
 
@@ -166,6 +121,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
   }
 
+  /*
   // -----------------------------------------------------------------------------------
   private void showRainbow() {
     // Fill the strip with a full color wheel of hues
@@ -198,7 +154,7 @@ public class LEDSubsystem extends SubsystemBase {
       ledBuffer.setRGB((patternMarker + i) % stripLength, 200, 20, 0);
     }
   }
-    
+  */
  
   public void showWindup() {
 

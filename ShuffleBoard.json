@@ -196,7 +196,7 @@
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Vision Disabled",
-              "_title": "Vision Disabled",
+              "_title": "/SmartDashboard/Vision Disabled",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#FF0000FF",
@@ -211,11 +211,24 @@
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Safety Override",
-              "_title": "Safety Override",
+              "_title": "/SmartDashboard/Safety Override",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#FF0000FF",
               "Colors/Color when false": "#00FF00FF"
+            }
+          },
+          "0,6": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/LED Mode",
+              "_title": "/SmartDashboard/LED Mode",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }
