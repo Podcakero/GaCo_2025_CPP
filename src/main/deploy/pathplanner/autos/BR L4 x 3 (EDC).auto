@@ -36,9 +36,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "DISABLE_VISION"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "EtoCR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ENABLE_VISION"
           }
         },
         {
@@ -66,9 +78,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "DISABLE_VISION"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "DtoCR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ENABLE_VISION"
           }
         },
         {

@@ -36,9 +36,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "DISABLE_VISION"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "JtoCL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ENABLE_VISION"
           }
         },
         {
@@ -66,9 +78,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "DISABLE_VISION"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "KtoCL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ENABLE_VISION"
           }
         },
         {

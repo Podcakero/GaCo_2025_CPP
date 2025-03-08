@@ -33,6 +33,7 @@ public class VisionSubsystem extends SubsystemBase{
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     Pose3d robotPose;
     boolean safetyOverride = false;
+    boolean visionUpdateDisabled = false;
 
     /**
      * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
@@ -57,6 +58,10 @@ public class VisionSubsystem extends SubsystemBase{
         this.safetyOverride = safetyOverride;
     }
 
+    public void setVisionDisabled(boolean visionUpdateDisabled){
+        this.visionUpdateDisabled = visionUpdateDisabled;
+    }
+
     public void periodic(){
 
         estimatedRobotPose = getEstimatedGlobalPose();
@@ -71,7 +76,7 @@ public class VisionSubsystem extends SubsystemBase{
             Translation2d oldPosition = drivetrain.getState().Pose.getTranslation();
             double displacement = oldPosition.getDistance(newPosition);
 
-            if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
+            if (((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) && !visionUpdateDisabled) {
                 drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
             }
 
