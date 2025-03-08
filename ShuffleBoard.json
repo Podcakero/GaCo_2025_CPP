@@ -187,6 +187,36 @@
               "Range/Max": 100.0,
               "Visuals/Show value": true
             }
+          },
+          "7,6": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Vision Disabled",
+              "_title": "Vision Disabled",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#FF0000FF",
+              "Colors/Color when false": "#00FF00FF"
+            }
+          },
+          "10,6": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Safety Override",
+              "_title": "Safety Override",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#FF0000FF",
+              "Colors/Color when false": "#00FF00FF"
+            }
           }
         }
       }

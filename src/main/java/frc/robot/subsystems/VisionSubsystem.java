@@ -79,13 +79,12 @@ public class VisionSubsystem extends SubsystemBase{
             if (((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) && !visionUpdateDisabled) {
                 drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
             }
-
             SmartDashboard.putNumber("pose Disp", displacement);
             SmartDashboard.putString("Pose 2d", robotPose.toString());
-            SmartDashboard.putBoolean("Safety Override", safetyOverride);
-
-
         }
+        
+        SmartDashboard.putBoolean("Safety Override", safetyOverride);
+        SmartDashboard.putBoolean("Vision Disabled", visionUpdateDisabled);
     }
 
     /**
