@@ -94,7 +94,32 @@ public class ApproachSubsystem extends SubsystemBase {
     try{
       alliance = DriverStation.getAlliance();
       if(alliance.get().equals(Alliance.Red)){
-        id = id - 11;
+        switch(id){
+          case 17:
+          id = 8;
+          break;
+
+        case 18:
+          id = 7;
+          break;
+
+        case 19:
+          id = 6;
+          break;
+
+        case 20:
+          id = 11;
+          break;
+
+        case 21:
+          id = 10;
+          break;
+          
+        case 22:
+          id = 9;
+          break;
+        }
+        
       }
     } catch(NoSuchElementException e){
     System.out.println("No alliance color assigned");
