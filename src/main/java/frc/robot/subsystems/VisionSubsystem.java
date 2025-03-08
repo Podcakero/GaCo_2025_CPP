@@ -32,7 +32,8 @@ public class VisionSubsystem extends SubsystemBase{
     Optional<EstimatedRobotPose>  estimatedRobotPose;
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     Pose3d robotPose;
-       
+    boolean safetyOverride = false;
+
     /**
      * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
      * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
@@ -52,6 +53,10 @@ public class VisionSubsystem extends SubsystemBase{
         poseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
     }
 
+    public void setSafetyOverride(boolean safetyOverride){
+        this.safetyOverride = safetyOverride;
+    }
+
     public void periodic(){
 
         estimatedRobotPose = getEstimatedGlobalPose();
@@ -66,12 +71,13 @@ public class VisionSubsystem extends SubsystemBase{
             Translation2d oldPosition = drivetrain.getState().Pose.getTranslation();
             double displacement = oldPosition.getDistance(newPosition);
 
-            if ((displacement <= 1.0) || (DriverStation.isDisabled())) {
+            if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
                 drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
             }
 
             SmartDashboard.putNumber("pose Disp", displacement);
             SmartDashboard.putString("Pose 2d", robotPose.toString());
+            SmartDashboard.putBoolean("Safety Override", safetyOverride);
 
 
         }

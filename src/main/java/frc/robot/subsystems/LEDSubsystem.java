@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -12,16 +11,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.Globals;
-import frc.robot.subsystems.LEDmode;
+
 
 
 public class LEDSubsystem extends SubsystemBase {
 
   private final int               stripLength = 25;
-  private final int               speedoGrn   = 14;
-  private final int               speedoOrg   = 6;
-
   private LEDmode                 lastMode = LEDmode.NONE;
   private AddressableLED          ledStrip;
   private Addressable2815LEDBuffer ledBuffer;  // Use the new class that flips the R&G LEDs
@@ -134,10 +129,10 @@ public class LEDSubsystem extends SubsystemBase {
         flashStrip(BLUE, 0.1, 0.0);
         break;
 
-       case SYSTEM_ERROR:       // Displaying system error code
+       case SYSTEM_ERROR:       // Displaying system error 
+       default:
         flashStrip(RED, 0.2, 0.2);
         break;
-
     }
 
     // Set the LEDs
@@ -213,23 +208,10 @@ public class LEDSubsystem extends SubsystemBase {
       // 16-24  Shooter Status
       clearStrip();
       
-      if (true) {
-        setStrip(GREEN,0, 8);
-      } else {
-        setStrip(RED,0, 8);
-      }
 
-      if (true) {
+        setStrip(GREEN,0, 8);
         setStrip(GREEN,8, 8);
-      } else {
-        setStrip(RED,8, 8);
-      }
-      
-      if (true) {
-         setStrip(GREEN,16, 8);
-      } else {
-        setStrip(RED,16, 8);
-      }
+        setStrip(GREEN,16, 8);
   }
 
 
