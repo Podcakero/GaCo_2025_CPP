@@ -76,7 +76,7 @@ public class VisionSubsystem extends SubsystemBase{
             Translation2d oldPosition = drivetrain.getState().Pose.getTranslation();
             double displacement = oldPosition.getDistance(newPosition);
 
-            if (((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) && !visionUpdateDisabled) {
+            if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
                 drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
             }
             SmartDashboard.putNumber("pose Disp", displacement);
