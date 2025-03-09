@@ -51,7 +51,7 @@ public class LEDSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
 
     if (DriverStation.isDisabled()) {
-      if (Globals.gotCoral) {
+      if (Globals.GOT_CORAL) {
         Globals.setLEDMode(LEDmode.ALLIANCE);
       } else {
         Globals.setLEDMode(LEDmode.SYSTEM_ERROR);
@@ -76,15 +76,15 @@ public class LEDSubsystem extends SubsystemBase {
         showAlliance();
         break;
 
-      case MANUAL:             // Seeling a speaker to score
-        flashStrip(GREEN, 0.25, 0.00);
+      case MANUAL:      // Show driving lights
+        showInPosition();
         break;
 
-      case APPROACH:    // Waiting to shoot Shooting took too long
+      case APPROACH:    // Auto Approach
         flashStrip(BLUE, 0.25, 0.0);
         break;
 
-      case SYSTEM_ERROR:       // Displaying system error 
+      case SYSTEM_ERROR:  // Displaying system error 
         default:
         flashStrip(PURPLE, 0.2, 0.2);
         break;
@@ -156,18 +156,38 @@ public class LEDSubsystem extends SubsystemBase {
   }
   */
  
-  public void showWindup() {
+  public void showInPosition() {
 
       // The LED bar is divided into 3 bands...
-      // 0-7    Camera Allignment status
-      // 8-15   Tilt Status
-      // 16-24  Shooter Status
-      clearStrip();
-      
+      // 0-4   ELV In Pos    
+      // 5-8   Wrist in Pos
+      // 9-16  Got Coral
+      // 17-20 Wrist in Pos
+      // 21-44 ELV In Pos    
 
-        setStrip(GREEN,0, 8);
-        setStrip(GREEN,8, 8);
-        setStrip(GREEN,16, 8);
+      clearStrip();
+
+      if (Globals.GOT_CORAL) {
+        setStrip(GREEN,9, 8);
+      } else {
+        setStrip(RED,9, 8);
+       }
+
+      if (Globals.WRIST_IN_POSITION) {
+        setStrip(GREEN,5, 4);
+        setStrip(GREEN,17, 4);
+      } else {
+        setStrip(RED,5, 4);
+        setStrip(RED,17, 4);
+       }
+      
+      if (Globals.ELEVATOR_IN_POSITION) {
+        setStrip(GREEN,0,  4);
+        setStrip(GREEN,21, 4);
+      } else {
+        setStrip(RED,0,  4);
+        setStrip(RED,21, 4);
+      }
   }
 
 
