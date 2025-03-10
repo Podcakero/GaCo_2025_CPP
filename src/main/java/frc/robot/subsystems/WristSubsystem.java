@@ -125,7 +125,7 @@ public class WristSubsystem extends SubsystemBase {
 
     getRangeMM();
 
-    Globals.gotCoral = gotExitCoral() && gotEnterCoral();
+    Globals.GOT_CORAL = gotExitCoral() && gotEnterCoral();
 
      /*if (DriverStation.getStickButtonPressed(1,2)){
       bumpWrist(0.1016);
@@ -200,7 +200,8 @@ public class WristSubsystem extends SubsystemBase {
 
 
   public boolean inPosition(){
-    return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;
+    Globals.WRIST_IN_POSITION = (Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance);
+    return Globals.WRIST_IN_POSITION;
   }
 
   

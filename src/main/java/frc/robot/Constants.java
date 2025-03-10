@@ -44,7 +44,7 @@ public class Constants {
         public static final double kHighAlgaeAngle          = 60;
         public static final double kAlgaeIntakeAngle        = 155;
 
-        public static final double kMaxCoralDetectRangeMM   = 50;
+        public static final double kMaxCoralDetectRangeMM   = 80;
     }
 
     public class ElevatorConstants {
@@ -97,8 +97,8 @@ public class Constants {
     public class DriverConstants{
         
         // driver
-        public static final double kMaxDriveSpeed = 0.75;
-        public static final double kMaxTurnSpeed  = 0.8;
+        public static final double kMaxDriveSpeed = 0.85;
+        public static final double kMaxTurnSpeed  = 0.9;
         
 
         //Co-Pilot 1
