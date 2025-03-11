@@ -63,9 +63,9 @@ public class RobotContainer {
     private final CommandJoystick       copilot_2 = new CommandJoystick(2);
 
     static final Transform3d robotToLowerCam = new Transform3d(new Translation3d(0.26, 0.00, 0.20), 
-                                                          new Rotation3d(0,Math.toRadians(0),0));
-    static final Transform3d robotToUpperCam = new Transform3d(new Translation3d(0.26, 0.00, 0.20), 
-                                                          new Rotation3d(0,Math.toRadians(0),0));
+                                                          new Rotation3d(0,0,0));
+    static final Transform3d robotToUpperCam = new Transform3d(new Translation3d(-0.05, 0.00, 1.017), 
+                                                          new Rotation3d(0,0, Math.PI));
 
     // Instanciate subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
