@@ -30,6 +30,7 @@ public class LEDSubsystem extends SubsystemBase {
    
   public static final int RED      = 0;
   public static final int ORANGE   = 5;
+  public static final int YELLOW   =30;
   public static final int GREEN   = 60;
   public static final int BLUE   = 120;
   public static final int PURPLE = 140;
@@ -169,6 +170,8 @@ public class LEDSubsystem extends SubsystemBase {
 
       if (Globals.GOT_CORAL) {
         setStrip(GREEN,9, 8);
+      } else if (Globals.GOT_ALGAE) {
+        setStrip(YELLOW,9, 8);
       } else {
         setStrip(RED,9, 8);
        }

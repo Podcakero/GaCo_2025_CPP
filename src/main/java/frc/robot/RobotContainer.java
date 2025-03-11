@@ -88,8 +88,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L2",        new JustIntakeCmd(tower, TowerEvent.GOTO_L2));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L3",        new JustIntakeCmd(tower, TowerEvent.GOTO_L3));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L4",        new JustIntakeCmd(tower, TowerEvent.GOTO_L4));
-        NamedCommands.registerCommand("SCORE_CORAL",    new TriggerEventCmd(tower, TowerEvent.SCORE_CORAL));
-        NamedCommands.registerCommand("GET_ALGAE", new TriggerEventCmd(tower, TowerEvent.INTAKE_ALGAE));
+        NamedCommands.registerCommand("SCORE_CORAL",               new TriggerEventCmd(tower, TowerEvent.SCORE_CORAL));
+        NamedCommands.registerCommand("GET_ALGAE",                 new TriggerEventCmd(tower, TowerEvent.INTAKE_ALGAE));
 
         NamedCommands.registerCommand("WAIT_FOR_ALGAE",         new WaitForTowerStateCmd(tower, TowerState.WAITING_FOR_ALGAE));
         NamedCommands.registerCommand("WAIT_FOR_LOWERING",         new WaitForTowerStateCmd(tower, TowerState.LOWERING));
@@ -176,31 +176,26 @@ public class RobotContainer {
         copilot_2.button(DriverConstants.pose_g).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_G)));
         copilot_2.button(DriverConstants.pose_h).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_H)));
         copilot_2.button(DriverConstants.pose_gha).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_GH)));
-
-              
        
         // reset the field-centric heading on back btn press
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));
         joystick.rightBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));
         joystick.a().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_ALGAE)));
-        
-        
 
         // ==== Approach Buttons ================================
         
-        
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(0.5).withVelocityY(0))
+            forwardStraight.withVelocityX(0.75).withVelocityY(0))
         );
         joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(-0.5).withVelocityY(0))
+            forwardStraight.withVelocityX(-0.75).withVelocityY(0))
         );
         joystick.pov(90).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(0).withVelocityY(-0.5))
+            forwardStraight.withVelocityX(0).withVelocityY(-0.25))
         );
         joystick.pov(270).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(0).withVelocityY(0.5))
+            forwardStraight.withVelocityX(0).withVelocityY(0.25))
         );
         
 

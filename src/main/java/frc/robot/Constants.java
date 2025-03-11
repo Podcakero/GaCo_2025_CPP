@@ -33,8 +33,8 @@ public class Constants {
         public static final double kCoralRetractPower = 0.02;
 		public static final double kCoralOutputPower =  0.5;
 		public static final double kCoralScoringPower = -1.0;
-		public static final double kAlgaeIntakePower = 0.25;
-        public static final double kLowAlgaeIntakePower = 0.1;
+		public static final double kAlgaeIntakePower = 0.3;
+        public static final double kLowAlgaeIntakePower = 0.2;
     
 
         public static final double kAngleMaxVelocityDPS = 400; // 
@@ -44,7 +44,9 @@ public class Constants {
         public static final double kSafeAngle               = 30;
         public static final double kL4Angle                 = 48;
         public static final double kHighAlgaeAngle          = 60;
-        public static final double kAlgaeIntakeAngle        = 155;
+
+        public static final double kAlgaeIntakeAngle        = 180;  // was 155
+        
         public static final double kMaxAngleWhenHome        = 182;
         public static final double kMaxAngle                = 210;
 
@@ -79,13 +81,16 @@ public class Constants {
         public static final Distance kElevatorSpeedSafeHeight = Inches.of(40);
         public static final Distance kElevatorMinHeight = Inches.of(17.5);
 
-        public static final Distance kL1Height = Inches.of(21);
-        public static final Distance kL2Height = Inches.of(31);
-        public static final Distance kL3Height = Inches.of(46);
-        public static final Distance kL4Height = Inches.of(70); 
         public static final Distance kIntakeHeight = Inches.of(17.5); 
 
-        public static final Distance kAlgaeHighHight = Inches.of(47.5);
+        public static final Distance kL1CoralHeight = Inches.of(21);
+        public static final Distance kL2CoralHeight = Inches.of(31);
+        public static final Distance kL3CoralHeight = Inches.of(46);
+        public static final Distance kL4CoralHeight = Inches.of(70);
+
+        public static final Distance kL1AlgaeHeight = Inches.of(24);
+        public static final Distance kL2AlgaeHeight = Inches.of(38);
+        public static final Distance kL3AlgaeHeight = Inches.of(54);  // was 47.5
 
         public static final Distance kSafeHomeHeight = Inches.of(19);
         
