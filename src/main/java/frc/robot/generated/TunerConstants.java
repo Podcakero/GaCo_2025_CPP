@@ -81,8 +81,8 @@ public class TunerConstants {
     private static final double kCoupleRatio = 4.5;
 
     //private static final double kDriveGearRatio = 6.394736842105262;
-    private static final double jermeyFactor = 0.911;
-    private static final double kDriveGearRatio = 6.394736842105262 * jermeyFactor;
+    private static final double fineTune = 1.01225; 
+    private static final double kDriveGearRatio = 6.394736842105262 * fineTune;
     
     private static final double kSteerGearRatio = 12.1;
     private static final Distance kWheelRadius = Inches.of(2);
