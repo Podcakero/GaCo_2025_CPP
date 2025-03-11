@@ -27,13 +27,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class VisionSubsystem extends SubsystemBase{
 
     CommandSwerveDrivetrain drivetrain;
-    PhotonCamera lowerCamera;
+    PhotonCamera photonCamera;
     PhotonPoseEstimator poseEstimator;
     Optional<EstimatedRobotPose>  estimatedRobotPose;
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     Pose3d robotPose;
     boolean safetyOverride = false;
-    boolean visionUpdateDisabled = false;
+   
+    
 
     /**
      * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
@@ -41,13 +42,9 @@ public class VisionSubsystem extends SubsystemBase{
      */
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(1.0, 1.0, Units.degreesToRadians(10));
 
-
-    static final Transform3d robotToCam = new Transform3d(new Translation3d(0.26, 0.00, 0.20), 
-                                                          new Rotation3d(0,Math.toRadians(0),0)); 
-
-    public VisionSubsystem(CommandSwerveDrivetrain  drivetrain){
+    public VisionSubsystem(CommandSwerveDrivetrain  drivetrain, String cameraName, Transform3d robotToCam){
         this.drivetrain = drivetrain;
-        lowerCamera = new PhotonCamera("LowerTagCamera");
+        photonCamera = new PhotonCamera(cameraName);
 
         // Construct PhotonPoseEstimator
         poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
@@ -58,9 +55,6 @@ public class VisionSubsystem extends SubsystemBase{
         this.safetyOverride = safetyOverride;
     }
 
-    public void setVisionDisabled(boolean visionUpdateDisabled){
-        this.visionUpdateDisabled = visionUpdateDisabled;
-    }
 
     public void periodic(){
 
@@ -84,7 +78,7 @@ public class VisionSubsystem extends SubsystemBase{
         }
         
         SmartDashboard.putBoolean("Safety Override", safetyOverride);
-        SmartDashboard.putBoolean("Vision Disabled", visionUpdateDisabled);
+        
     }
 
     /**
@@ -99,7 +93,7 @@ public class VisionSubsystem extends SubsystemBase{
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
-        for (var change : lowerCamera.getAllUnreadResults()) {
+        for (var change : photonCamera.getAllUnreadResults()) {
             visionEst = poseEstimator.update(change);
         }
         return visionEst;
