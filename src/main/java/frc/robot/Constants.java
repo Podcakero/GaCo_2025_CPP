@@ -16,8 +16,10 @@ public class Constants {
     public class WristConstants {
         public static final int kAngleMotorId = 61;
         public static final int kIntakeMotorId = 62;
-
-        public static final double kAngleFactor = 360 * 24 / 52; // 166 degrees
+        public static final int kExitTOFId = 63;
+        public static final int kEnterTOFId = 64;
+        
+        public static final double kAngleFactor = 360 * 24 / 40; // 216 degrees
 
         public static final double kP = 0.02;
         public static final double kI = 0;
