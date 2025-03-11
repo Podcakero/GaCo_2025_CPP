@@ -96,10 +96,11 @@ public class WristSubsystem extends SubsystemBase {
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    exitTOF = new TimeOfFlight(63);
+    exitTOF = new TimeOfFlight(Constants.WristConstants.kExitTOFId);
     exitTOF.setRangingMode(RangingMode.Short, 30);
     exitTOF.setRangeOfInterest(0, 0, 15, 15);
-    enterTOF = new TimeOfFlight(64);
+    
+    enterTOF = new TimeOfFlight(Constants.WristConstants.kEnterTOFId);
     enterTOF.setRangingMode(RangingMode.Short, 30);
     enterTOF.setRangeOfInterest(0, 0, 15, 15);
 

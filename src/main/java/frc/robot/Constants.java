@@ -16,8 +16,10 @@ public class Constants {
     public class WristConstants {
         public static final int kAngleMotorId = 61;
         public static final int kIntakeMotorId = 62;
-
-        public static final double kAngleFactor = 360 * 24 / 52; // 166 degrees
+        public static final int kExitTOFId = 63;
+        public static final int kEnterTOFId = 64;
+        
+        public static final double kAngleFactor = 360 * 24 / 40; // 216 degrees
 
         public static final double kP = 0.02;
         public static final double kI = 0;
@@ -38,11 +40,13 @@ public class Constants {
         public static final double kAngleMaxVelocityDPS = 400; // 
 		public static final double kAngleMaxAccelerationDPSPS = 1000; // 
 
-        public static final double kIntakeAngle             = 3;
+        public static final double kIntakeAngle             = 4;
         public static final double kSafeAngle               = 30;
         public static final double kL4Angle                 = 48;
         public static final double kHighAlgaeAngle          = 60;
         public static final double kAlgaeIntakeAngle        = 155;
+        public static final double kMaxAngleWhenHome        = 182;
+        public static final double kMaxAngle                = 210;
 
         public static final double kMaxCoralDetectRangeMM   = 80;
     }
