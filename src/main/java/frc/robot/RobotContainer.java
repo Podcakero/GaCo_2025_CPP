@@ -91,7 +91,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L2",        new JustIntakeCmd(tower, TowerEvent.GOTO_L2));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L3",        new JustIntakeCmd(tower, TowerEvent.GOTO_L3));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L4",        new JustIntakeCmd(tower, TowerEvent.GOTO_L4));
-        NamedCommands.registerCommand("SCORE_CORAL",               new TriggerEventCmd(tower, TowerEvent.SCORE_CORAL));
+        NamedCommands.registerCommand("SCORE_CORAL",               new TriggerEventCmd(tower, TowerEvent.SCORE));
+        NamedCommands.registerCommand("SCORE_ALGAE",               new TriggerEventCmd(tower, TowerEvent.SCORE)); // same as coral
         NamedCommands.registerCommand("GET_ALGAE",                 new TriggerEventCmd(tower, TowerEvent.INTAKE_ALGAE));
         NamedCommands.registerCommand("GO_TO_L1",                  new TriggerEventCmd(tower, TowerEvent.GOTO_L1));
         NamedCommands.registerCommand("WAIT_FOR_ALGAE",            new WaitForTowerStateCmd(tower, TowerState.WAITING_FOR_ALGAE));
@@ -103,9 +104,12 @@ public class RobotContainer {
         // All Path Planner event triggers  ===========
         new EventTrigger("GOTO_L1_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.GOTO_L1));
 
+
+        // Configure Auto Chooser  ===============================
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
 
+        // Send drive module data to dashboard
         SmartDashboard.putData("Swerve Drive", new Sendable() {
             @Override
             public void initSendable(SendableBuilder builder) {
@@ -146,7 +150,7 @@ public class RobotContainer {
         // Driver Buttons
         // Tower State Machine Events
         //joystick.leftBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
-        joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
+        joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE)));
 
         // ==== Approach Buttons ================================
         joystick.leftTrigger(0.5).onTrue(approach.runOnce(() -> approach.startApproach()))
@@ -155,7 +159,8 @@ public class RobotContainer {
         // CoPilot 1 Buttons
 
         copilot_1.button(DriverConstants.unknown).onTrue(tower.runOnce(() -> tower.homeTower()));
-        copilot_1.button(DriverConstants.reset).onTrue(lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true)));
+        copilot_1.button(DriverConstants.reset).onTrue(lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true))
+                                                .andThen(upperVision.runOnce(() -> upperVision.setSafetyOverride(true))));
 
         copilot_1.button(DriverConstants.l1).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
         copilot_1.button(DriverConstants.l2).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
@@ -206,7 +211,6 @@ public class RobotContainer {
             forwardStraight.withVelocityX(0).withVelocityY(0.25))
         );
         
-
         /* 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -224,6 +228,9 @@ public class RobotContainer {
         return autoChooser.getSelected();
     }
 
+    // ==============================================================================================
+    // Approach Command code
+    // ==============================================================================================
     private Command approachCoralStationCommand;
     boolean isAtTarget = false;
     double targetAngle = (approach.tags.getTagPose(12).get().getRotation().toRotation2d().getDegrees());

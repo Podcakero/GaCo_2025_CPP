@@ -131,10 +131,10 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case WAITING_FOR_ALGAE: {
 		
-				if(isTriggered(TowerEvent.INTAKE_ALGAE) || isTriggered(TowerEvent.SCORE_CORAL)){
+				if(isTriggered(TowerEvent.SCORE)){
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);  // Score Algae
 					Globals.GOT_ALGAE = false;
-					setState(TowerState.PAUSING_AFTER_SCORING_CORAL);
+					setState(TowerState.PAUSING_AFTER_SCORING_ALGAE);
 				} else if (isTriggered(TowerEvent.GOTO_L1)) {
 					currentLevel = 1;
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL1AlgaeHeight);
@@ -163,6 +163,16 @@ public class TowerSubsystem extends SubsystemBase {
 				}
 				break;
 			}
+
+			case PAUSING_AFTER_SCORING_ALGAE: {
+				if (stateTimer.hasElapsed(0.3)){
+					wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
+					elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
+					setState(TowerState.LOWERING);
+				}
+				break;
+			}
+
 
 			case INTAKING: {
 				if (wrist.gotEnterCoral()){
@@ -238,7 +248,7 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case READY_TO_SCORE: {
-				if (isTriggered(TowerEvent.SCORE_CORAL)) {
+				if (isTriggered(TowerEvent.SCORE)) {
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralScoringPower);
 					setState(TowerState.SCORING_CORAL);
 				} else if ((isTriggered(TowerEvent.GOTO_L4))  && (currentLevel != 4)){
@@ -275,6 +285,7 @@ public class TowerSubsystem extends SubsystemBase {
 			case PAUSING_AFTER_SCORING_CORAL: {
 				if (wrist.inPosition() && stateTimer.hasElapsed(0.2)) {
 					if (l3Algae){
+						l3Algae = false;  // reset the flag
 						elevator.setGoalPosition(Constants.ElevatorConstants.kL3AlgaeHeight);
 						wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
 						setState(TowerState.GOING_TO_ALGAE_L3);

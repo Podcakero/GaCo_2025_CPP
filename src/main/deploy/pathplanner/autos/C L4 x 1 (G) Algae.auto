@@ -50,12 +50,6 @@
         {
           "type": "named",
           "data": {
-            "name": "GET_ALGAE"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "WAIT_FOR_ALGAE"
           }
         },
@@ -74,7 +68,7 @@
         {
           "type": "named",
           "data": {
-            "name": "SCORE_CORAL"
+            "name": "SCORE_ALGAE"
           }
         }
       ]
