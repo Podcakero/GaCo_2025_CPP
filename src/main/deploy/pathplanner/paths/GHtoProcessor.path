@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 6.620812952575263,
-        "y": 3.826101565867585
+        "x": 6.425250000000001,
+        "y": 3.7617499999999997
       },
       "prevControl": {
-        "x": 6.5281658804654175,
-        "y": 4.067910579175837
+        "x": 6.332602927890155,
+        "y": 4.0035590133082515
       },
       "nextControl": {
-        "x": 7.023848684206563,
-        "y": 2.774177631583027
+        "x": 6.828285731631301,
+        "y": 2.7098260657154416
       },
       "isLocked": false,
       "linkedName": null
@@ -46,7 +46,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.5723270440251613,
+      "waypointRelativePos": 1.755789473684207,
       "rotationDegrees": -90.0
     }
   ],
@@ -55,7 +55,7 @@
   "eventMarkers": [
     {
       "name": "GOTO_L1_ALGAE",
-      "waypointRelativePos": 0.22262118491920913,
+      "waypointRelativePos": 0.7902240325865565,
       "endWaypointRelativePos": null,
       "command": null
     }
