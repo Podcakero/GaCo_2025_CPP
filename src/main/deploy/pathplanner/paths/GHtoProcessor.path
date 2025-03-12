@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.005110290339918,
-        "y": 4.000192089903781
+        "x": 6.005233345340494,
+        "y": 3.9923323360313407
       },
       "isLocked": false,
       "linkedName": "GH"
     },
     {
       "anchor": {
-        "x": 6.647518492258484,
-        "y": 3.8847868518766844
+        "x": 6.620812952575263,
+        "y": 3.826101565867585
       },
       "prevControl": {
-        "x": 6.457292819647738,
-        "y": 4.060483386752674
+        "x": 6.5281658804654175,
+        "y": 4.067910579175837
       },
       "nextControl": {
-        "x": 7.487999999999641,
-        "y": 3.108499999998169
+        "x": 7.023848684206563,
+        "y": 2.774177631583027
       },
       "isLocked": false,
       "linkedName": null
@@ -36,21 +36,26 @@
         "y": 0.71
       },
       "prevControl": {
-        "x": 6.025499999999999,
-        "y": 1.5972499999999992
+        "x": 6.013569078943404,
+        "y": 2.0044407894777647
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Processor"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.5723270440251613,
+      "rotationDegrees": -90.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "GO_TO_L1",
-      "waypointRelativePos": 0.30794297352342165,
+      "name": "GOTO_L1_ALGAE",
+      "waypointRelativePos": 0.22262118491920913,
       "endWaypointRelativePos": null,
       "command": null
     }

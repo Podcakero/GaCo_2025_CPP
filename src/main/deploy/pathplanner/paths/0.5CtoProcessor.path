@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 6.393693034121131,
-        "y": 2.2407499999999994
+        "x": 6.148273026315788,
+        "y": 1.7061677631578949
       },
       "prevControl": {
-        "x": 6.911805969488561,
-        "y": 2.7906198539980402
+        "x": 6.350328947368421,
+        "y": 2.456661184210526
       },
       "nextControl": {
-        "x": 5.875580098753701,
-        "y": 1.6908801460019585
+        "x": 5.9278524906029055,
+        "y": 0.8874629162243353
       },
       "isLocked": false,
       "linkedName": null
@@ -52,7 +52,14 @@
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "GOTO_L1_ALGAE",
+      "waypointRelativePos": 0.12926391382405683,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 3.0,

@@ -43,7 +43,7 @@ public class TowerSubsystem extends SubsystemBase {
 		wrist.resetFrameRate();
 	}
 
-	public void goToL3Algae(){
+	public void enableGoToL3Algae(){
 		l3Algae = true;
 	}
 
@@ -116,12 +116,12 @@ public class TowerSubsystem extends SubsystemBase {
 				if(wrist.inPosition()){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL3AlgaeHeight);
 					wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
-					setState(TowerState.RAISING_AND_FLIPING_TO_ALGAE_L3);
+					setState(TowerState.GOING_TO_ALGAE_L3);
 				}
 				break;
 			}
 
-			case RAISING_AND_FLIPING_TO_ALGAE_L3: {
+			case GOING_TO_ALGAE_L3: {
 				if(elevator.inPosition() &&  wrist.inPosition()){
 					wrist.setIntakeSpeed(Constants.WristConstants.kAlgaeIntakePower);
 					setState(TowerState.WAITING_FOR_ALGAE);
@@ -134,7 +134,7 @@ public class TowerSubsystem extends SubsystemBase {
 				if(isTriggered(TowerEvent.INTAKE_ALGAE) || isTriggered(TowerEvent.SCORE_CORAL)){
 					wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);  // Score Algae
 					Globals.GOT_ALGAE = false;
-					setState(TowerState.PAUSING);
+					setState(TowerState.PAUSING_AFTER_SCORING_CORAL);
 				} else if (isTriggered(TowerEvent.GOTO_L1)) {
 					currentLevel = 1;
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL1AlgaeHeight);
@@ -265,32 +265,30 @@ public class TowerSubsystem extends SubsystemBase {
 			}
 
 			case SCORING_CORAL: {
-				if (!wrist.gotExitCoral()) {
-					setState(TowerState.PAUSING);
-				} else if ( stateTimer.hasElapsed(0.3)) {
+				if (!wrist.gotExitCoral() || stateTimer.hasElapsed(0.3)) {
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
-					setState(TowerState.PAUSING);
+					setState(TowerState.PAUSING_AFTER_SCORING_CORAL);
 				}
 				break;
 			}
 
-			case PAUSING: {
-				if (stateTimer.hasElapsed(0.25)) {
-					wrist.setIntakeSpeed(0);
-					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+			case PAUSING_AFTER_SCORING_CORAL: {
+				if (wrist.inPosition() && stateTimer.hasElapsed(0.2)) {
 					if (l3Algae){
 						elevator.setGoalPosition(Constants.ElevatorConstants.kL3AlgaeHeight);
+						wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
+						setState(TowerState.GOING_TO_ALGAE_L3);
 					} else {
 						elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
-					
+						setState(TowerState.LOWERING);
 					}
-					setState(TowerState.LOWERING);
 				}
 				break;
 			}
 
 			case LOWERING: {
 				if (elevator.inPosition()){
+					wrist.setIntakeSpeed(0);
 					wrist.setGoalAngle(Constants.WristConstants.kIntakeAngle);
 					setState(TowerState.GOING_TO_INTAKE);
 				}
@@ -309,7 +307,7 @@ public class TowerSubsystem extends SubsystemBase {
 		//  Determine what portion of full speed can be used based on the tower State
 		safetyFactor = 1;
 
-		if ((currentState == TowerState.SCORING_CORAL) || (currentState == TowerState.PAUSING)) {
+		if ((currentState == TowerState.SCORING_CORAL) || (currentState == TowerState.PAUSING_AFTER_SCORING_CORAL)) {
 			safetyFactor = 0.25;
 		} else if (elevator.getHeight().gt(Constants.ElevatorConstants.kElevatorSpeedSafeHeight)) {
 			double span    = Constants.ElevatorConstants.kElevatorMaxHeight.in(Inches) - Constants.ElevatorConstants.kElevatorSpeedSafeHeight.in(Inches); 
