@@ -22,6 +22,7 @@ public class TowerSubsystem extends SubsystemBase {
 	private TowerEvent pendingEvent = TowerEvent.NONE;   
 	private double safetyFactor = 1;
 	private int currentLevel = 0;
+	private boolean l3Algae = false;
 
 	/** Creates a new Tower. */
 	public TowerSubsystem(ElevatorSubsystem elevator, WristSubsystem wrist) {
@@ -40,6 +41,10 @@ public class TowerSubsystem extends SubsystemBase {
 	public void resetFrameRate() {
 		elevator.resetFrameRate();
 		wrist.resetFrameRate();
+	}
+
+	public void goToL3Algae(){
+		l3Algae = true;
 	}
 
 	@Override
@@ -273,7 +278,12 @@ public class TowerSubsystem extends SubsystemBase {
 				if (stateTimer.hasElapsed(0.25)) {
 					wrist.setIntakeSpeed(0);
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
-					elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
+					if (l3Algae){
+						elevator.setGoalPosition(Constants.ElevatorConstants.kL3AlgaeHeight);
+					} else {
+						elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
+					
+					}
 					setState(TowerState.LOWERING);
 				}
 				break;
@@ -330,6 +340,7 @@ public class TowerSubsystem extends SubsystemBase {
 	private void updateDashboard() {
 		SmartDashboard.putString("Tower State", currentState.toString() + " <- " + pendingEvent.toString());
 		SmartDashboard.putNumber("Safety Factor", safetyFactor * 100);
+		SmartDashboard.putBoolean("l3Algae", l3Algae);
 	}
 	
 	private Boolean isTriggered(TowerEvent event){

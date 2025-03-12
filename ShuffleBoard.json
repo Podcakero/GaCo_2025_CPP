@@ -215,6 +215,21 @@
               "_glyph": 148,
               "_showGlyph": false
             }
+          },
+          "8,6": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/l3Algae",
+              "_title": "/SmartDashboard/l3Algae",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
           }
         }
       }

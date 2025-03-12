@@ -60,15 +60,33 @@
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 1.0
+            "pathName": "GHto0.5C"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GO_TO_L1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GO_TO_L3_ALGAE"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "GHto0.5C"
+            "pathName": "0.5CtoProcessor"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_CORAL"
           }
         }
       ]
