@@ -39,22 +39,9 @@
               "_showGlyph": false
             }
           },
-          "13,8": {
-            "size": [
-              11,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Pose 2d",
-              "_title": "/SmartDashboard/Pose 2d",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "4,0": {
             "size": [
-              4,
+              6,
               2
             ],
             "content": {
@@ -188,21 +175,6 @@
               "Visuals/Show value": true
             }
           },
-          "10,6": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Safety Override",
-              "_title": "Limit Tag Jumping",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#FF0000FF",
-              "Colors/Color when false": "#00FF00FF"
-            }
-          },
           "0,6": {
             "size": [
               3,
@@ -216,7 +188,7 @@
               "_showGlyph": false
             }
           },
-          "8,6": {
+          "1,8": {
             "size": [
               2,
               2
@@ -229,6 +201,62 @@
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "3,8": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/LowerTagCamera Safety Override",
+              "_title": "/SmartDashboard/LowerTagCamera Safety Override",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "3,6": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/UpperTagCamera Safety Override",
+              "_title": "/SmartDashboard/UpperTagCamera Safety Override",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "5,8": {
+            "size": [
+              8,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/LowerTagCamera Pose 2d",
+              "_title": "/SmartDashboard/LowerTagCamera Pose 2d",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,6": {
+            "size": [
+              8,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/UpperTagCamera Pose 2d",
+              "_title": "/SmartDashboard/UpperTagCamera Pose 2d",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }
