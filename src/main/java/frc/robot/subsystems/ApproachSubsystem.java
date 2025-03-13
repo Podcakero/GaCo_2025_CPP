@@ -4,11 +4,15 @@
 
 package frc.robot.subsystems;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -22,15 +26,21 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ApproachSubsystem extends SubsystemBase {
-  /** Creates a new ApproachSubsystem. */
-  public ApproachSubsystem() {}
 
-  private Command  approachCommand;
+  private Command approachCommand;
   private CommandScheduler scheduler = CommandScheduler.getInstance();
   public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
   public Optional<Alliance> alliance = DriverStation.getAlliance();
+  private CommandSwerveDrivetrain drivetrain;
   ApproachTarget targetIdentifier = ApproachTarget.UNKNOWN;
 
+
+  public ApproachSubsystem(CommandSwerveDrivetrain drivetrain) {
+    this.drivetrain = drivetrain;
+  }
+
+
+  
   
   @Override
   public void periodic() {
@@ -64,31 +74,65 @@ public class ApproachSubsystem extends SubsystemBase {
       0.0 );
   }*/
 
+
+
+
+  // Prevent the path from being flipped if the coordinates are already correct
+
+
+
   /* Update the command stored in "approachCommand" to navigate to the specified position **/
   public void createPathCmd(ApproachTarget targetPos){
     targetIdentifier = targetPos;
     // Distance in meters
     double spacing = 0.45; // 1/2 length of robot
     double offset = 0.165;   // Offset from the center to the pole
+    double closeApproachDistance = 0.2;  // Distance to stay away from the reef when approaching close
 
     if(targetPos.position == ReefSidePosition.LEFT){
       offset = -offset;
     } else if(targetPos.position == ReefSidePosition.CENTER){
       offset = 0;
-      spacing = 0.9;
+      spacing = 0.9; // Space out further for algae
     }
-    
+
     double coords[] = getTagCoords(targetPos.tagId);
-    double x = (coords[0] + Math.cos(coords[2])*spacing) + Math.cos(coords[2]+Math.PI/2)*offset;
-    double y = (coords[1] + Math.sin(coords[2])*spacing) + Math.sin(coords[2]+Math.PI/2)*offset;
+    boolean isClose = true;
 
-    //System.out.println("[" + coords[0] + "/" + x + ", " + coords[1] + "/" + y + "]; Rot: " + Math.toDegrees(coords[2]));
+    double angleToTarget = Math.atan2(coords[1] - drivetrain.getState().Pose.getY(), coords[0] - drivetrain.getState().Pose.getX());
 
-    approachCommand = AutoBuilder.pathfindToPose(
-      new Pose2d(x, y, new Rotation2d(coords[2] + Math.PI)),
-      new PathConstraints( 2.0, 2.0,
-      Math.PI, Math.PI * 2),
-      0.0 );
+    if(isClose){
+      // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        new Pose2d(coords[0] + Math.cos(coords[2]) * (spacing + closeApproachDistance), coords[1] +  Math.sin(coords[2]) * (spacing + closeApproachDistance), Rotation2d.fromRadians(angleToTarget)),
+        new Pose2d(coords[0] + Math.cos(coords[2]) * spacing, coords[1] + Math.sin(coords[2]) * spacing, Rotation2d.fromRadians(coords[2]))
+      );
+
+      PathConstraints constraints = new PathConstraints(2.0, 2.5, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+
+      // Create the path using the waypoints created above
+      PathPlannerPath path = new PathPlannerPath(
+          waypoints,
+          constraints,
+          null,
+          new GoalEndState(0.3, Rotation2d.fromRadians((getTagCoords(targetPos.tagId)[2] + Math.PI) % (2*Math.PI))) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+      );
+      path.preventFlipping = true;
+      approachCommand = AutoBuilder.followPath(path);
+
+    } else{
+      
+      double x = (coords[0] + Math.cos(coords[2])*spacing) + Math.cos(coords[2]+Math.PI/2)*offset;
+      double y = (coords[1] + Math.sin(coords[2])*spacing) + Math.sin(coords[2]+Math.PI/2)*offset;
+
+      //System.out.println("[" + coords[0] + "/" + x + ", " + coords[1] + "/" + y + "]; Rot: " + Math.toDegrees(coords[2]));
+
+      approachCommand = AutoBuilder.pathfindToPose(
+        new Pose2d(x, y, new Rotation2d(coords[2] + Math.PI)),
+        new PathConstraints( 2.0, 2.0,
+        Math.PI, Math.PI * 2),
+        0.0 );
+    }
   }
 
   private double[] getTagCoords(int id){

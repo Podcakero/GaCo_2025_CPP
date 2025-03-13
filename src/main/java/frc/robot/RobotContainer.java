@@ -76,7 +76,7 @@ public class RobotContainer {
     public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist);
     public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam);
     public final VisionSubsystem upperVision = new VisionSubsystem(drivetrain, "UpperTagCamera", robotToUpperCam);
-    public final ApproachSubsystem approach = new ApproachSubsystem();
+    public final ApproachSubsystem approach = new ApproachSubsystem(drivetrain);
     
     public final LEDSubsystem led = new LEDSubsystem(0);
 
