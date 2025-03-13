@@ -55,8 +55,10 @@ public class TowerSubsystem extends SubsystemBase {
 	}
 
 	public void homeTower() {
+		wrist.setIntakeSpeed(0);
 		elevator.resetElevatorControl();
 		wrist.resetWristControl();
+		pendingEvent = TowerEvent.NONE;
 		setState(TowerState.INIT);
 	}
 	
@@ -112,6 +114,9 @@ public class TowerSubsystem extends SubsystemBase {
 				} else if (isTriggered(TowerEvent.INTAKE_HIGH_ALGAE)){
 					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
 					setState(TowerState.GET_SAFE_FOR_L3_ALGAE);
+				} else if (isTriggered(TowerEvent.SCORE)){
+					wrist.setIntakeSpeed(Constants.WristConstants.kCoralIntakePower);
+					setState(TowerState.PAUSING_AFTER_SCORING_CORAL);
 				} else {
 					currentLevel = 0;
 				}
@@ -195,7 +200,12 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case READY_TO_SCORE_CORAL: {
 				if (isTriggered(TowerEvent.SCORE)) {
-					wrist.setIntakeSpeed(Constants.WristConstants.kCoralScoringPower);
+					if (currentLevel >  1) {
+						wrist.setIntakeSpeed(Constants.WristConstants.kCoralL234ScoringPower);
+					} else {
+						wrist.setIntakeSpeed(Constants.WristConstants.kCoralL1ScoringPower);
+					}
+					
 					setState(TowerState.SCORING_CORAL);
 				} else if ((isTriggered(TowerEvent.GOTO_L4))  && (currentLevel != 4)){
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL4CoralHeight);
@@ -230,7 +240,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case PAUSING_AFTER_SCORING_CORAL: {
 				if (wrist.inPosition() && stateTimer.hasElapsed(0.2)) {
-					if (goDirectAlgae){
+					if (goDirectAlgae){  // special bypass to go to pickup Algae in Auto
 						goDirectAlgae = false;  // reset the flag
 						elevator.setGoalPosition(Constants.ElevatorConstants.kL2AlgaeHeight);
 						wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
@@ -323,7 +333,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case PAUSING_AFTER_SCORING_ALGAE: {  // this state trigers Path Planner to move after scoring
 				if (stateTimer.hasElapsed(0.3)){
-					if(goDirectAlgae){
+					if(goDirectAlgae){  // special bypass to go to pickup Algae in Auto
 						goDirectAlgae = false; //resets the flag
 						wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
 						currentLevel = 1;
