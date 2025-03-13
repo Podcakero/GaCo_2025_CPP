@@ -18,6 +18,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,6 +47,7 @@ public class ApproachSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putString("Approach Target", targetIdentifier.toString());
+
   }
 
   public void startApproach() {
@@ -100,20 +102,30 @@ public class ApproachSubsystem extends SubsystemBase {
     double coords[] = getTagCoords(targetPos.tagId);
 
     boolean isClose = false;
+    double effectiveDistance = 1;
 
-    if(Math.abs(coords[0] - drivetrain.getState().Pose.getX()) < 1 && Math.abs(coords[1] - drivetrain.getState().Pose.getY()) < 1){
+    double distanceToTarget = Math.hypot(coords[0] - drivetrain.getState().Pose.getX(), coords[1] - drivetrain.getState().Pose.getY());
+    SmartDashboard.putNumber("Distance to Target", distanceToTarget);
+    if(distanceToTarget >= effectiveDistance){ //should probably be 1 meter
       isClose = true;
     } else{
-      isClose = false;
+      isClose = true; // should be false
     }
 
     if(isClose){
+
+      double pt1X = coords[0] + (Math.cos(coords[2]) * (spacing + closeApproachDistance)) + Math.sin(coords[2])*offset;
+      double pt1Y = coords[1] + (Math.sin(coords[2]) * (spacing + closeApproachDistance)) + Math.cos(coords[2])*offset;
+      double pt2X = coords[0] + (Math.cos(coords[2]) * (spacing)) + Math.sin(coords[2])*offset;
+      double pt2Y = coords[1] + (Math.sin(coords[2]) * (spacing)) + Math.cos(coords[2])*offset;
+
+
       // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        new Pose2d(coords[0] + Math.cos(coords[2]) * (spacing + closeApproachDistance), coords[1] +  Math.sin(coords[2]) * (spacing + closeApproachDistance), Rotation2d.fromDegrees(reverseAngle(coords[2]))),
-        new Pose2d(coords[0] + Math.cos(coords[2]) * spacing, coords[1] + Math.sin(coords[2]) * spacing, Rotation2d.fromRadians(reverseAngle(coords[2])))
+        drivetrain.getState().Pose,
+        new Pose2d(pt1X, pt1Y, Rotation2d.fromDegrees(reverseAngle(coords[2]))),
+        new Pose2d(pt2X, pt2Y, Rotation2d.fromRadians(reverseAngle(coords[2])))
       );
-      System.out.println(waypoints.toString());
       PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
 
       // Create the path using the waypoints created above
