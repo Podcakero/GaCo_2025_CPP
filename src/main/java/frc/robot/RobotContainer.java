@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.JustIntakeCmd;
@@ -83,21 +85,34 @@ public class RobotContainer {
 
     public RobotContainer() {
         
-        NamedCommands.registerCommand("INTAKE_CORAL",   new TriggerEventCmd(tower, TowerEvent.INTAKE_CORAL));
+        // All named commands =========================
+        NamedCommands.registerCommand("INTAKE_CORAL",              new TriggerEventCmd(tower, TowerEvent.INTAKE_CORAL));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L1",        new JustIntakeCmd(tower, TowerEvent.GOTO_L1));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L2",        new JustIntakeCmd(tower, TowerEvent.GOTO_L2));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L3",        new JustIntakeCmd(tower, TowerEvent.GOTO_L3));
         NamedCommands.registerCommand("INTAKE_AND_GOTO_L4",        new JustIntakeCmd(tower, TowerEvent.GOTO_L4));
-        NamedCommands.registerCommand("SCORE_CORAL",               new TriggerEventCmd(tower, TowerEvent.SCORE_CORAL));
-        NamedCommands.registerCommand("GET_ALGAE",                 new TriggerEventCmd(tower, TowerEvent.INTAKE_ALGAE));
-
-        NamedCommands.registerCommand("WAIT_FOR_ALGAE",         new WaitForTowerStateCmd(tower, TowerState.WAITING_FOR_ALGAE));
-        NamedCommands.registerCommand("WAIT_FOR_LOWERING",         new WaitForTowerStateCmd(tower, TowerState.LOWERING));
+        NamedCommands.registerCommand("SCORE_CORAL",               new TriggerEventCmd(tower, TowerEvent.SCORE));
+        NamedCommands.registerCommand("SCORE_ALGAE",               new TriggerEventCmd(tower, TowerEvent.SCORE)); // same as coral
+        NamedCommands.registerCommand("GET_ALGAE",                 new TriggerEventCmd(tower, TowerEvent.INTAKE_HIGH_ALGAE));
+        NamedCommands.registerCommand("GO_TO_L1",                  new TriggerEventCmd(tower, TowerEvent.GOTO_L1));
+        NamedCommands.registerCommand("WAIT_FOR_ALGAE",            new WaitForTowerStateCmd(tower, TowerState.WAITING_FOR_ALGAE));
+        NamedCommands.registerCommand("WAIT_FOR_LOWERING",         new WaitForTowerStateCmd(tower, TowerState.PAUSING_AFTER_SCORING_CORAL));
         NamedCommands.registerCommand("WAIT_FOR_HOME",             new WaitForTowerStateCmd(tower, TowerState.HOME));
 
+        NamedCommands.registerCommand("GO_DIRECTLY_TO_ALGAE",      Commands.runOnce(() -> tower.enableGoToDirectAlgae()));
+
+        // All Path Planner event triggers  ===========
+        new EventTrigger("GOTO_L1_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.GOTO_L1));
+        new EventTrigger("GOTO_L3_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.GOTO_L3));
+        new EventTrigger("INTAKE_LOW_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.INTAKE_LOW_ALGAE));
+        new EventTrigger("INTAKE_HIGH_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.INTAKE_HIGH_ALGAE));
+
+
+        // Configure Auto Chooser  ===============================
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
 
+        // Send drive module data to dashboard
         SmartDashboard.putData("Swerve Drive", new Sendable() {
             @Override
             public void initSendable(SendableBuilder builder) {
@@ -138,7 +153,7 @@ public class RobotContainer {
         // Driver Buttons
         // Tower State Machine Events
         //joystick.leftBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
-        joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE_CORAL)));
+        joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE)));
 
         // ==== Approach Buttons ================================
         joystick.leftTrigger(0.5).onTrue(approach.runOnce(() -> approach.startApproach()))
@@ -147,7 +162,8 @@ public class RobotContainer {
         // CoPilot 1 Buttons
 
         copilot_1.button(DriverConstants.unknown).onTrue(tower.runOnce(() -> tower.homeTower()));
-        copilot_1.button(DriverConstants.reset).onTrue(lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true)));
+        copilot_1.button(DriverConstants.reset).onTrue(lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true))
+                                                .andThen(upperVision.runOnce(() -> upperVision.setSafetyOverride(true))));
 
         copilot_1.button(DriverConstants.l1).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
         copilot_1.button(DriverConstants.l2).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
@@ -181,7 +197,9 @@ public class RobotContainer {
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));
         joystick.rightBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));
-        joystick.a().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_ALGAE)));
+
+        joystick.y().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_HIGH_ALGAE)));
+        joystick.a().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_LOW_ALGAE)));
 
         // ==== Approach Buttons ================================
         
@@ -198,7 +216,6 @@ public class RobotContainer {
             forwardStraight.withVelocityX(0).withVelocityY(0.25))
         );
         
-
         /* 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -216,6 +233,9 @@ public class RobotContainer {
         return autoChooser.getSelected();
     }
 
+    // ==============================================================================================
+    // Approach Command code
+    // ==============================================================================================
     private Command approachCoralStationCommand;
     boolean isAtTarget = false;
     double targetAngle = (approach.tags.getTagPose(12).get().getRotation().toRotation2d().getDegrees());

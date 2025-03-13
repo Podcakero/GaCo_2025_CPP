@@ -14,10 +14,10 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
+
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
+
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -33,6 +33,7 @@ public class VisionSubsystem extends SubsystemBase{
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     Pose3d robotPose;
     boolean safetyOverride = false;
+    String cameraName;
    
     
 
@@ -44,6 +45,7 @@ public class VisionSubsystem extends SubsystemBase{
 
     public VisionSubsystem(CommandSwerveDrivetrain  drivetrain, String cameraName, Transform3d robotToCam){
         this.drivetrain = drivetrain;
+        this.cameraName = cameraName;
         photonCamera = new PhotonCamera(cameraName);
 
         // Construct PhotonPoseEstimator
@@ -73,11 +75,11 @@ public class VisionSubsystem extends SubsystemBase{
             if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
                 drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
             }
-            SmartDashboard.putNumber("pose Disp", displacement);
-            SmartDashboard.putString("Pose 2d", robotPose.toString());
+
+            SmartDashboard.putString(cameraName + " Pose 2d", robotPose.toString());
         }
         
-        SmartDashboard.putBoolean("Safety Override", safetyOverride);
+        SmartDashboard.putBoolean(cameraName + " Safety Override", safetyOverride);
         
     }
 

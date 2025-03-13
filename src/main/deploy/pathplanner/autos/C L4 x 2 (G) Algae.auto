@@ -70,6 +70,30 @@
           "data": {
             "name": "SCORE_ALGAE"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GO_DIRECTLY_TO_ALGAE"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ProcessorToEF"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "EFtoProcessor"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SCORE_ALGAE"
+          }
         }
       ]
     }
