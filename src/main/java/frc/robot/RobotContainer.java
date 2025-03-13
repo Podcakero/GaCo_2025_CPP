@@ -156,7 +156,7 @@ public class RobotContainer {
         joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE)));
 
         // ==== Approach Buttons ================================
-        joystick.leftTrigger(0.5).onTrue(approach.runOnce(() -> approach.startApproach()))
+        joystick.leftTrigger(0.5).onTrue(approach.runOnce(() -> approach.createPathCmd(approach.targetIdentifier)).andThen(approach.runOnce(() -> approach.startApproach())))
         .onFalse(drivetrain.runOnce(() -> drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0))));
 
         // CoPilot 1 Buttons

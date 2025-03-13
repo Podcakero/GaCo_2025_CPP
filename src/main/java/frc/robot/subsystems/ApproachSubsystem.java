@@ -32,7 +32,7 @@ public class ApproachSubsystem extends SubsystemBase {
   public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
   public Optional<Alliance> alliance = DriverStation.getAlliance();
   private CommandSwerveDrivetrain drivetrain;
-  ApproachTarget targetIdentifier = ApproachTarget.UNKNOWN;
+  public ApproachTarget targetIdentifier = ApproachTarget.UNKNOWN;
 
 
   public ApproachSubsystem(CommandSwerveDrivetrain drivetrain) {
@@ -78,7 +78,9 @@ public class ApproachSubsystem extends SubsystemBase {
 
 
   // Prevent the path from being flipped if the coordinates are already correct
+  public void checkDistance(){
 
+  }
 
 
   /* Update the command stored in "approachCommand" to navigate to the specified position **/
@@ -87,7 +89,7 @@ public class ApproachSubsystem extends SubsystemBase {
     // Distance in meters
     double spacing = 0.45; // 1/2 length of robot
     double offset = 0.165;   // Offset from the center to the pole
-    double closeApproachDistance = 0.2;  // Distance to stay away from the reef when approaching close
+    double closeApproachDistance = 0.15;  // Distance to stay away from the reef when approaching close
 
     if(targetPos.position == ReefSidePosition.LEFT){
       offset = -offset;
@@ -95,27 +97,31 @@ public class ApproachSubsystem extends SubsystemBase {
       offset = 0;
       spacing = 0.9; // Space out further for algae
     }
-
     double coords[] = getTagCoords(targetPos.tagId);
-    boolean isClose = true;
 
-    double angleToTarget = Math.atan2(coords[1] - drivetrain.getState().Pose.getY(), coords[0] - drivetrain.getState().Pose.getX());
+    boolean isClose = false;
+
+    if(Math.abs(coords[0] - drivetrain.getState().Pose.getX()) < 1 && Math.abs(coords[1] - drivetrain.getState().Pose.getY()) < 1){
+      isClose = true;
+    } else{
+      isClose = false;
+    }
 
     if(isClose){
       // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        new Pose2d(coords[0] + Math.cos(coords[2]) * (spacing + closeApproachDistance), coords[1] +  Math.sin(coords[2]) * (spacing + closeApproachDistance), Rotation2d.fromRadians(angleToTarget)),
-        new Pose2d(coords[0] + Math.cos(coords[2]) * spacing, coords[1] + Math.sin(coords[2]) * spacing, Rotation2d.fromRadians(coords[2]))
+        new Pose2d(coords[0] + Math.cos(coords[2]) * (spacing + closeApproachDistance), coords[1] +  Math.sin(coords[2]) * (spacing + closeApproachDistance), Rotation2d.fromDegrees(reverseAngle(coords[2]))),
+        new Pose2d(coords[0] + Math.cos(coords[2]) * spacing, coords[1] + Math.sin(coords[2]) * spacing, Rotation2d.fromRadians(reverseAngle(coords[2])))
       );
-
-      PathConstraints constraints = new PathConstraints(2.0, 2.5, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+      System.out.println(waypoints.toString());
+      PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
 
       // Create the path using the waypoints created above
       PathPlannerPath path = new PathPlannerPath(
           waypoints,
           constraints,
           null,
-          new GoalEndState(0.3, Rotation2d.fromRadians((getTagCoords(targetPos.tagId)[2] + Math.PI) % (2*Math.PI))) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+          new GoalEndState(0.0, Rotation2d.fromRadians(reverseAngle(coords[2]))) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
       );
       path.preventFlipping = true;
       approachCommand = AutoBuilder.followPath(path);
@@ -179,5 +185,13 @@ public class ApproachSubsystem extends SubsystemBase {
     return coords;
   }
 
+  /** Returns the reversed angle from the given angle in radians -PI to PI */
+  private double reverseAngle(double angle){
+    if(angle >= 0){
+      return angle - Math.PI;
+    } else{
+      return angle + Math.PI;
+    }
+  }
 
 }
