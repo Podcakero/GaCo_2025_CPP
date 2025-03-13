@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.015750000000001,
-        "y": 0.49549999999999955
+        "x": 5.995315401593458,
+        "y": 0.6872149357794762
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.898750000001814,
-        "y": 1.0512499999973182
+        "x": 5.914420294726029,
+        "y": 1.2929468414646668
       },
       "isLocked": false,
-      "linkedName": "P"
+      "linkedName": "Processor"
     },
     {
       "anchor": {
@@ -28,7 +28,16 @@
       "linkedName": "EF"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.17192982456140535,
+      "rotationDegrees": -89.16503815517356
+    },
+    {
+      "waypointRelativePos": 0.5326315789473675,
+      "rotationDegrees": 112.2296130905596
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
@@ -45,7 +54,14 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "GOTO_L3_ALGAE",
+      "waypointRelativePos": 0.09042769857433855,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
@@ -62,7 +78,7 @@
   "folder": "Processor",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 91.21887523513135
+    "rotation": -90.86147474025668
   },
   "useDefaultConstraints": true
 }

@@ -22,7 +22,7 @@ public class TowerSubsystem extends SubsystemBase {
 	private TowerEvent pendingEvent = TowerEvent.NONE;   
 	private double safetyFactor = 1;
 	private int currentLevel = 0;
-	private boolean l3Algae = false;
+	private boolean goDirectAlgae = false;
 
 	/** Creates a new Tower. */
 	public TowerSubsystem(ElevatorSubsystem elevator, WristSubsystem wrist) {
@@ -43,8 +43,8 @@ public class TowerSubsystem extends SubsystemBase {
 		wrist.resetFrameRate();
 	}
 
-	public void enableGoToL3Algae(){
-		l3Algae = true;
+	public void enableGoToDirectAlgae(){
+		goDirectAlgae = true;
 	}
 
 	@Override
@@ -230,9 +230,9 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case PAUSING_AFTER_SCORING_CORAL: {
 				if (wrist.inPosition() && stateTimer.hasElapsed(0.2)) {
-					if (l3Algae){
-						l3Algae = false;  // reset the flag
-						elevator.setGoalPosition(Constants.ElevatorConstants.kL3AlgaeHeight);
+					if (goDirectAlgae){
+						goDirectAlgae = false;  // reset the flag
+						elevator.setGoalPosition(Constants.ElevatorConstants.kL2AlgaeHeight);
 						wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
 						setState(TowerState.GOING_TO_ALGAE_INTAKE);
 					} else {
@@ -308,7 +308,7 @@ public class TowerSubsystem extends SubsystemBase {
 					wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
 					setState(TowerState.CHANGING_ALGAE_HEIGHT);
 				} else if(wrist.getIntakeCurrent() > 40){
-					wrist.setIntakeSpeed(Constants.WristConstants.kLowAlgaeIntakePower);  // hold lightly
+					//wrist.setIntakeSpeed(Constants.WristConstants.kLowAlgaeIntakePower);  // hold lightly
 					Globals.GOT_ALGAE = true;
 				}
 				break;
@@ -321,11 +321,19 @@ public class TowerSubsystem extends SubsystemBase {
 				break;
 			}
 
-			case PAUSING_AFTER_SCORING_ALGAE: {
+			case PAUSING_AFTER_SCORING_ALGAE: {  // this state trigers Path Planner to move after scoring
 				if (stateTimer.hasElapsed(0.3)){
-					wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
-					elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
-					setState(TowerState.LOWERING);
+					if(goDirectAlgae){
+						goDirectAlgae = false; //resets the flag
+						wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
+						currentLevel = 1;
+						wrist.setIntakeSpeed(Constants.WristConstants.kAlgaeIntakePower);
+						setState(TowerState.WAITING_FOR_ALGAE);
+					} else {
+						wrist.setGoalAngle(Constants.WristConstants.kSafeAngle);
+						elevator.setGoalPosition(Constants.ElevatorConstants.kIntakeHeight);
+						setState(TowerState.LOWERING);
+					}
 				}
 				break;
 			}
@@ -368,7 +376,7 @@ public class TowerSubsystem extends SubsystemBase {
 	private void updateDashboard() {
 		SmartDashboard.putString("Tower State", currentState.toString() + " <- " + pendingEvent.toString());
 		SmartDashboard.putNumber("Safety Factor", safetyFactor * 100);
-		SmartDashboard.putBoolean("l3Algae", l3Algae);
+		SmartDashboard.putBoolean("l3Algae", goDirectAlgae);
 	}
 	
 	private Boolean isTriggered(TowerEvent event){

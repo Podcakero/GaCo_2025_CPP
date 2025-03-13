@@ -3,52 +3,59 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.12125,
-        "y": 1.0219999999999994
+        "x": 5.136768226965968,
+        "y": 2.944799946940335
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.72575,
-        "y": 1.4314999999999998
+        "x": 5.44241803278633,
+        "y": 2.43662909835959
       },
       "isLocked": false,
-      "linkedName": "CR"
+      "linkedName": "EF"
     },
     {
       "anchor": {
-        "x": 5.981534285930412,
-        "y": 0.7599134664794451
+        "x": 5.995315401593458,
+        "y": 0.6872149357794762
       },
       "prevControl": {
-        "x": 5.845034285930411,
-        "y": 1.1011634664794454
+        "x": 5.982120612270642,
+        "y": 1.9129488271761568
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "P"
+      "linkedName": "Processor"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "GOTO_L1_ALGAE",
+      "waypointRelativePos": 0.10835030549898139,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
+    "maxAngularVelocity": 360.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -89.6852175039472
+    "rotation": -90.86147474025668
   },
   "reversed": false,
-  "folder": "Collect Right",
+  "folder": "EF",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 52.59464336859144
+    "rotation": 119.16761337957777
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
