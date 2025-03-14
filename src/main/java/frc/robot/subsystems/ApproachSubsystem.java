@@ -94,70 +94,74 @@ public class ApproachSubsystem extends SubsystemBase {
 
   /* Update the command stored in "approachCommand" to navigate to the specified position **/
   public void createPathCmd(ApproachTarget targetPos){
-    targetIdentifier = targetPos;
-    // Distance in meters
-    double spacing = 0.45; // 1/2 length of robot
-    double offset = 0.165;   // Offset from the center to the pole
-    double closeApproachDistance = 0.15;  // Distance to stay away from the reef when approaching close
+    if(targetPos != ApproachTarget.UNKNOWN){
+      targetIdentifier = targetPos;
+      // Distance in meters
+      double spacing = 0.45; // 1/2 length of robot
+      double offset = 0.165;   // Offset from the center to the pole
+      double closeApproachDistance = 0.15;  // Distance to stay away from the reef when approaching close
 
-    if(targetPos.position == ReefSidePosition.LEFT){
-      offset = -offset;
-    } else if(targetPos.position == ReefSidePosition.CENTER){
-      offset = 0;
-      spacing = 0.9; // Space out further for algae
-    }
-    double coords[] = getTagCoords(targetPos.tagId);
+      if(targetPos.position == ReefSidePosition.LEFT){
+        offset = -offset;
+      } else if(targetPos.position == ReefSidePosition.CENTER){
+        offset = 0;
+        spacing = 0.9; // Space out further for algae
+      }
+      double coords[] = getTagCoords(targetPos.tagId);
 
-    boolean isClose = false;
-    double effectiveDistance = 1;
+      boolean isClose = false;
+      double effectiveDistance = 1;
 
-    double distanceToTarget = Math.hypot(coords[0] - drivetrain.getState().Pose.getX(), coords[1] - drivetrain.getState().Pose.getY());
-    SmartDashboard.putNumber("Distance to Target", distanceToTarget);
-    if(distanceToTarget >= effectiveDistance){ //should probably be 1 meter
-      isClose = true;
+      double distanceToTarget = Math.hypot(coords[0] - drivetrain.getState().Pose.getX(), coords[1] - drivetrain.getState().Pose.getY());
+      SmartDashboard.putNumber("Distance to Target", distanceToTarget);
+      if(distanceToTarget >= effectiveDistance){ //should probably be 1 meter
+        isClose = true;
+      } else{
+        isClose = true; // should be false
+      }
+
+      if(isClose){
+
+        double pt1X = coords[0] + (Math.cos(coords[2]) * (spacing + closeApproachDistance)) + Math.cos(coords[2]+Math.PI/2)*offset;
+        double pt1Y = coords[1] + (Math.sin(coords[2]) * (spacing + closeApproachDistance)) + Math.sin(coords[2]+Math.PI/2)*offset;
+        double pt2X = coords[0] + (Math.cos(coords[2]) * (spacing)) + Math.cos(coords[2]+Math.PI/2)*offset;
+        double pt2Y = coords[1] + (Math.sin(coords[2]) * (spacing)) + Math.sin(coords[2]+Math.PI/2)*offset;
+
+        double approachAngle = Math.atan2(pt1Y - drivetrain.getState().Pose.getY(), pt1X - drivetrain.getState().Pose.getX());
+
+        // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+          new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), Rotation2d.fromRadians(approachAngle)),
+          new Pose2d(pt1X, pt1Y, Rotation2d.fromRadians(reverseAngle(coords[2]))),
+          new Pose2d(pt2X, pt2Y, Rotation2d.fromRadians(reverseAngle(coords[2])))
+        );
+        PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
+
+        // Create the path using the waypoints created above
+        path = new PathPlannerPath(
+            waypoints,
+            constraints,
+            null,
+            new GoalEndState(0.0, Rotation2d.fromRadians(reverseAngle(coords[2]))) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+        );
+        path.preventFlipping = true;
+        approachCommand = AutoBuilder.followPath(path);
+
+      } else{
+        
+        double x = (coords[0] + Math.cos(coords[2])*spacing) + Math.cos(coords[2]+Math.PI/2)*offset;
+        double y = (coords[1] + Math.sin(coords[2])*spacing) + Math.sin(coords[2]+Math.PI/2)*offset;
+
+        //System.out.println("[" + coords[0] + "/" + x + ", " + coords[1] + "/" + y + "]; Rot: " + Math.toDegrees(coords[2]));
+
+        approachCommand = AutoBuilder.pathfindToPose(
+          new Pose2d(x, y, new Rotation2d(coords[2] + Math.PI)),
+          new PathConstraints( 2.0, 2.0,
+          Math.PI, Math.PI * 2),
+          0.0 );
+      }
     } else{
-      isClose = true; // should be false
-    }
-
-    if(isClose){
-
-      double pt1X = coords[0] + (Math.cos(coords[2]) * (spacing + closeApproachDistance)) + Math.sin(coords[2])*offset;
-      double pt1Y = coords[1] + (Math.sin(coords[2]) * (spacing + closeApproachDistance)) + Math.cos(coords[2])*offset;
-      double pt2X = coords[0] + (Math.cos(coords[2]) * (spacing)) + Math.sin(coords[2])*offset;
-      double pt2Y = coords[1] + (Math.sin(coords[2]) * (spacing)) + Math.cos(coords[2])*offset;
-
-      double approachAngle = Math.atan2(pt1Y - drivetrain.getState().Pose.getY(), pt1X - drivetrain.getState().Pose.getX());
-
-      // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
-      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), Rotation2d.fromRadians(approachAngle)),
-        new Pose2d(pt1X, pt1Y, Rotation2d.fromRadians(reverseAngle(coords[2]))),
-        new Pose2d(pt2X, pt2Y, Rotation2d.fromRadians(reverseAngle(coords[2])))
-      );
-      PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
-
-      // Create the path using the waypoints created above
-      path = new PathPlannerPath(
-          waypoints,
-          constraints,
-          null,
-          new GoalEndState(0.0, Rotation2d.fromRadians(reverseAngle(coords[2]))) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
-      );
-      path.preventFlipping = true;
-      approachCommand = AutoBuilder.followPath(path);
-
-    } else{
-      
-      double x = (coords[0] + Math.cos(coords[2])*spacing) + Math.cos(coords[2]+Math.PI/2)*offset;
-      double y = (coords[1] + Math.sin(coords[2])*spacing) + Math.sin(coords[2]+Math.PI/2)*offset;
-
-      //System.out.println("[" + coords[0] + "/" + x + ", " + coords[1] + "/" + y + "]; Rot: " + Math.toDegrees(coords[2]));
-
-      approachCommand = AutoBuilder.pathfindToPose(
-        new Pose2d(x, y, new Rotation2d(coords[2] + Math.PI)),
-        new PathConstraints( 2.0, 2.0,
-        Math.PI, Math.PI * 2),
-        0.0 );
+      // No path is selected, do nothing
     }
   }
 
