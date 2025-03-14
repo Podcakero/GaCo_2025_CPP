@@ -4,14 +4,21 @@
 
 package frc.robot.subsystems;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.json.simple.parser.ParseException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.RotationTarget;
 import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -34,7 +41,7 @@ public class ApproachSubsystem extends SubsystemBase {
   public Optional<Alliance> alliance = DriverStation.getAlliance();
   private CommandSwerveDrivetrain drivetrain;
   public ApproachTarget targetIdentifier = ApproachTarget.UNKNOWN;
-
+  private PathPlannerPath path;
 
   public ApproachSubsystem(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
@@ -119,17 +126,18 @@ public class ApproachSubsystem extends SubsystemBase {
       double pt2X = coords[0] + (Math.cos(coords[2]) * (spacing)) + Math.sin(coords[2])*offset;
       double pt2Y = coords[1] + (Math.sin(coords[2]) * (spacing)) + Math.cos(coords[2])*offset;
 
+      double approachAngle = Math.atan2(pt1Y - drivetrain.getState().Pose.getY(), pt1X - drivetrain.getState().Pose.getX());
 
       // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        drivetrain.getState().Pose,
-        new Pose2d(pt1X, pt1Y, Rotation2d.fromDegrees(reverseAngle(coords[2]))),
+        new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), Rotation2d.fromRadians(approachAngle)),
+        new Pose2d(pt1X, pt1Y, Rotation2d.fromRadians(reverseAngle(coords[2]))),
         new Pose2d(pt2X, pt2Y, Rotation2d.fromRadians(reverseAngle(coords[2])))
       );
       PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI); // The constraints for this path.
 
       // Create the path using the waypoints created above
-      PathPlannerPath path = new PathPlannerPath(
+      path = new PathPlannerPath(
           waypoints,
           constraints,
           null,
@@ -205,5 +213,6 @@ public class ApproachSubsystem extends SubsystemBase {
       return angle + Math.PI;
     }
   }
+
 
 }
