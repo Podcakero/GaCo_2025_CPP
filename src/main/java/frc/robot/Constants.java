@@ -21,18 +21,20 @@ public class Constants {
         
         public static final double kAngleFactor = 360 * 24 / 40; // 216 degrees
 
-        public static final double kP = 0.02;
+        public static final double kP = 0.04; // was 0.02
         public static final double kI = 0;
         public static final double kD = 0.0;
         public static final double kAngleTollerance = 1;
 		
-        public static final double kAnglePower = 1;
+        public static final double kAnglePower = 0.5; // was 1.0
 		
 		public static final double kCoralIntakePower = -0.3;
         public static final double kCoralSlowIntakePower = -0.05;
         public static final double kCoralRetractPower = 0.02;
 		public static final double kCoralOutputPower =  0.5;
-		public static final double kCoralScoringPower = -1.0;
+		public static final double kCoralL234ScoringPower = -1.0;
+        public static final double kCoralL1ScoringPower = -0.2;
+
 		public static final double kAlgaeIntakePower = 0.3;
         public static final double kLowAlgaeIntakePower = 0.2;
     
@@ -119,7 +121,7 @@ public class Constants {
         public static final int l2 = 4;
         public static final int l1 = 5;
 
-        public static final int unknown = 6;
+        public static final int home = 6;
 
         public static final int pose_ija = 7;
         public static final int pose_i = 8;
