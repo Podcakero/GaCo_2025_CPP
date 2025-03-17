@@ -14,10 +14,10 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
+
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
+
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,30 +27,36 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class VisionSubsystem extends SubsystemBase{
 
     CommandSwerveDrivetrain drivetrain;
-    PhotonCamera lowerCamera;
+    PhotonCamera photonCamera;
     PhotonPoseEstimator poseEstimator;
     Optional<EstimatedRobotPose>  estimatedRobotPose;
     AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
     Pose3d robotPose;
-       
+    boolean safetyOverride = false;
+    String cameraName;
+   
+    
+
     /**
      * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
      * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
      */
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(1.0, 1.0, Units.degreesToRadians(10));
 
-
-    static final Transform3d robotToCam = new Transform3d(new Translation3d(0.26, 0.00, 0.20), 
-                                                          new Rotation3d(0,Math.toRadians(0),0)); 
-
-    public VisionSubsystem(CommandSwerveDrivetrain  drivetrain){
+    public VisionSubsystem(CommandSwerveDrivetrain  drivetrain, String cameraName, Transform3d robotToCam){
         this.drivetrain = drivetrain;
-        lowerCamera = new PhotonCamera("LowerTagCamera");
+        this.cameraName = cameraName;
+        photonCamera = new PhotonCamera(cameraName);
 
         // Construct PhotonPoseEstimator
         poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
         poseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
     }
+
+    public void setSafetyOverride(boolean safetyOverride){
+        this.safetyOverride = safetyOverride;
+    }
+
 
     public void periodic(){
 
@@ -66,15 +72,15 @@ public class VisionSubsystem extends SubsystemBase{
             Translation2d oldPosition = drivetrain.getState().Pose.getTranslation();
             double displacement = oldPosition.getDistance(newPosition);
 
-            if ((displacement <= 1.0) || (DriverStation.isDisabled())) {
+            if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
                 drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
             }
 
-            SmartDashboard.putNumber("pose Disp", displacement);
-            SmartDashboard.putString("Pose 2d", robotPose.toString());
-
-
+            SmartDashboard.putString(cameraName + " Pose 2d", robotPose.toString());
         }
+        
+        SmartDashboard.putBoolean(cameraName + " Safety Override", safetyOverride);
+        
     }
 
     /**
@@ -89,7 +95,7 @@ public class VisionSubsystem extends SubsystemBase{
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
-        for (var change : lowerCamera.getAllUnreadResults()) {
+        for (var change : photonCamera.getAllUnreadResults()) {
             visionEst = poseEstimator.update(change);
         }
         return visionEst;

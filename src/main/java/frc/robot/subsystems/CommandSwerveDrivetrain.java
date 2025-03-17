@@ -237,6 +237,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @return Command to run
      */
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
+        Globals.setLEDMode(LEDmode.MANUAL); ;
         return run(() -> this.setControl(requestSupplier.get()));
     }
 

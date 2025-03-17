@@ -81,8 +81,8 @@ public class TunerConstants {
     private static final double kCoupleRatio = 4.5;
 
     //private static final double kDriveGearRatio = 6.394736842105262;
-    private static final double jermeyFactor = 0.911;
-    private static final double kDriveGearRatio = 6.394736842105262 * jermeyFactor;
+    private static final double fineTune = 1.01225; 
+    private static final double kDriveGearRatio = 6.394736842105262 * fineTune;
     
     private static final double kSteerGearRatio = 12.1;
     private static final Distance kWheelRadius = Inches.of(2);
@@ -132,7 +132,7 @@ public class TunerConstants {
     // For recalibrating a wheel:  
     // Align the wheels with a straight edge with the Bevel gear on inside (Shiny mark on outside)
     // Run Phoenix Tuner and click on the Matching CANCoder
-    // Click REFRESH on the self tuner page
+    // Click REFRESH on the self test page
     // Scroll down and read the value for : "Absolute Position NO Offset" <<<  make sure you use the correct item.
     // Flip the sign of the number shown   eg: flip + & -
     // Copy the flipped value into the "kXxxxxXxxxxEncoderOffset" value below in the corect wheel location

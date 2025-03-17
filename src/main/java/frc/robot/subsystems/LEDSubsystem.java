@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -12,16 +11,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.Globals;
-import frc.robot.subsystems.LEDmode;
+
 
 
 public class LEDSubsystem extends SubsystemBase {
 
   private final int               stripLength = 25;
-  private final int               speedoGrn   = 14;
-  private final int               speedoOrg   = 6;
-
   private LEDmode                 lastMode = LEDmode.NONE;
   private AddressableLED          ledStrip;
   private Addressable2815LEDBuffer ledBuffer;  // Use the new class that flips the R&G LEDs
@@ -31,11 +26,11 @@ public class LEDSubsystem extends SubsystemBase {
   // members for different modes
   private int patternMarker = 0;
   private int direction = 1;
-  private int collectingLEDSpeed = 2;
   private boolean stripOn = false;
    
   public static final int RED      = 0;
   public static final int ORANGE   = 5;
+  public static final int YELLOW   =30;
   public static final int GREEN   = 60;
   public static final int BLUE   = 120;
   public static final int PURPLE = 140;
@@ -57,15 +52,15 @@ public class LEDSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
 
     if (DriverStation.isDisabled()) {
-      if (Globals.gotCoral) {
+      if (Globals.GOT_CORAL) {
         Globals.setLEDMode(LEDmode.ALLIANCE);
       } else {
         Globals.setLEDMode(LEDmode.SYSTEM_ERROR);
       }
-    }
+    } 
 
     SmartDashboard.putString("LED Mode", Globals.getLEDMode().toString());
-
+   
     if (Globals.getLEDMode() != lastMode) {
       clearStrip();
       ledTimer.restart();
@@ -82,62 +77,18 @@ public class LEDSubsystem extends SubsystemBase {
         showAlliance();
         break;
 
-      case RAINBOW:     // Show a pretty Rainbow
-        showRainbow();
+      case MANUAL:      // Show driving lights
+        showInPosition();
         break;
 
-      case NOTE_COLLECTING:  // Seeking a Note to collect
-        showCollecting();
-        break;
-
-      case NOTE_DETECTED:      // Note is visible
-        flashStrip(ORANGE, 0.05, 0.05);
-        break;
-
-      case NOTE_HOLDING:       // Note is in robot
-        flashStrip(ORANGE, 0.25, 0.0);
-        break;
-
-      case SEEKING:             // Seeling a speaker to score
-        flashStrip(GREEN, 0.25, 0.25);
-        break;
-
-      case SPEAKER_DETECTED:   // Speaker Apriltag has been detected
-        flashStrip(GREEN, 0.25, 0.0);
-        break;
-
-      case WINDING_UP:
-        showWindup();
-        break;
-
-      case SHOOTING:            // Green
-        flashStrip(GREEN, 0.1, 0.1);
-        break;
-
-      case SHOOTING_TIMEOUT:    // Waiting to shoot Shooting took too long
+      case APPROACH:    // Auto Approach
         flashStrip(BLUE, 0.25, 0.0);
         break;
 
-      case DEFAULT:
-      flashStrip(GREEN, 0.25, 0.0);
+      case SYSTEM_ERROR:  // Displaying system error 
+        default:
+        flashStrip(PURPLE, 0.2, 0.2);
         break;
-
-      case LOWERING:
-        flashStrip(RED, 0.2, 0.05);
-        break;
-
-      case WAITING:
-        flashStrip(PURPLE, 0.1, 0);
-        break;
-
-     case DONE_WAITING:
-        flashStrip(BLUE, 0.1, 0.0);
-        break;
-
-       case SYSTEM_ERROR:       // Displaying system error code
-        flashStrip(RED, 0.2, 0.2);
-        break;
-
     }
 
     // Set the LEDs
@@ -171,6 +122,7 @@ public class LEDSubsystem extends SubsystemBase {
     }
   }
 
+  /*
   // -----------------------------------------------------------------------------------
   private void showRainbow() {
     // Fill the strip with a full color wheel of hues
@@ -203,32 +155,41 @@ public class LEDSubsystem extends SubsystemBase {
       ledBuffer.setRGB((patternMarker + i) % stripLength, 200, 20, 0);
     }
   }
-    
+  */
  
-  public void showWindup() {
+  public void showInPosition() {
 
       // The LED bar is divided into 3 bands...
-      // 0-7    Camera Allignment status
-      // 8-15   Tilt Status
-      // 16-24  Shooter Status
-      clearStrip();
-      
-      if (true) {
-        setStrip(GREEN,0, 8);
-      } else {
-        setStrip(RED,0, 8);
-      }
+      // 0-4   ELV In Pos    
+      // 5-8   Wrist in Pos
+      // 9-16  Got Coral
+      // 17-20 Wrist in Pos
+      // 21-44 ELV In Pos    
 
-      if (true) {
-        setStrip(GREEN,8, 8);
+      clearStrip();
+
+      if (Globals.GOT_CORAL) {
+        setStrip(GREEN,9, 8);
+      } else if (Globals.GOT_ALGAE) {
+        setStrip(YELLOW,9, 8);
       } else {
-        setStrip(RED,8, 8);
-      }
+        setStrip(RED,9, 8);
+       }
+
+      if (Globals.WRIST_IN_POSITION) {
+        setStrip(GREEN,5, 4);
+        setStrip(GREEN,17, 4);
+      } else {
+        setStrip(RED,5, 4);
+        setStrip(RED,17, 4);
+       }
       
-      if (true) {
-         setStrip(GREEN,16, 8);
+      if (Globals.ELEVATOR_IN_POSITION) {
+        setStrip(GREEN,0,  4);
+        setStrip(GREEN,21, 4);
       } else {
-        setStrip(RED,16, 8);
+        setStrip(RED,0,  4);
+        setStrip(RED,21, 4);
       }
   }
 

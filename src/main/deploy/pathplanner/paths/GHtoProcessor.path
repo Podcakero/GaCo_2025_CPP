@@ -1,0 +1,82 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.754163201180253,
+        "y": 3.9923323360313407
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.005233345340494,
+        "y": 3.9923323360313407
+      },
+      "isLocked": false,
+      "linkedName": "GH"
+    },
+    {
+      "anchor": {
+        "x": 6.425250000000001,
+        "y": 3.7617499999999997
+      },
+      "prevControl": {
+        "x": 6.332602927890155,
+        "y": 4.0035590133082515
+      },
+      "nextControl": {
+        "x": 6.828285731631301,
+        "y": 2.7098260657154416
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.995315401593458,
+        "y": 0.6872149357794762
+      },
+      "prevControl": {
+        "x": 6.002884480536863,
+        "y": 1.9816557252572402
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Processor"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.755789473684207,
+      "rotationDegrees": -90.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "GOTO_L1_ALGAE",
+      "waypointRelativePos": 0.7902240325865565,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 360.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -90.86147474025668
+  },
+  "reversed": false,
+  "folder": "GH",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 179.7350322883535
+  },
+  "useDefaultConstraints": false
+}

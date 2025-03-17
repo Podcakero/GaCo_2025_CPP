@@ -159,7 +159,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean inPosition(){
-    return Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Constants.ElevatorConstants.kHeightTollerance.in(Meters);
+    Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Constants.ElevatorConstants.kHeightTollerance.in(Meters));
+    return Globals.ELEVATOR_IN_POSITION;
   }
 	
   public void runClosedLoop() {

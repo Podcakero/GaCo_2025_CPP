@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Globals;
+import frc.robot.subsystems.LEDmode;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -40,16 +42,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    // m_robotContainer.tower.initialize();
     Telemetry.displayAutoPaths(); // Display the selected auto path on the dashboard while robot is disabled
   }
 
   @Override
   public void disabledExit() {
     m_robotContainer.tower.initialize();
-    //m_robotContainer.elevator.SyncronizeRelativeEncoder();
-    //m_robotContainer.elevator.resetElevatorControl();
-    //m_robotContainer.wrist.resetWristControl();
+    m_robotContainer.lowerVision.setSafetyOverride(false);
+    m_robotContainer.upperVision.setSafetyOverride(false);
+
   }
 
   @Override
@@ -76,6 +77,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     m_robotContainer.tower.initialize();
+    Globals.setLEDMode(LEDmode.MANUAL );
   }
 
   @Override

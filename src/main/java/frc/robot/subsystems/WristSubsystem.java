@@ -96,10 +96,11 @@ public class WristSubsystem extends SubsystemBase {
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    exitTOF = new TimeOfFlight(63);
+    exitTOF = new TimeOfFlight(Constants.WristConstants.kExitTOFId);
     exitTOF.setRangingMode(RangingMode.Short, 30);
     exitTOF.setRangeOfInterest(0, 0, 15, 15);
-    enterTOF = new TimeOfFlight(64);
+    
+    enterTOF = new TimeOfFlight(Constants.WristConstants.kEnterTOFId);
     enterTOF.setRangingMode(RangingMode.Short, 30);
     enterTOF.setRangeOfInterest(0, 0, 15, 15);
 
@@ -125,7 +126,7 @@ public class WristSubsystem extends SubsystemBase {
 
     getRangeMM();
 
-    Globals.gotCoral = gotExitCoral() && gotEnterCoral();
+    Globals.GOT_CORAL = gotExitCoral() && gotEnterCoral();
 
      /*if (DriverStation.getStickButtonPressed(1,2)){
       bumpWrist(0.1016);
@@ -200,7 +201,8 @@ public class WristSubsystem extends SubsystemBase {
 
 
   public boolean inPosition(){
-    return Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance;
+    Globals.WRIST_IN_POSITION = (Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance);
+    return Globals.WRIST_IN_POSITION;
   }
 
   

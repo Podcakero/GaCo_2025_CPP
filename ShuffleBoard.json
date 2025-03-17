@@ -39,22 +39,9 @@
               "_showGlyph": false
             }
           },
-          "13,8": {
-            "size": [
-              8,
-              2
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Pose 2d",
-              "_title": "/SmartDashboard/Pose 2d",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "4,0": {
             "size": [
-              4,
+              6,
               2
             ],
             "content": {
@@ -81,9 +68,9 @@
               "Visuals/Show Outside Circles": false
             }
           },
-          "7,2": {
+          "4,2": {
             "size": [
-              3,
+              2,
               2
             ],
             "content": {
@@ -94,7 +81,7 @@
               "_showGlyph": false
             }
           },
-          "4,2": {
+          "6,2": {
             "size": [
               3,
               2
@@ -107,7 +94,7 @@
               "_showGlyph": false
             }
           },
-          "4,4": {
+          "6,4": {
             "size": [
               3,
               2
@@ -120,9 +107,9 @@
               "_showGlyph": false
             }
           },
-          "7,4": {
+          "4,4": {
             "size": [
-              3,
+              2,
               2
             ],
             "content": {
@@ -159,7 +146,7 @@
               "_showGlyph": false
             }
           },
-          "10,4": {
+          "10,0": {
             "size": [
               3,
               2
@@ -172,10 +159,10 @@
               "_showGlyph": false
             }
           },
-          "10,0": {
+          "13,8": {
             "size": [
               3,
-              4
+              3
             ],
             "content": {
               "_type": "Simple Dial",
@@ -186,6 +173,88 @@
               "Range/Min": 0.0,
               "Range/Max": 100.0,
               "Visuals/Show value": true
+            }
+          },
+          "0,6": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/LED Mode",
+              "_title": "LED Mode",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,8": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/LowerTagCamera Safety Override",
+              "_title": "Lower Override",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "2,6": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/UpperTagCamera Safety Override",
+              "_title": "Upper Override",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "5,8": {
+            "size": [
+              8,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/LowerTagCamera Pose 2d",
+              "_title": "LowerTagCamera Pose 2d",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,6": {
+            "size": [
+              8,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/UpperTagCamera Pose 2d",
+              "_title": "UpperTagCamera Pose 2d",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,2": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Tag Info",
+              "_title": "/SmartDashboard/Tag Info",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }
