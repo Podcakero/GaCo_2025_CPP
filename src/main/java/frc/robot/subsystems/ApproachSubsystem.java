@@ -4,11 +4,15 @@
 
 package frc.robot.subsystems;
 
-import java.util.NoSuchElementException;
+import java.util.List;
 import java.util.Optional;
 
+
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -22,81 +26,133 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ApproachSubsystem extends SubsystemBase {
-  /** Creates a new ApproachSubsystem. */
-  public ApproachSubsystem() {}
 
-  private Command  approachCommand;
   private CommandScheduler scheduler = CommandScheduler.getInstance();
-  public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
+//  public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
+  public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded); //CHS uses andymark, worlds uses welded
   public Optional<Alliance> alliance = DriverStation.getAlliance();
-  ApproachTarget targetIdentifier = ApproachTarget.UNKNOWN;
-
+  private CommandSwerveDrivetrain drivetrain;
+  private PathPlannerPath path;
+  
+  public ApproachSubsystem(CommandSwerveDrivetrain drivetrain) {
+    this.drivetrain = drivetrain;
+  }
   
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putString("Approach Target", targetIdentifier.toString());
+    SmartDashboard.putString("Approach Target", Globals.IDENTIFIED_TARGET.toString());
+  }
+
+  public void identifyTarget(ApproachTarget targetPos) {
+    Globals.IDENTIFIED_TARGET = targetPos;
   }
 
   public void startApproach() {
     Globals.setLEDMode(LEDmode.APPROACH);
-    scheduler.schedule(approachCommand);
+    if (Globals.IDENTIFIED_TARGET != ApproachTarget.UNKNOWN) {
+      scheduler.schedule(buildPathCmd(Globals.IDENTIFIED_TARGET));
+    }
   }
 
+  static final double BUMPER_TO_CENTER = 0.45;
+  static final double REEF_HALF_WIDTH  = 0.165;       // Offset from the center to the pole
+  static final double NORMAL_APPROACH_DISTANCE = 0.2; // Target Distance from reef when first approaching
+  static final double ALGAE_STANDOFF   = 0.80;        // Extra distance for wrist fold down
+  static final double OVERHEAD_STANDOFF = 0.0;        // Negative is more under the barge
+  
+  /* Create a Path Command to navigate to the specified position **/
+  public Command buildPathCmd(ApproachTarget targetPos){
 
-  // Direct call tag without an Enum
-  /*private void createPathCmd(int id, boolean isLeft){
     // Distance in meters
-    double spacing = 0.45;
-    double offset = 0.2;
-    if(isLeft){
-      offset = -offset;
-    }
+    double centerStandoff   = BUMPER_TO_CENTER;
+    double reefBranchOffset = REEF_HALF_WIDTH;      
+
+    // Get tag coordinates and heading
+    int adjTagID    = getTagId(targetPos.tagId);
+    double tagX     = tags.getTagPose(adjTagID).get().getX();
+    double tagY     = tags.getTagPose(adjTagID).get().getY();
+    double tagAngle = tags.getTagPose(adjTagID).get().toPose2d().getRotation().getRadians();
+    double offsetX  = 0;
+    double offsetY  = 0;    
+
+    SmartDashboard.putString("Tag Info", String.format("ID%d X:%.3f Y:%.3f T:%.1f", adjTagID, tagX, tagY, Math.toDegrees(tagAngle)));
     
-    double coords[] = getTagCoords(id);
-    double x = (coords[0] + Math.cos(coords[2])*spacing) + Math.cos(coords[2]+Math.PI/2)*offset;
-    double y = (coords[1] + Math.sin(coords[2])*spacing) + Math.sin(coords[2]+Math.PI/2)*offset;
-    System.out.println("[" + coords[0] + "/" + x + ", " + coords[1] + "/" + y + "]; Rot: " + Math.toDegrees(coords[2]));
-    approachCommand = AutoBuilder.pathfindToPose(
-      new Pose2d(x, y, new Rotation2d(coords[2] + Math.PI)),
-      new PathConstraints( 4.0, 3.0,
-      Math.PI, Math.PI * 2),
-      0.0 );
-  }*/
-
-  /* Update the command stored in "approachCommand" to navigate to the specified position **/
-  public void createPathCmd(ApproachTarget targetPos){
-    targetIdentifier = targetPos;
-    // Distance in meters
-    double spacing = 0.45; // 1/2 length of robot
-    double offset = 0.165;   // Offset from the center to the pole
-
-    if(targetPos.position == ReefSidePosition.LEFT){
-      offset = -offset;
-    } else if(targetPos.position == ReefSidePosition.CENTER){
-      offset = 0;
-      spacing = 0.9;
+    // adjust offset and standoff based on specific target location
+    if(targetPos.position == ApproachPosition.LEFT){
+      reefBranchOffset = -reefBranchOffset;
+    } else if(targetPos.position == ApproachPosition.ALGAE){
+      reefBranchOffset = 0.0;
+      centerStandoff = ALGAE_STANDOFF; // Space out further for algae
+    } else if(targetPos.position == ApproachPosition.OVERHEAD){
+      reefBranchOffset = 0.4;
+      centerStandoff = OVERHEAD_STANDOFF; // Space out further for algae
     }
+
+    // Calculate left/right offsets for branch coordinates
+    if (reefBranchOffset != 0) {
+      offsetX  = Math.cos(tagAngle+Math.PI/2) * reefBranchOffset;
+      offsetY  = Math.sin(tagAngle+Math.PI/2) * reefBranchOffset;
+    }
+
+    // Determine intermediate and final approach points
+    double pt0X = drivetrain.getState().Pose.getX();
+    double pt0Y = drivetrain.getState().Pose.getY();
+    double pt1X = tagX + (Math.cos(tagAngle) * (centerStandoff + NORMAL_APPROACH_DISTANCE)) + offsetX;
+    double pt1Y = tagY + (Math.sin(tagAngle) * (centerStandoff + NORMAL_APPROACH_DISTANCE)) + offsetY;
+    double pt2X = tagX + (Math.cos(tagAngle) * (centerStandoff)) + offsetX;
+    double pt2Y = tagY + (Math.sin(tagAngle) * (centerStandoff)) + offsetY;
+
+    // determine trajectory angles for starting and ending path.
+    Rotation2d initialAngle  = Rotation2d.fromRadians(Math.atan2(pt1Y - pt0Y, pt1X - pt0X));
+    Rotation2d finalAngle    = Rotation2d.fromRadians(reverseAngle(tagAngle));   
+    Rotation2d overheadAngle = Rotation2d.fromRadians(tagAngle) ;
+
+    // Create a list of three waypoints.
+    // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+      new Pose2d(pt0X, pt0Y, initialAngle),
+      new Pose2d(pt1X, pt1Y, finalAngle),
+      new Pose2d(pt2X, pt2Y, finalAngle)
+    );
+
+    // limit severity of motion.
+    PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI); 
     
-    double coords[] = getTagCoords(targetPos.tagId);
-    double x = (coords[0] + Math.cos(coords[2])*spacing) + Math.cos(coords[2]+Math.PI/2)*offset;
-    double y = (coords[1] + Math.sin(coords[2])*spacing) + Math.sin(coords[2]+Math.PI/2)*offset;
+    // Create and return the path using the waypoints created above
+    path = new PathPlannerPath(
+        waypoints,
+        constraints,
+        null,
+        new GoalEndState(0.0, (targetPos.position == ApproachPosition.OVERHEAD) ? overheadAngle : finalAngle) // Goal end state. 
+    );
 
-    //System.out.println("[" + coords[0] + "/" + x + ", " + coords[1] + "/" + y + "]; Rot: " + Math.toDegrees(coords[2]));
-
-    approachCommand = AutoBuilder.pathfindToPose(
-      new Pose2d(x, y, new Rotation2d(coords[2] + Math.PI)),
-      new PathConstraints( 2.0, 2.0,
-      Math.PI, Math.PI * 2),
-      0.0 );
+    path.preventFlipping = true;
+    return AutoBuilder.followPath(path);
   }
 
-  private double[] getTagCoords(int id){
-    try{
-      alliance = DriverStation.getAlliance();
-      if(alliance.get().equals(Alliance.Red)){
-        switch(id){
-          case 17:
+  // Modify tag ID is running on Red Alliance.
+  private int getTagId(int id){
+    alliance = DriverStation.getAlliance();
+    if(alliance.isPresent() && alliance.get().equals(Alliance.Red)){
+      switch(id){
+        case 12:
+          id = 2;
+          break;
+
+        case 13:
+          id = 1;
+          break;
+
+        case 14:
+          id = 5;
+          break;
+
+        case 16:
+          id = 3;
+          break;
+
+        case 17:
           id = 8;
           break;
 
@@ -119,20 +175,20 @@ public class ApproachSubsystem extends SubsystemBase {
         case 22:
           id = 9;
           break;
-        }
-        
       }
-    } catch(NoSuchElementException e){
-    System.out.println("No alliance color assigned");
+    }
+
+    return id;
   }
-    double coords[] = new double[3];
-    coords[0] = Math.round((tags.getTagPose(id).get().getX()*10000));
-    coords[0] = coords[0]/10000;
-    coords[1] = Math.round((tags.getTagPose(id).get().getY()*10000));
-    coords[1] = coords[1]/10000;
-    coords[2] = (tags.getTagPose(id).get().getRotation().getAngle());
-    //System.out.println("Tag " + id +": [" + coords[0] + ", " + coords[1] + "], Rotation: " + Math.round(Units.radiansToDegrees(coords[2])));
-    return coords;
+
+  /** Returns the reversed angle from the given angle in radians -PI to PI */
+  
+  private double reverseAngle(double angle){
+    if(angle >= 0){  // This seems unnecessary  (Phil)
+      return angle - Math.PI;
+    } else{
+      return angle + Math.PI;
+    }
   }
 
 

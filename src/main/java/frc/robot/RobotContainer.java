@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -51,7 +52,7 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.08).withRotationalDeadband(MaxAngularRate * 0.08) // Add a 8% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     //private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -76,7 +77,7 @@ public class RobotContainer {
     public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist);
     public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam);
     public final VisionSubsystem upperVision = new VisionSubsystem(drivetrain, "UpperTagCamera", robotToUpperCam);
-    public final ApproachSubsystem approach = new ApproachSubsystem();
+    public final ApproachSubsystem approach = new ApproachSubsystem(drivetrain);
     
     public final LEDSubsystem led = new LEDSubsystem(0);
 
@@ -146,63 +147,35 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate * Constants.DriverConstants.kMaxTurnSpeed * tower.getTowerSpeedSafetyFactor()) // Drive counterclockwise with negative X (left)
             )
         );
+
+        // avoid the PathPlanner startup delay....
+        FollowPathCommand.warmupCommand().schedule();
     }
 
     private void configureBindings() {
 
         // Driver Buttons
-        // Tower State Machine Events
-        //joystick.leftBumper().onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)));
-        joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE)));
 
-        // ==== Approach Buttons ================================
-        joystick.leftTrigger(0.5).onTrue(approach.runOnce(() -> approach.startApproach()))
-        .onFalse(drivetrain.runOnce(() -> drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0))));
+        joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE)));  // score coral or algae
 
-        // CoPilot 1 Buttons
+        joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));  // reset field centric home
 
-        copilot_1.button(DriverConstants.home).onTrue(tower.runOnce(() -> tower.homeTower()));
-        copilot_1.button(DriverConstants.reset).onTrue(lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true))
-                                                .andThen(upperVision.runOnce(() -> upperVision.setSafetyOverride(true))));
-
-        copilot_1.button(DriverConstants.l1).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
-        copilot_1.button(DriverConstants.l2).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
-        copilot_1.button(DriverConstants.l3).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L3)));
-        copilot_1.button(DriverConstants.l4).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L4)));
-
-        copilot_1.button(DriverConstants.pose_i).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_I)));
-        copilot_1.button(DriverConstants.pose_j).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_J)));
-        copilot_1.button(DriverConstants.pose_ija).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_IJ)));
-        copilot_1.button(DriverConstants.pose_k).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_K)));
-        copilot_1.button(DriverConstants.pose_l).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_L)));
-        copilot_1.button(DriverConstants.pose_kla).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_KL)));
-        
-        // CoPilot 2 Buttons
-
-        copilot_2.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
-        copilot_2.button(DriverConstants.pose_a).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_A)));
-        copilot_2.button(DriverConstants.pose_b).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_B)));
-        copilot_2.button(DriverConstants.pose_aba).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_AB)));
-        copilot_2.button(DriverConstants.pose_c).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_C)));
-        copilot_2.button(DriverConstants.pose_d).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_D)));
-        copilot_2.button(DriverConstants.pose_cda).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_CD)));
-        copilot_2.button(DriverConstants.pose_e).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_E)));
-        copilot_2.button(DriverConstants.pose_f).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_F)));
-        copilot_2.button(DriverConstants.pose_efa).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_EF)));
-        copilot_2.button(DriverConstants.pose_g).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_G)));
-        copilot_2.button(DriverConstants.pose_h).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_H)));
-        copilot_2.button(DriverConstants.pose_gha).onTrue(tower.runOnce(() -> approach.createPathCmd(ApproachTarget.REEF_GH)));
-       
-        // reset the field-centric heading on back btn press
-        joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));
-        joystick.rightBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));
+        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));  // collect coral left side
+        joystick.rightBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));// collect coral right side
 
         joystick.y().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_HIGH_ALGAE)));
         joystick.a().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_LOW_ALGAE)));
 
+        joystick.x().onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.BARGE)));
+        joystick.b().onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.PROCESSOR)));
+
         // ==== Approach Buttons ================================
-        
+
+        joystick.leftTrigger(0.5).onTrue(approach.runOnce(() -> approach.startApproach()))
+        .onFalse(drivetrain.runOnce(() -> drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0))));
+
+        // ==== NON Field Centric driving ================================
+
         joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0.75).withVelocityY(0))
         );
@@ -215,16 +188,41 @@ public class RobotContainer {
         joystick.pov(270).whileTrue(drivetrain.applyRequest(() ->
             forwardStraight.withVelocityX(0).withVelocityY(0.25))
         );
-        
-        /* 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        */
+            
+        // ====  CoPilot 1 Buttons  ======================================
 
+        copilot_1.button(DriverConstants.home).onTrue(tower.runOnce(() -> tower.homeTower()));
+        copilot_1.button(DriverConstants.reset).onTrue(lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true))
+                                                .andThen(upperVision.runOnce(() -> upperVision.setSafetyOverride(true))));
+
+        copilot_1.button(DriverConstants.l1).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
+        copilot_1.button(DriverConstants.l2).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
+        copilot_1.button(DriverConstants.l3).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L3)));
+        copilot_1.button(DriverConstants.l4).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L4)));
+
+        copilot_1.button(DriverConstants.pose_i).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_I)));
+        copilot_1.button(DriverConstants.pose_j).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_J)));
+        copilot_1.button(DriverConstants.pose_ija).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_IJ)));
+        copilot_1.button(DriverConstants.pose_k).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_K)));
+        copilot_1.button(DriverConstants.pose_l).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_L)));
+        copilot_1.button(DriverConstants.pose_kla).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_KL)));
+        
+        // ===  CoPilot 2 Buttons  ===========================================
+
+        copilot_2.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
+        copilot_2.button(DriverConstants.pose_a).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_A)));
+        copilot_2.button(DriverConstants.pose_b).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_B)));
+        copilot_2.button(DriverConstants.pose_aba).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_AB)));
+        copilot_2.button(DriverConstants.pose_c).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_C)));
+        copilot_2.button(DriverConstants.pose_d).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_D)));
+        copilot_2.button(DriverConstants.pose_cda).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_CD)));
+        copilot_2.button(DriverConstants.pose_e).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_E)));
+        copilot_2.button(DriverConstants.pose_f).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_F)));
+        copilot_2.button(DriverConstants.pose_efa).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_EF)));
+        copilot_2.button(DriverConstants.pose_g).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_G)));
+        copilot_2.button(DriverConstants.pose_h).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_H)));
+        copilot_2.button(DriverConstants.pose_gha).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_GH)));
+       
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 

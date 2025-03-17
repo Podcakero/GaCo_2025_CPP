@@ -449,6 +449,20 @@
               "data_type": "double[]",
               "show_submit_button": false
             }
+          },
+          {
+            "title": "Tag Info",
+            "x": 832.0,
+            "y": 448.0,
+            "width": 512.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Tag Info",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
           }
         ]
       }

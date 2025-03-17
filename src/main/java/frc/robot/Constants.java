@@ -37,7 +37,6 @@ public class Constants {
 
 		public static final double kAlgaeIntakePower = 0.3;
         public static final double kLowAlgaeIntakePower = 0.2;
-    
 
         public static final double kAngleMaxVelocityDPS = 400; // 
 		public static final double kAngleMaxAccelerationDPSPS = 1000; // 
@@ -68,8 +67,8 @@ public class Constants {
 
         public static final double kS = 0.04435;    //  these may need to be rescaled for meters by dividing 
 		public static final double kG = 0.257;      //  by kRelativeEncoderScaleRevToMeters
-		public static final double kV = 0.117 ;      //
-		public static final double kA = 0.00803 ;    //
+		public static final double kV = 0.117 ;     //
+		public static final double kA = 0.00803 ;   //
 
         public static final Distance kHeightTollerance = Inches.of(1.0);
 
@@ -88,7 +87,7 @@ public class Constants {
         public static final Distance kL1CoralHeight = Inches.of(21);
         public static final Distance kL2CoralHeight = Inches.of(31);
         public static final Distance kL3CoralHeight = Inches.of(46);
-        public static final Distance kL4CoralHeight = Inches.of(72);
+        public static final Distance kL4CoralHeight = Inches.of(71);  // was 70
 
         public static final Distance kL1AlgaeHeight = Inches.of(24);
         public static final Distance kL2AlgaeHeight = Inches.of(39);
@@ -96,13 +95,11 @@ public class Constants {
 
         public static final Distance kSafeHomeHeight = Inches.of(19);
         
-
         public static final double kElevatorMaxVelocityRPS = 2.0;  // MPS
 		public static final double kElevatorMaxAccelerationRPSPS = 4.0; // MPSS  was 6
 	
-        public static final double kElevatorEncoderPositionConversionFactor = kRelativeEncoderScaleRevToMeters; // Needs to be empirically measured
-        public static final double kElevatorEncoderVelocityConversionFactor = kRelativeEncoderScaleRevToMeters; // Needs to be empirically measured. Should be able to be derived from kElevatorEncoderPositionConversionFactor
-   
+        public static final double kElevatorEncoderPositionConversionFactor = kRelativeEncoderScaleRevToMeters; 
+        public static final double kElevatorEncoderVelocityConversionFactor = kRelativeEncoderScaleRevToMeters; 
     }
 
     public class DriverConstants{
@@ -110,10 +107,8 @@ public class Constants {
         // driver
         public static final double kMaxDriveSpeed = 0.85;
         public static final double kMaxTurnSpeed  = 0.9;
-        
 
         //Co-Pilot 1
-        
         public static final int reset = 1;
 
         public static final int l4 = 2;
@@ -131,7 +126,6 @@ public class Constants {
         public static final int pose_l = 12;
 
         //Co-pilot 2
-
         public static final int pose_h = 1;
         public static final int pose_gha = 2;
         public static final int pose_g = 3;
