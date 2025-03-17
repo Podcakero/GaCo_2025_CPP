@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -146,6 +147,9 @@ public class RobotContainer {
                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate * Constants.DriverConstants.kMaxTurnSpeed * tower.getTowerSpeedSafetyFactor()) // Drive counterclockwise with negative X (left)
             )
         );
+
+        // avoid the PathPlanner startup delay....
+        FollowPathCommand.warmupCommand().schedule();
     }
 
     private void configureBindings() {
@@ -161,6 +165,9 @@ public class RobotContainer {
 
         joystick.y().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_HIGH_ALGAE)));
         joystick.a().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_LOW_ALGAE)));
+
+        joystick.x().onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.BARGE)));
+        joystick.b().onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.PROCESSOR)));
 
         // ==== Approach Buttons ================================
 

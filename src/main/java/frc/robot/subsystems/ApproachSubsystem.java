@@ -4,28 +4,20 @@
 
 package frc.robot.subsystems;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.json.simple.parser.ParseException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.RotationTarget;
 import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,9 +27,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ApproachSubsystem extends SubsystemBase {
 
-  private Command approachCommand;
   private CommandScheduler scheduler = CommandScheduler.getInstance();
-  public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
+//  public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
+  public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded); //CHS uses andymark, worlds uses welded
   public Optional<Alliance> alliance = DriverStation.getAlliance();
   private CommandSwerveDrivetrain drivetrain;
   private PathPlannerPath path;
@@ -49,7 +41,7 @@ public class ApproachSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putString("Approach Target", identifiedTarget.toString());
+    SmartDashboard.putString("Approach Target", Globals.IDENTIFIED_TARGET.toString());
   }
 
   public void identifyTarget(ApproachTarget targetPos) {
@@ -59,32 +51,38 @@ public class ApproachSubsystem extends SubsystemBase {
   public void startApproach() {
     Globals.setLEDMode(LEDmode.APPROACH);
     if (Globals.IDENTIFIED_TARGET != ApproachTarget.UNKNOWN) {
-      buildPathCmd(Globals.IDENTIFIED_TARGET);
-      scheduler.schedule(approachCommand);
+      scheduler.schedule(buildPathCmd(Globals.IDENTIFIED_TARGET));
     }
   }
 
+  static final double BUMPER_TO_CENTER = 0.45;
+  static final double REEF_HALF_WIDTH  = 0.165;       // Offset from the center to the pole
+  static final double NORMAL_APPROACH_DISTANCE = 0.2; // Target Distance from reef when first approaching
+  static final double ALGAE_STANDOFF   = 0.45;        // Extra distance for wrist fold down
+  
   /* Create a Path Command to navigate to the specified position **/
   public Command buildPathCmd(ApproachTarget targetPos){
 
     // Distance in meters
-    double centerStandoff = 0.45;         // 1/2 length of robot
-    double reefBranchOffset = 0.165;      // Offset from the center to the pole
-    double closeApproachDistance = 0.15;  // Target Distance from reef when first approaching
+    double centerStandoff   = BUMPER_TO_CENTER;
+    double reefBranchOffset = REEF_HALF_WIDTH;      
 
     // Get tag coordinates and heading
-    double tagX     = tags.getTagPose(getTagId(targetPos.tagId)).get().getX();
-    double tagY     = tags.getTagPose(getTagId(targetPos.tagId)).get().getY();
-    double tagAngle = tags.getTagPose(getTagId(targetPos.tagId)).get().getRotation().getAngle();
+    int adjTagID    = getTagId(targetPos.tagId);
+    double tagX     = tags.getTagPose(adjTagID).get().getX();
+    double tagY     = tags.getTagPose(adjTagID).get().getY();
+    double tagAngle = tags.getTagPose(adjTagID).get().getRotation().getAngle();
     double offsetX  = 0;
     double offsetY  = 0;    
+
+    SmartDashboard.putString("Tag Info", String.format("ID%d X:%.3f Y:%.3f T:%.1f", adjTagID, tagX, tagY, Math.toDegrees(tagAngle)));
     
     // adjust offset and standoff based on specific target location
     if(targetPos.position == ReefSidePosition.LEFT){
       reefBranchOffset = -reefBranchOffset;
     } else if(targetPos.position == ReefSidePosition.CENTER){
       reefBranchOffset = 0.0;
-      centerStandoff += 0.45; // Space out further for algae
+      centerStandoff += ALGAE_STANDOFF; // Space out further for algae
     }
 
     // Calculate left/right offsets for branch coordinates
@@ -96,8 +94,8 @@ public class ApproachSubsystem extends SubsystemBase {
     // Determine intermediate and final approach points
     double pt0X = drivetrain.getState().Pose.getX();
     double pt0Y = drivetrain.getState().Pose.getY();
-    double pt1X = tagX + (Math.cos(tagAngle) * (centerStandoff + closeApproachDistance)) + offsetX;
-    double pt1Y = tagY + (Math.sin(tagAngle) * (centerStandoff + closeApproachDistance)) + offsetY;
+    double pt1X = tagX + (Math.cos(tagAngle) * (centerStandoff + NORMAL_APPROACH_DISTANCE)) + offsetX;
+    double pt1Y = tagY + (Math.sin(tagAngle) * (centerStandoff + NORMAL_APPROACH_DISTANCE)) + offsetY;
     double pt2X = tagX + (Math.cos(tagAngle) * (centerStandoff)) + offsetX;
     double pt2Y = tagY + (Math.sin(tagAngle) * (centerStandoff)) + offsetY;
 
@@ -115,7 +113,7 @@ public class ApproachSubsystem extends SubsystemBase {
 
     // limit severity of motion.
     PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI); 
-
+    
     // Create and return the path using the waypoints created above
     path = new PathPlannerPath(
         waypoints,
