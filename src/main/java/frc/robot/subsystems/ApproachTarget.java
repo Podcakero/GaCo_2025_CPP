@@ -6,36 +6,36 @@ package frc.robot.subsystems;
 
 /** Reef target positions using blue side AprilTag IDs */
 public enum ApproachTarget {
-    UNKNOWN(0, ReefSidePosition.CENTER),
-    REEF_A(18, ReefSidePosition.LEFT),
-    REEF_B(18, ReefSidePosition.RIGHT),
-    REEF_AB(18, ReefSidePosition.CENTER),
-    REEF_C(17, ReefSidePosition.LEFT),
-    REEF_D(17, ReefSidePosition.RIGHT),
-    REEF_CD(17, ReefSidePosition.CENTER),
-    REEF_E(22, ReefSidePosition.LEFT),
-    REEF_F(22, ReefSidePosition.RIGHT),
-    REEF_EF(22, ReefSidePosition.CENTER),
-    REEF_G(21, ReefSidePosition.LEFT),
-    REEF_H(21, ReefSidePosition.RIGHT),
-    REEF_GH(21, ReefSidePosition.CENTER),
-    REEF_I(20, ReefSidePosition.LEFT),
-    REEF_J(20, ReefSidePosition.RIGHT),
-    REEF_IJ(20, ReefSidePosition.CENTER),
-    REEF_K(19, ReefSidePosition.LEFT),
-    REEF_L(19, ReefSidePosition.RIGHT),
-    REEF_KL(19, ReefSidePosition.CENTER),
-    PROCESSOR(16,ReefSidePosition.CENTER),
-    BARGE(14, ReefSidePosition.CENTER),
-    LEFT_SOURCE(13, ReefSidePosition.CENTER),
-    RIGHT_SOURCE(12, ReefSidePosition.CENTER)
+    UNKNOWN(0, ApproachPosition.ALGAE),
+    REEF_A(18, ApproachPosition.LEFT),
+    REEF_B(18, ApproachPosition.RIGHT),
+    REEF_AB(18, ApproachPosition.ALGAE),
+    REEF_C(17, ApproachPosition.LEFT),
+    REEF_D(17, ApproachPosition.RIGHT),
+    REEF_CD(17, ApproachPosition.ALGAE),
+    REEF_E(22, ApproachPosition.LEFT),
+    REEF_F(22, ApproachPosition.RIGHT),
+    REEF_EF(22, ApproachPosition.ALGAE),
+    REEF_G(21, ApproachPosition.LEFT),
+    REEF_H(21, ApproachPosition.RIGHT),
+    REEF_GH(21, ApproachPosition.ALGAE),
+    REEF_I(20, ApproachPosition.LEFT),
+    REEF_J(20, ApproachPosition.RIGHT),
+    REEF_IJ(20, ApproachPosition.ALGAE),
+    REEF_K(19, ApproachPosition.LEFT),
+    REEF_L(19, ApproachPosition.RIGHT),
+    REEF_KL(19, ApproachPosition.ALGAE),
+    PROCESSOR(16,ApproachPosition.ALGAE),
+    BARGE(14, ApproachPosition.OVERHEAD),
+    LEFT_SOURCE(13, ApproachPosition.ALGAE),
+    RIGHT_SOURCE(12, ApproachPosition.ALGAE)
     ;
 
 
-    public ReefSidePosition position;
+    public ApproachPosition position;
     public final int tagId;
 
-    ApproachTarget(int tagId, ReefSidePosition position){
+    ApproachTarget(int tagId, ApproachPosition position){
         this.tagId = tagId;
         this.position = position;
     }

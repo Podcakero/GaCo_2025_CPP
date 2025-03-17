@@ -68,9 +68,9 @@
               "Visuals/Show Outside Circles": false
             }
           },
-          "7,2": {
+          "4,2": {
             "size": [
-              3,
+              2,
               2
             ],
             "content": {
@@ -81,7 +81,7 @@
               "_showGlyph": false
             }
           },
-          "4,2": {
+          "6,2": {
             "size": [
               3,
               2
@@ -94,7 +94,7 @@
               "_showGlyph": false
             }
           },
-          "4,4": {
+          "6,4": {
             "size": [
               3,
               2
@@ -107,9 +107,9 @@
               "_showGlyph": false
             }
           },
-          "7,4": {
+          "4,4": {
             "size": [
-              3,
+              2,
               2
             ],
             "content": {
@@ -188,21 +188,6 @@
               "_showGlyph": false
             }
           },
-          "0,8": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/l3Algae",
-              "_title": "/SmartDashboard/l3Algae",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
           "2,8": {
             "size": [
               3,
@@ -226,7 +211,7 @@
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/UpperTagCamera Safety Override",
-              "_title": "Uppe Override",
+              "_title": "Upper Override",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
@@ -255,6 +240,19 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/UpperTagCamera Pose 2d",
               "_title": "UpperTagCamera Pose 2d",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,2": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Tag Info",
+              "_title": "/SmartDashboard/Tag Info",
               "_glyph": 148,
               "_showGlyph": false
             }

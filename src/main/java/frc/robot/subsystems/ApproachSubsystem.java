@@ -58,7 +58,8 @@ public class ApproachSubsystem extends SubsystemBase {
   static final double BUMPER_TO_CENTER = 0.45;
   static final double REEF_HALF_WIDTH  = 0.165;       // Offset from the center to the pole
   static final double NORMAL_APPROACH_DISTANCE = 0.2; // Target Distance from reef when first approaching
-  static final double ALGAE_STANDOFF   = 0.45;        // Extra distance for wrist fold down
+  static final double ALGAE_STANDOFF   = 0.80;        // Extra distance for wrist fold down
+  static final double OVERHEAD_STANDOFF = 0.0;        // Negative is more under the barge
   
   /* Create a Path Command to navigate to the specified position **/
   public Command buildPathCmd(ApproachTarget targetPos){
@@ -71,18 +72,21 @@ public class ApproachSubsystem extends SubsystemBase {
     int adjTagID    = getTagId(targetPos.tagId);
     double tagX     = tags.getTagPose(adjTagID).get().getX();
     double tagY     = tags.getTagPose(adjTagID).get().getY();
-    double tagAngle = tags.getTagPose(adjTagID).get().getRotation().getAngle();
+    double tagAngle = tags.getTagPose(adjTagID).get().toPose2d().getRotation().getRadians();
     double offsetX  = 0;
     double offsetY  = 0;    
 
     SmartDashboard.putString("Tag Info", String.format("ID%d X:%.3f Y:%.3f T:%.1f", adjTagID, tagX, tagY, Math.toDegrees(tagAngle)));
     
     // adjust offset and standoff based on specific target location
-    if(targetPos.position == ReefSidePosition.LEFT){
+    if(targetPos.position == ApproachPosition.LEFT){
       reefBranchOffset = -reefBranchOffset;
-    } else if(targetPos.position == ReefSidePosition.CENTER){
+    } else if(targetPos.position == ApproachPosition.ALGAE){
       reefBranchOffset = 0.0;
-      centerStandoff += ALGAE_STANDOFF; // Space out further for algae
+      centerStandoff = ALGAE_STANDOFF; // Space out further for algae
+    } else if(targetPos.position == ApproachPosition.OVERHEAD){
+      reefBranchOffset = 0.4;
+      centerStandoff = OVERHEAD_STANDOFF; // Space out further for algae
     }
 
     // Calculate left/right offsets for branch coordinates
@@ -100,8 +104,9 @@ public class ApproachSubsystem extends SubsystemBase {
     double pt2Y = tagY + (Math.sin(tagAngle) * (centerStandoff)) + offsetY;
 
     // determine trajectory angles for starting and ending path.
-    Rotation2d initialAngle = Rotation2d.fromRadians(Math.atan2(pt1Y - pt0Y, pt1X - pt0X));
-    Rotation2d finalAngle   = Rotation2d.fromRadians(reverseAngle(tagAngle));
+    Rotation2d initialAngle  = Rotation2d.fromRadians(Math.atan2(pt1Y - pt0Y, pt1X - pt0X));
+    Rotation2d finalAngle    = Rotation2d.fromRadians(reverseAngle(tagAngle));   
+    Rotation2d overheadAngle = Rotation2d.fromRadians(tagAngle) ;
 
     // Create a list of three waypoints.
     // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
@@ -119,7 +124,7 @@ public class ApproachSubsystem extends SubsystemBase {
         waypoints,
         constraints,
         null,
-        new GoalEndState(0.0, finalAngle) // Goal end state. 
+        new GoalEndState(0.0, (targetPos.position == ApproachPosition.OVERHEAD) ? overheadAngle : finalAngle) // Goal end state. 
     );
 
     path.preventFlipping = true;
