@@ -40,123 +40,148 @@ public class ApproachSubsystem extends SubsystemBase {
   public AprilTagFieldLayout tags = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark); //CHS uses andymark, worlds uses welded
   public Optional<Alliance> alliance = DriverStation.getAlliance();
   private CommandSwerveDrivetrain drivetrain;
-  public ApproachTarget targetIdentifier = ApproachTarget.UNKNOWN;
   private PathPlannerPath path;
-
+  
   public ApproachSubsystem(CommandSwerveDrivetrain drivetrain) {
     this.drivetrain = drivetrain;
   }
-
-
-  
   
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putString("Approach Target", targetIdentifier.toString());
+    SmartDashboard.putString("Approach Target", identifiedTarget.toString());
+  }
 
+  public void identifyTarget(ApproachTarget targetPos) {
+    Globals.IDENTIFIED_TARGET = targetPos;
   }
 
   public void startApproach() {
     Globals.setLEDMode(LEDmode.APPROACH);
-    scheduler.schedule(approachCommand);
-  }
-
-
-   /* Update the command stored in "approachCommand" to navigate to the specified position **/
-  public void createPathCmd(ApproachTarget targetPos){
-    if(targetPos != ApproachTarget.UNKNOWN){
-      targetIdentifier = targetPos;
-      // Distance in meters
-      double centerStandoff = 0.45; // 1/2 length of robot
-      double reefBranchOffset = 0.165;   // Offset from the center to the pole
-      double closeApproachDistance = 0.15;  // Distance to stay away from the reef when approaching close
-
-      if(targetPos.position == ReefSidePosition.LEFT){
-        reefBranchOffset = -reefBranchOffset;
-      } else if(targetPos.position == ReefSidePosition.CENTER){
-        reefBranchOffset = 0;
-        centerStandoff += 0.45; // Space out further for algae
-      }
-      double tagCoords[] = getTagCoords(targetPos.tagId);  
-      double tagAngle = tagCoords[2];
-
-      double pt1X = tagCoords[0] + (Math.cos(tagAngle) * (centerStandoff + closeApproachDistance)) + Math.cos(tagAngle+Math.PI/2)*reefBranchOffset;
-      double pt1Y = tagCoords[1] + (Math.sin(tagAngle) * (centerStandoff + closeApproachDistance)) + Math.sin(tagAngle+Math.PI/2)*reefBranchOffset;
-      double pt2X = tagCoords[0] + (Math.cos(tagAngle) * (centerStandoff)) + Math.cos(tagAngle+Math.PI/2)*reefBranchOffset;
-      double pt2Y = tagCoords[1] + (Math.sin(tagAngle) * (centerStandoff)) + Math.sin(tagAngle+Math.PI/2)*reefBranchOffset;
-
-      Rotation2d initialAngle = Rotation2d.fromRadians(Math.atan2(pt1Y - drivetrain.getState().Pose.getY(), pt1X - drivetrain.getState().Pose.getX()));
-      Rotation2d finalAngle = Rotation2d.fromRadians(reverseAngle(tagAngle));
-
-      // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
-      List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        new Pose2d(drivetrain.getState().Pose.getX(), drivetrain.getState().Pose.getY(), initialAngle),
-        new Pose2d(pt1X, pt1Y, finalAngle),
-        new Pose2d(pt2X, pt2Y, finalAngle)
-      );
-
-      PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI); 
-
-      // Create the path using the waypoints created above
-      path = new PathPlannerPath(
-          waypoints,
-          constraints,
-          null,
-          new GoalEndState(0.0, finalAngle) // Goal end state. 
-      );
-
-      path.preventFlipping = true;
-      approachCommand = AutoBuilder.followPath(path);
-      
-    } else {
-      // No path is selected, do nothing
+    if (Globals.IDENTIFIED_TARGET != ApproachTarget.UNKNOWN) {
+      buildPathCmd(Globals.IDENTIFIED_TARGET);
+      scheduler.schedule(approachCommand);
     }
   }
 
-  private double[] getTagCoords(int id){
+  /* Create a Path Command to navigate to the specified position **/
+  public Command buildPathCmd(ApproachTarget targetPos){
+
+    // Distance in meters
+    double centerStandoff = 0.45;         // 1/2 length of robot
+    double reefBranchOffset = 0.165;      // Offset from the center to the pole
+    double closeApproachDistance = 0.15;  // Target Distance from reef when first approaching
+
+    // Get tag coordinates and heading
+    double tagX     = tags.getTagPose(getTagId(targetPos.tagId)).get().getX();
+    double tagY     = tags.getTagPose(getTagId(targetPos.tagId)).get().getY();
+    double tagAngle = tags.getTagPose(getTagId(targetPos.tagId)).get().getRotation().getAngle();
+    double offsetX  = 0;
+    double offsetY  = 0;    
+    
+    // adjust offset and standoff based on specific target location
+    if(targetPos.position == ReefSidePosition.LEFT){
+      reefBranchOffset = -reefBranchOffset;
+    } else if(targetPos.position == ReefSidePosition.CENTER){
+      reefBranchOffset = 0.0;
+      centerStandoff += 0.45; // Space out further for algae
+    }
+
+    // Calculate left/right offsets for branch coordinates
+    if (reefBranchOffset != 0) {
+      offsetX  = Math.cos(tagAngle+Math.PI/2) * reefBranchOffset;
+      offsetY  = Math.sin(tagAngle+Math.PI/2) * reefBranchOffset;
+    }
+
+    // Determine intermediate and final approach points
+    double pt0X = drivetrain.getState().Pose.getX();
+    double pt0Y = drivetrain.getState().Pose.getY();
+    double pt1X = tagX + (Math.cos(tagAngle) * (centerStandoff + closeApproachDistance)) + offsetX;
+    double pt1Y = tagY + (Math.sin(tagAngle) * (centerStandoff + closeApproachDistance)) + offsetY;
+    double pt2X = tagX + (Math.cos(tagAngle) * (centerStandoff)) + offsetX;
+    double pt2Y = tagY + (Math.sin(tagAngle) * (centerStandoff)) + offsetY;
+
+    // determine trajectory angles for starting and ending path.
+    Rotation2d initialAngle = Rotation2d.fromRadians(Math.atan2(pt1Y - pt0Y, pt1X - pt0X));
+    Rotation2d finalAngle   = Rotation2d.fromRadians(reverseAngle(tagAngle));
+
+    // Create a list of three waypoints.
+    // The rotation component of the pose should be the direction of travel. Do not use holonomic rotation.
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+      new Pose2d(pt0X, pt0Y, initialAngle),
+      new Pose2d(pt1X, pt1Y, finalAngle),
+      new Pose2d(pt2X, pt2Y, finalAngle)
+    );
+
+    // limit severity of motion.
+    PathConstraints constraints = new PathConstraints(2.0, 1.5, 2 * Math.PI, 4 * Math.PI); 
+
+    // Create and return the path using the waypoints created above
+    path = new PathPlannerPath(
+        waypoints,
+        constraints,
+        null,
+        new GoalEndState(0.0, finalAngle) // Goal end state. 
+    );
+
+    path.preventFlipping = true;
+    return AutoBuilder.followPath(path);
+  }
+
+  // Modify tag ID is running on Red Alliance.
+  private int getTagId(int id){
     alliance = DriverStation.getAlliance();
     if(alliance.isPresent() && alliance.get().equals(Alliance.Red)){
       switch(id){
+        case 12:
+          id = 2;
+          break;
+
+        case 13:
+          id = 1;
+          break;
+
+        case 14:
+          id = 5;
+          break;
+
+        case 16:
+          id = 3;
+          break;
+
         case 17:
-        id = 8;
-        break;
+          id = 8;
+          break;
 
-      case 18:
-        id = 7;
-        break;
+        case 18:
+          id = 7;
+          break;
 
-      case 19:
-        id = 6;
-        break;
+        case 19:
+          id = 6;
+          break;
 
-      case 20:
-        id = 11;
-        break;
+        case 20:
+          id = 11;
+          break;
 
-      case 21:
-        id = 10;
-        break;
-        
-      case 22:
-        id = 9;
-        break;
+        case 21:
+          id = 10;
+          break;
+          
+        case 22:
+          id = 9;
+          break;
       }
-      
     }
-    double coords[] = new double[3];
-    coords[0] = Math.round((tags.getTagPose(id).get().getX()*10000));
-    coords[0] = coords[0]/10000;
-    coords[1] = Math.round((tags.getTagPose(id).get().getY()*10000));
-    coords[1] = coords[1]/10000;
-    coords[2] = (tags.getTagPose(id).get().getRotation().getAngle());
-    //System.out.println("Tag " + id +": [" + coords[0] + ", " + coords[1] + "], Rotation: " + Math.round(Units.radiansToDegrees(coords[2])));
-    return coords;
+
+    return id;
   }
 
   /** Returns the reversed angle from the given angle in radians -PI to PI */
+  
   private double reverseAngle(double angle){
-    if(angle >= 0){
+    if(angle >= 0){  // This seems unnecessary  (Phil)
       return angle - Math.PI;
     } else{
       return angle + Math.PI;

@@ -6,7 +6,7 @@ public final class Globals{
     public  static boolean GOT_ALGAE = false;
     public  static boolean WRIST_IN_POSITION = false;
     public  static boolean ELEVATOR_IN_POSITION = false;
-    
+    public  static ApproachTarget IDENTIFIED_TARGET = ApproachTarget.UNKNOWN;    
 
     private static LEDmode ledMode  = LEDmode.ALLIANCE;
 

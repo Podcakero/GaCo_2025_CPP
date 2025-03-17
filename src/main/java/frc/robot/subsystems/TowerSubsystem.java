@@ -306,6 +306,7 @@ public class TowerSubsystem extends SubsystemBase {
 					currentLevel = 1;
 					elevator.setGoalPosition(Constants.ElevatorConstants.kL1AlgaeHeight);
 					wrist.setGoalAngle(Constants.WristConstants.kAlgaeIntakeAngle);
+					Globals.IDENTIFIED_TARGET = ApproachTarget.PROCESSOR;
 					setState(TowerState.CHANGING_ALGAE_HEIGHT);
 				} else if (isTriggered(TowerEvent.GOTO_L2)) {
 					currentLevel = 2;

@@ -24,7 +24,12 @@ public enum ApproachTarget {
     REEF_IJ(20, ReefSidePosition.CENTER),
     REEF_K(19, ReefSidePosition.LEFT),
     REEF_L(19, ReefSidePosition.RIGHT),
-    REEF_KL(19, ReefSidePosition.CENTER);
+    REEF_KL(19, ReefSidePosition.CENTER),
+    PROCESSOR(16,ReefSidePosition.CENTER),
+    BARGE(14, ReefSidePosition.CENTER),
+    LEFT_SOURCE(13, ReefSidePosition.CENTER),
+    RIGHT_SOURCE(12, ReefSidePosition.CENTER)
+    ;
 
 
     public ReefSidePosition position;
