@@ -27,7 +27,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.Elevator;
 import frc.robot.commands.DefaultElevatorCmd;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -48,50 +48,50 @@ public class ElevatorSubsystem extends SubsystemBase {
 	private TrapezoidProfile.State elevatorSetpoint;
 
   private Distance relativeEncoderHeight =  Meters.of(0);
-  private Distance lastGoalPosition = Constants.ElevatorConstants.kElevatorMinHeight;
+  private Distance lastGoalPosition = Constants.Elevator.kElevatorMinHeight;
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    leftElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorLeftId, MotorType.kBrushless);
-    centerElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorCenterId, MotorType.kBrushless);
-    rightElevatorMotor = new SparkFlex(ElevatorConstants.kElevatorMotorRightId, MotorType.kBrushless);
+    leftElevatorMotor = new SparkFlex(Elevator.kElevatorMotorLeftId, MotorType.kBrushless);
+    centerElevatorMotor = new SparkFlex(Elevator.kElevatorMotorCenterId, MotorType.kBrushless);
+    rightElevatorMotor = new SparkFlex(Elevator.kElevatorMotorRightId, MotorType.kBrushless);
 
     elevatorController = centerElevatorMotor.getClosedLoopController();
     elevatorEncoder = centerElevatorMotor.getEncoder();
   
-	  elevatorFeedforward = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
+	  elevatorFeedforward = new ElevatorFeedforward(Elevator.kS, Elevator.kG, Elevator.kV);
 
-	  elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(ElevatorConstants.kElevatorMaxVelocityRPS,
-				                                              ElevatorConstants.kElevatorMaxAccelerationRPSPS));
+	  elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(Elevator.kElevatorMaxVelocityRPS,
+				                                              Elevator.kElevatorMaxAccelerationRPSPS));
 
 	  elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), elevatorEncoder.getVelocity());
 
     centerElevatorMotorConfig = new SparkFlexConfig();
 
     centerElevatorMotorConfig.closedLoop
-      .p(ElevatorConstants.kP)
-      .i(ElevatorConstants.kI)
-      .d(ElevatorConstants.kD)
+      .p(Elevator.kP)
+      .i(Elevator.kI)
+      .d(Elevator.kD)
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
 
     centerElevatorMotorConfig.encoder
-      .positionConversionFactor(ElevatorConstants.kElevatorEncoderPositionConversionFactor)
-      .velocityConversionFactor(ElevatorConstants.kElevatorEncoderVelocityConversionFactor);
+      .positionConversionFactor(Elevator.kElevatorEncoderPositionConversionFactor)
+      .velocityConversionFactor(Elevator.kElevatorEncoderVelocityConversionFactor);
 
     centerElevatorMotorConfig
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit);
+      .smartCurrentLimit(Elevator.kElevatorCurrentLimit);
 
     leftElevatorMotorConfig = new SparkFlexConfig();
     leftElevatorMotorConfig
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit)
+      .smartCurrentLimit(Elevator.kElevatorCurrentLimit)
       .follow(centerElevatorMotor);
     
     rightElevatorMotorConfig = new SparkFlexConfig();
     rightElevatorMotorConfig
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(ElevatorConstants.kElevatorCurrentLimit)
+      .smartCurrentLimit(Elevator.kElevatorCurrentLimit)
       .follow(centerElevatorMotor);
 
     leftElevatorMotor.configure(leftElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -143,10 +143,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setGoalPosition(Distance goalPosition) {
-    if (goalPosition.lt(Constants.ElevatorConstants.kElevatorMinHeight)) {
-      goalPosition = Constants.ElevatorConstants.kElevatorMinHeight;
-    } else if (goalPosition.gt(Constants.ElevatorConstants.kElevatorMaxHeight)) {
-      goalPosition = Constants.ElevatorConstants.kElevatorMaxHeight;
+    if (goalPosition.lt(Constants.Elevator.kElevatorMinHeight)) {
+      goalPosition = Constants.Elevator.kElevatorMinHeight;
+    } else if (goalPosition.gt(Constants.Elevator.kElevatorMaxHeight)) {
+      goalPosition = Constants.Elevator.kElevatorMaxHeight;
     }
 
     lastGoalPosition = goalPosition;
@@ -159,7 +159,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean inPosition(){
-    Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Constants.ElevatorConstants.kHeightTollerance.in(Meters));
+    Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Constants.Elevator.kHeightTollerance.in(Meters));
     return Globals.ELEVATOR_IN_POSITION;
   }
 	

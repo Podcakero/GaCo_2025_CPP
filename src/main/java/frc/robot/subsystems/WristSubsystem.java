@@ -47,14 +47,14 @@ public class WristSubsystem extends SubsystemBase {
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
 
-    intakeSpark = new SparkFlex(Constants.WristConstants.kIntakeMotorId, MotorType.kBrushless);
-    angleSpark = new SparkFlex(Constants.WristConstants.kAngleMotorId, MotorType.kBrushless);
+    intakeSpark = new SparkFlex(Constants.Wrist.kIntakeMotorId, MotorType.kBrushless);
+    angleSpark = new SparkFlex(Constants.Wrist.kAngleMotorId, MotorType.kBrushless);
 
     intakeEncoder = intakeSpark.getEncoder();
     angleEncoder = angleSpark.getAbsoluteEncoder();
 
-    angleTrapezoidProfile = new TrapezoidProfile(new Constraints(Constants.WristConstants.kAngleMaxVelocityDPS,
-				                                              Constants.WristConstants.kAngleMaxAccelerationDPSPS));
+    angleTrapezoidProfile = new TrapezoidProfile(new Constraints(Constants.Wrist.kAngleMaxVelocityDPS,
+				                                              Constants.Wrist.kAngleMaxAccelerationDPSPS));
 
 	  angleSetpoint = new TrapezoidProfile.State(angleEncoder.getPosition(), angleEncoder.getVelocity());
     angleController = angleSpark.getClosedLoopController();
@@ -84,23 +84,23 @@ public class WristSubsystem extends SubsystemBase {
       .smartCurrentLimit(50);
     angleConfig.absoluteEncoder
       //.inverted(true)
-      .positionConversionFactor(Constants.WristConstants.kAngleFactor) // degrees
-      .velocityConversionFactor(Constants.WristConstants.kAngleFactor / 60.0); // degrees per second
+      .positionConversionFactor(Constants.Wrist.kAngleFactor) // degrees
+      .velocityConversionFactor(Constants.Wrist.kAngleFactor / 60.0); // degrees per second
     angleConfig.closedLoop
       .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
       // These are example gains you may need to them for your own robot!
-      .pid(Constants.WristConstants.kP, Constants.WristConstants.kI, Constants.WristConstants.kD)
-      .outputRange(-Constants.WristConstants.kAnglePower, Constants.WristConstants.kAnglePower)
-      .positionWrappingInputRange(0, Constants.WristConstants.kAngleFactor);
+      .pid(Constants.Wrist.kP, Constants.Wrist.kI, Constants.Wrist.kD)
+      .outputRange(-Constants.Wrist.kAnglePower, Constants.Wrist.kAnglePower)
+      .positionWrappingInputRange(0, Constants.Wrist.kAngleFactor);
 
     intakeSpark.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    exitTOF = new TimeOfFlight(Constants.WristConstants.kExitTOFId);
+    exitTOF = new TimeOfFlight(Constants.Wrist.kExitTOFId);
     exitTOF.setRangingMode(RangingMode.Short, 30);
     exitTOF.setRangeOfInterest(0, 0, 15, 15);
     
-    enterTOF = new TimeOfFlight(Constants.WristConstants.kEnterTOFId);
+    enterTOF = new TimeOfFlight(Constants.Wrist.kEnterTOFId);
     enterTOF.setRangingMode(RangingMode.Short, 30);
     enterTOF.setRangeOfInterest(0, 0, 15, 15);
 
@@ -155,11 +155,11 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public boolean gotExitCoral() {
-    return (exitCoralRange < Constants.WristConstants.kMaxCoralDetectRangeMM);
+    return (exitCoralRange < Constants.Wrist.kMaxCoralDetectRangeMM);
   }
 
   public boolean gotEnterCoral() {
-    return (enterCoralRange < Constants.WristConstants.kMaxCoralDetectRangeMM);
+    return (enterCoralRange < Constants.Wrist.kMaxCoralDetectRangeMM);
   }
 
   public void getRangeMM() {
@@ -201,7 +201,7 @@ public class WristSubsystem extends SubsystemBase {
 
 
   public boolean inPosition(){
-    Globals.WRIST_IN_POSITION = (Math.abs(angleGoal.position - getWristAngle()) < Constants.WristConstants.kAngleTollerance);
+    Globals.WRIST_IN_POSITION = (Math.abs(angleGoal.position - getWristAngle()) < Constants.Wrist.kAngleTollerance);
     return Globals.WRIST_IN_POSITION;
   }
 
