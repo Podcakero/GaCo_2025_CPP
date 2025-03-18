@@ -167,6 +167,9 @@ public class TowerSubsystem extends SubsystemBase {
 					currentLevel = 4;
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING_TO_L4);
+				} else if (isTriggered(TowerEvent.SCORE)){
+					wrist.setIntakeSpeed(Constants.Wrist.kCoralIntakePower);
+					setState(TowerState.PAUSING_AFTER_SCORING_CORAL);
 				} else {
 					if (wrist.gotExitCoral()) {
 						wrist.setIntakeSpeed(0);
