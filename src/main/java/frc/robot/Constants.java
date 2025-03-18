@@ -13,7 +13,7 @@ public class Constants {
 
     public static final double kDt = 0.02;
 
-    public class WristConstants {
+    public class Wrist {
         public static final int kAngleMotorId = 61;
         public static final int kIntakeMotorId = 62;
         public static final int kExitTOFId = 63;
@@ -46,7 +46,10 @@ public class Constants {
         public static final double kL4Angle                 = 48;
         public static final double kHighAlgaeAngle          = 60;
 
-        public static final double kAlgaeIntakeAngle        = 180;  // was 155
+        public static final double kAlgaeIntakeAngle        = 180; 
+
+        public static final double kAlgaeWindupAngle        = 150; 
+        public static final double kAlgaeReleaseAngle       = 60; 
         
         public static final double kMaxAngleWhenHome        = 182;
         public static final double kMaxAngle                = 210;
@@ -54,7 +57,7 @@ public class Constants {
         public static final double kMaxCoralDetectRangeMM   = 80;
     }
 
-    public class ElevatorConstants {
+    public class Elevator {
 
         // scale factors
         public static final double kRelativeEncoderScaleRevToMeters = 0.0315;  // 25 turns for 31 inches of travel
@@ -92,6 +95,8 @@ public class Constants {
         public static final Distance kL1AlgaeHeight = Inches.of(24);
         public static final Distance kL2AlgaeHeight = Inches.of(39);
         public static final Distance kL3AlgaeHeight = Inches.of(54);  
+
+        public static final Distance kL4AlgaeWindupHeight = Inches.of(71);  
 
         public static final Distance kSafeHomeHeight = Inches.of(19);
         
