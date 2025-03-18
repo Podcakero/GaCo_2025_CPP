@@ -29,7 +29,7 @@ public class Constants {
         public static final double kAnglePower = 0.5; // was 1.0
 		
 		public static final double kCoralIntakePower = -0.3;
-        public static final double kCoralSlowIntakePower = -0.05;
+        public static final double kCoralSlowIntakePower = -0.1;
         public static final double kCoralRetractPower = 0.02;
 		public static final double kCoralOutputPower =  0.5;
 		public static final double kCoralL234ScoringPower = -1.0;

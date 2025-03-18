@@ -127,10 +127,21 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case INTAKING: {
 				if (wrist.gotEnterCoral()){
-					wrist.setGoalAngle(Constants.Wrist.kSafeAngle);
 					wrist.setIntakeSpeed(Constants.Wrist.kCoralSlowIntakePower);
-					setState(TowerState.GOING_TO_SAFE);
+					setState(TowerState.INTAKE_PAUSE);
 				}
+				break;
+			}
+
+			case INTAKE_PAUSE: {
+				if (wrist.gotExitCoral()) {
+					wrist.setIntakeSpeed(0);
+				}
+				
+				if (stateTimer.hasElapsed(0.2)) {
+					wrist.setGoalAngle(Constants.Wrist.kSafeAngle);
+					setState(TowerState.GOING_TO_SAFE);
+				} 
 				break;
 			}
 			
@@ -138,10 +149,8 @@ public class TowerSubsystem extends SubsystemBase {
 				if (wrist.inPosition()){
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.GOT_CORAL);
-				} else {
-					if (wrist.gotExitCoral()) {
+				} else if (wrist.gotExitCoral()) {
 						wrist.setIntakeSpeed(0);
-					}
 				}
 				break;
 			}

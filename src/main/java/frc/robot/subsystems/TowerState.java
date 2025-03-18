@@ -10,6 +10,7 @@ public enum TowerState {
 
 	//Scoring
 	INTAKING,
+	INTAKE_PAUSE,
 	GOING_TO_SAFE,
 	GOT_CORAL,
 	RAISING_TO_L123,
