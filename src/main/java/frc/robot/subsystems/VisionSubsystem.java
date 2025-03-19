@@ -34,6 +34,7 @@ public class VisionSubsystem extends SubsystemBase{
     Pose3d robotPose;
     boolean safetyOverride = false;
     String cameraName;
+    boolean upperCam;
    
     
 
@@ -43,9 +44,10 @@ public class VisionSubsystem extends SubsystemBase{
      */
     private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(1.0, 1.0, Units.degreesToRadians(10));
 
-    public VisionSubsystem(CommandSwerveDrivetrain  drivetrain, String cameraName, Transform3d robotToCam){
+    public VisionSubsystem(CommandSwerveDrivetrain  drivetrain, String cameraName, Transform3d robotToCam, boolean upperCam){
         this.drivetrain = drivetrain;
         this.cameraName = cameraName;
+        this.upperCam   = upperCam;
         photonCamera = new PhotonCamera(cameraName);
 
         // Construct PhotonPoseEstimator
@@ -72,8 +74,13 @@ public class VisionSubsystem extends SubsystemBase{
             Translation2d oldPosition = drivetrain.getState().Pose.getTranslation();
             double displacement = oldPosition.getDistance(newPosition);
 
-            if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
-                drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
+            // Make sure we're not the upper cam with a lockout
+            if (!(upperCam && Globals.HIGH_CAM_LOCKOUT) ) {
+
+                // validate the position before usig it.
+                if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
+                    drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
+                }
             }
 
             SmartDashboard.putString(cameraName + " Pose 2d", robotPose.toString());

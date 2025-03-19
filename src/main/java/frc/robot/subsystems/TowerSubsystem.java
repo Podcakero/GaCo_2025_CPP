@@ -6,10 +6,12 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.DriverConstants;
 
 public class TowerSubsystem extends SubsystemBase {
 
@@ -68,35 +70,31 @@ public class TowerSubsystem extends SubsystemBase {
 
 			// =================== Initializing ===================
 			case INIT: {
-				if (elevator.getHeight().lt(Constants.Elevator.kSafeHomeHeight)) {
-					wrist.setGoalAngle(Constants.Wrist.kIntakeAngle);
-					elevator.setGoalPosition(Constants.Elevator.kIntakeHeight);	
-					setState(TowerState.HOMING);
-				} else {
-					wrist.setGoalAngle(Constants.Wrist.kSafeAngle);
-					setState(TowerState.PREPARING_TO_HOME);
-				}
+				wrist.setGoalAngle(Constants.Wrist.kSafeAngle);
+				setState(TowerState.MAKING_WRIST_SAFE);
 				break;
 			}
 
-			case PREPARING_TO_HOME: {
+			case MAKING_WRIST_SAFE: {
 				if (wrist.inPosition()) {
 					elevator.setGoalPosition(Constants.Elevator.kIntakeHeight);	
-					setState(TowerState.LOWERING_TO_HOME);
+					setState(TowerState.HOMING_ELEVATOR);
 				}
 				break;
 			}
 
-			case LOWERING_TO_HOME: {
+			case HOMING_ELEVATOR: {
 				if (elevator.inPosition()) {
 					wrist.setGoalAngle(Constants.Wrist.kIntakeAngle);
-					setState(TowerState.HOMING);
+					setState(TowerState.HOMING_WRIST);
+				} else if (DriverStation.getStickButton(1, DriverConstants.reset)) {
+					elevator.resetEncoder();
 				}
 				break;
 			}
 
-			case HOMING: {
-				if (wrist.inPosition() && elevator.inPosition()){
+			case HOMING_WRIST: {
+				if (wrist.inPosition()){
 					setState(TowerState.HOME);
 				}
 				break;

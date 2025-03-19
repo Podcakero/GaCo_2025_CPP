@@ -7,6 +7,8 @@ public final class Globals{
     public  static boolean WRIST_IN_POSITION = false;
     public  static boolean ELEVATOR_IN_POSITION = false;
     public  static ApproachTarget IDENTIFIED_TARGET = ApproachTarget.UNKNOWN;    
+    public  static boolean HIGH_CAM_LOCKOUT = false;
+
 
     private static LEDmode ledMode  = LEDmode.ALLIANCE;
 

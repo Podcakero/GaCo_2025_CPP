@@ -59,6 +59,8 @@ public class Constants {
 
     public class Elevator {
 
+        public static final Distance elevatorHomeHeight = Inches.of(17.5);  // only valid when elevator is homed;
+
         // scale factors
         public static final double kRelativeEncoderScaleRevToMeters = 0.0315;  // 25 turns for 31 inches of travel
         public static final double kAbsoluteEncoderScaleVoltsToMeters = 0.498;

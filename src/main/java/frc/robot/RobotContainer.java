@@ -75,8 +75,8 @@ public class RobotContainer {
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
     public final WristSubsystem wrist = new WristSubsystem();
     public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist);
-    public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam);
-    public final VisionSubsystem upperVision = new VisionSubsystem(drivetrain, "UpperTagCamera", robotToUpperCam);
+    public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam, false);
+    public final VisionSubsystem upperVision = new VisionSubsystem(drivetrain, "UpperTagCamera", robotToUpperCam, true);
     public final ApproachSubsystem approach = new ApproachSubsystem(drivetrain);
     
     public final LEDSubsystem led = new LEDSubsystem(0);
@@ -191,9 +191,11 @@ public class RobotContainer {
             
         // ====  CoPilot 1 Buttons  ======================================
 
-        copilot_1.button(DriverConstants.home).onTrue(tower.runOnce(() -> tower.homeTower()));
         copilot_1.button(DriverConstants.reset).onTrue(lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true))
-                                                .andThen(upperVision.runOnce(() -> upperVision.setSafetyOverride(true))));
+//                                             .andThen(upperVision.runOnce(() -> upperVision.setSafetyOverride(true)))  //   only override low cam safety to reposition
+                                               );
+
+        copilot_1.button(DriverConstants.home).onTrue(tower.runOnce(() -> tower.homeTower()));
 
         copilot_1.button(DriverConstants.l1).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
         copilot_1.button(DriverConstants.l2).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
