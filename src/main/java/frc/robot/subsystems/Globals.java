@@ -10,7 +10,6 @@ public final class Globals extends SubsystemBase {
     public  static boolean      WRIST_IN_POSITION;
     public  static boolean      ELEVATOR_IN_POSITION;
     public  static ApproachTarget IDENTIFIED_TARGET;    
-    public  static boolean      UPPER_CAM_ENABLED;
     private static LEDmode      LED_MODE;
 
     public Globals(){
@@ -19,7 +18,6 @@ public final class Globals extends SubsystemBase {
         WRIST_IN_POSITION = false;
         ELEVATOR_IN_POSITION = false;
         IDENTIFIED_TARGET = ApproachTarget.UNKNOWN;    
-        UPPER_CAM_ENABLED = false;
         LED_MODE  = LEDmode.ALLIANCE;
     }
 
@@ -28,7 +26,6 @@ public final class Globals extends SubsystemBase {
         SmartDashboard.putBoolean("Wrist In Position", WRIST_IN_POSITION);
         SmartDashboard.putBoolean("Elevator In Position", ELEVATOR_IN_POSITION);
         SmartDashboard.putString("Approach Target", IDENTIFIED_TARGET.toString());
-        SmartDashboard.putBoolean("Upper Cam Enabled", UPPER_CAM_ENABLED);   
         SmartDashboard.putString("LED Mode", Globals.LED_MODE.toString());
     }
 
@@ -39,13 +36,4 @@ public final class Globals extends SubsystemBase {
     public static LEDmode getLEDMode() {
         return LED_MODE;
     }
-
-    public static void enableUpperCam(){
-        UPPER_CAM_ENABLED = true;
-    }
-
-    public static void disableUpperCam(){
-        UPPER_CAM_ENABLED = false;
-    }
-
  }

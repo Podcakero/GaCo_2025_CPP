@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.3523116438356164,
-        "y": 0.6667594178082186
+        "x": 0.9949795081967214,
+        "y": 0.5425717213114762
       },
       "prevControl": {
-        "x": 2.479155906130698,
-        "y": 1.481923352234447
+        "x": 2.121823770491803,
+        "y": 1.3577356557377054
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,16 +29,36 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
-  "pointTowardsZones": [],
-  "eventMarkers": [
+  "constraintZones": [
     {
-      "name": "USE_UPPER_CAM",
-      "waypointRelativePos": 0.4440677966101695,
-      "endWaypointRelativePos": 1.0,
-      "command": null
+      "name": "Fast",
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 0.6561651276480172,
+      "constraints": {
+        "maxVelocity": 4.0,
+        "maxAcceleration": 6.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Slow",
+      "minWaypointRelativePos": 0.6083650190114064,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 2.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
     }
   ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.5,
     "maxAcceleration": 3.5,

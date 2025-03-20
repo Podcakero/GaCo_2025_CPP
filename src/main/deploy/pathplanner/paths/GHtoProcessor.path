@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 5.995315401593458,
-        "y": 0.6872149357794762
+        "x": 6.045640677973637,
+        "y": 0.761459862345223
       },
       "prevControl": {
-        "x": 6.002884480536863,
-        "y": 1.9816557252572404
+        "x": 6.053209756917042,
+        "y": 2.0559006518229888
       },
       "nextControl": null,
       "isLocked": false,
@@ -50,7 +50,21 @@
       "rotationDegrees": -90.0
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Slow",
+      "minWaypointRelativePos": 1.6512764801738191,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 2.5,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 360.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -64,13 +78,13 @@
     "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 360.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 360.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.86147474025668
+    "rotation": -90.96286362563627
   },
   "reversed": false,
   "folder": "GH",
