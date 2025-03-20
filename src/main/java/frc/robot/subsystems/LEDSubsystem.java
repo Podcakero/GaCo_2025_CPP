@@ -8,11 +8,8 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-
 
 public class LEDSubsystem extends SubsystemBase {
 
@@ -55,7 +52,7 @@ public class LEDSubsystem extends SubsystemBase {
       if (Globals.GOT_CORAL) {
         Globals.setLEDMode(LEDmode.ALLIANCE);
       } else {
-        Globals.setLEDMode(LEDmode.SYSTEM_ERROR);
+        Globals.setLEDMode(LEDmode.ERROR);
       }
     } 
 
@@ -83,7 +80,7 @@ public class LEDSubsystem extends SubsystemBase {
         flashStrip(BLUE, 0.25, 0.0);
         break;
 
-      case SYSTEM_ERROR:  // Displaying system error 
+      case ERROR:  // Displaying system error 
         default:
         flashStrip(PURPLE, 0.2, 0.2);
         break;

@@ -5,7 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Inches;
-
 import edu.wpi.first.units.measure.Distance;
 
 /** Add your docs here. */
@@ -92,13 +91,13 @@ public class Constants {
         public static final Distance kL1CoralHeight = Inches.of(21);
         public static final Distance kL2CoralHeight = Inches.of(31);
         public static final Distance kL3CoralHeight = Inches.of(46);
-        public static final Distance kL4CoralHeight = Inches.of(71);  // was 70
+        public static final Distance kL4CoralHeight = Inches.of(72);  // was 70
 
         public static final Distance kL1AlgaeHeight = Inches.of(24);
         public static final Distance kL2AlgaeHeight = Inches.of(39);
         public static final Distance kL3AlgaeHeight = Inches.of(54);  
 
-        public static final Distance kL4AlgaeWindupHeight = Inches.of(71);  
+        public static final Distance kL4AlgaeWindupHeight = Inches.of(71.5);  
 
         public static final Distance kSafeHomeHeight = Inches.of(19);
         
