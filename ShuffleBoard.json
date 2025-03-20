@@ -76,7 +76,7 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/ElevatorGoal",
-              "_title": "ElevatorGoal",
+              "_title": "Elevator Goal",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -281,7 +281,7 @@
             ],
             "content": {
               "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/High Cam Enabled",
+              "_source0": "network_table:///SmartDashboard/Upper Cam Enabled",
               "_title": "Enabled",
               "_glyph": 148,
               "_showGlyph": false,

@@ -145,7 +145,7 @@ public class WristSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
     SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRange);
     SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRange);
-    SmartDashboard.putBoolean("Wrist In Position", inPosition());
+    
   }
 
   // TOF sensor

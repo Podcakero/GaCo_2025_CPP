@@ -238,7 +238,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         Globals.setLEDMode(LEDmode.MANUAL); 
-        Globals.enableHighCam();
+        Globals.enableUpperCam();
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
