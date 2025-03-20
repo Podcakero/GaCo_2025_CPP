@@ -100,8 +100,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     setDefaultCommand(new DefaultElevatorCmd(this));
 
-    Distance elevatorHeight = Inches.of(17.5);  // only valid when elevator is homed;
-    elevatorEncoder.setPosition(elevatorHeight.in(Meters)); 
+    elevatorEncoder.setPosition(Constants.Elevator.elevatorHomeHeight.in(Meters)); 
+  }
+
+    /**
+   * WARNING: This will rebase the elevator at the current position.
+   */
+  public void resetEncoder(){
+    elevatorEncoder.setPosition(Constants.Elevator.elevatorHomeHeight.in(Meters)); 
+    initialize();
   }
 
   public void initialize(){
@@ -128,6 +135,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elev Rel Hgt", relativeEncoderHeight.in(Inches));
 		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
     SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
+    SmartDashboard.putBoolean("Elevator In Position", inPosition());
 	}
 
   public void readSensors() {

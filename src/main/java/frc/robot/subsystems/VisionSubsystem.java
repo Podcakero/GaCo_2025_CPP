@@ -10,7 +10,6 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -19,7 +18,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -34,18 +32,20 @@ public class VisionSubsystem extends SubsystemBase{
     Pose3d robotPose;
     boolean safetyOverride = false;
     String cameraName;
+    boolean upperCam;
+    Vector<N3> visionMeasurementStdDevs;
    
-    
-
     /**
      * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
      * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
      */
-    private static final Vector<N3> visionMeasurementStdDevs = VecBuilder.fill(1.0, 1.0, Units.degreesToRadians(10));
-
-    public VisionSubsystem(CommandSwerveDrivetrain  drivetrain, String cameraName, Transform3d robotToCam){
+    
+    public VisionSubsystem(CommandSwerveDrivetrain  drivetrain, String cameraName, Transform3d robotToCam, Vector<N3> stdDev, boolean upperCam){
         this.drivetrain = drivetrain;
         this.cameraName = cameraName;
+        this.upperCam   = upperCam;
+        this.visionMeasurementStdDevs = stdDev;
+
         photonCamera = new PhotonCamera(cameraName);
 
         // Construct PhotonPoseEstimator
@@ -72,11 +72,22 @@ public class VisionSubsystem extends SubsystemBase{
             Translation2d oldPosition = drivetrain.getState().Pose.getTranslation();
             double displacement = oldPosition.getDistance(newPosition);
 
-            if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
-                drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
+            // Make sure we're not the upper cam with a lockout
+            if (!upperCam || Globals.HIGH_CAM_ENABLED) {
+
+                // validate the position before usig it.
+                if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
+                    drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
+                }
+
+                // dont display if locked out
+                SmartDashboard.putString(cameraName + " Pose 2d", robotPose.toString());
             }
 
-            SmartDashboard.putString(cameraName + " Pose 2d", robotPose.toString());
+            if (upperCam) {
+                SmartDashboard.putBoolean("High Cam Enabled", Globals.HIGH_CAM_ENABLED);   
+            }
+          
         }
         
         SmartDashboard.putBoolean(cameraName + " Safety Override", safetyOverride);
