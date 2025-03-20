@@ -28,7 +28,8 @@ public class JustIntakeCmd extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return ((tower.getState() == TowerState.GOING_TO_SAFE)  ||  
+    return ((tower.getState() == TowerState.INTAKE_PAUSE) || 
+            (tower.getState() == TowerState.GOING_TO_SAFE)  ||  
             (tower.getState() == TowerState.GOT_CORAL));
   }
 }

@@ -70,8 +70,13 @@ public class TowerSubsystem extends SubsystemBase {
 
 			// =================== Initializing ===================
 			case INIT: {
-				wrist.setGoalAngle(Constants.Wrist.kSafeAngle);
-				setState(TowerState.MAKING_WRIST_SAFE);
+				if (elevator.getHeight().lt(Constants.Elevator.kSafeHomeHeight)) {
+					elevator.setGoalPosition(Constants.Elevator.kIntakeHeight);	
+					setState(TowerState.HOMING_ELEVATOR);
+				} else {
+					wrist.setGoalAngle(Constants.Wrist.kSafeAngle);
+					setState(TowerState.MAKING_WRIST_SAFE);
+				}
 				break;
 			}
 
@@ -103,8 +108,10 @@ public class TowerSubsystem extends SubsystemBase {
 			// =================== GENERIC HOME condition ===================
 			
 			case HOME: {
-				if (isTriggered(TowerEvent.INTAKE_CORAL) || isHoldingGoTo()){
-					wrist.setIntakeSpeed(Constants.Wrist.kCoralIntakePower);
+				if (isTriggered(TowerEvent.INTAKE_CORAL) || isHoldingGoTo()){ // will triger on L1-4 as well
+					if (!wrist.gotExitCoral()) {  // this will be true if we are holding a coral
+						wrist.setIntakeSpeed(Constants.Wrist.kCoralIntakePower);
+					}
 					setState(TowerState.INTAKING);
 				} else if (isTriggered(TowerEvent.INTAKE_LOW_ALGAE)){
 					wrist.setGoalAngle(Constants.Wrist.kSafeAngle);
@@ -124,7 +131,10 @@ public class TowerSubsystem extends SubsystemBase {
 			// ====  CORAL specific states  ========================================
 
 			case INTAKING: {
-				if (wrist.gotEnterCoral()){
+				if (wrist.gotExitCoral()) {   // this will be true if we are holding a coral
+					wrist.setIntakeSpeed(0);
+					setState(TowerState.INTAKE_PAUSE);
+				} else if (wrist.gotEnterCoral()){
 					wrist.setIntakeSpeed(Constants.Wrist.kCoralSlowIntakePower);
 					setState(TowerState.INTAKE_PAUSE);
 				}

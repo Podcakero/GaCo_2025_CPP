@@ -81,7 +81,7 @@
               "_showGlyph": false
             }
           },
-          "6,2": {
+          "9,2": {
             "size": [
               3,
               2
@@ -94,7 +94,7 @@
               "_showGlyph": false
             }
           },
-          "6,4": {
+          "9,4": {
             "size": [
               3,
               2
@@ -175,7 +175,7 @@
               "Visuals/Show value": true
             }
           },
-          "0,6": {
+          "16,8": {
             "size": [
               2,
               2
@@ -188,7 +188,7 @@
               "_showGlyph": false
             }
           },
-          "2,8": {
+          "0,8": {
             "size": [
               3,
               2
@@ -203,7 +203,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "2,6": {
+          "0,6": {
             "size": [
               3,
               2
@@ -244,17 +244,49 @@
               "_showGlyph": false
             }
           },
-          "9,2": {
+          "6,2": {
             "size": [
-              4,
+              3,
               2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Tag Info",
-              "_title": "/SmartDashboard/Tag Info",
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Elevator In Position",
+              "_title": "/SmartDashboard/Elevator In Position",
               "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "6,4": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Wrist In Position",
+              "_title": "/SmartDashboard/Wrist In Position",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "3,6": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/High Cam Enabled",
+              "_title": "Enabled",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }

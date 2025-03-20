@@ -16,9 +16,13 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import com.pathplanner.lib.events.EventTrigger;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -40,6 +44,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.Globals;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.TowerEvent;
 import frc.robot.subsystems.TowerState;
@@ -67,16 +72,21 @@ public class RobotContainer {
 
     static final Transform3d robotToLowerCam = new Transform3d(new Translation3d(0.26, 0.00, 0.20), 
                                                           new Rotation3d(0,0,0));
+    static final Vector<N3> lowerCamStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5));
+
+
     static final Transform3d robotToUpperCam = new Transform3d(new Translation3d(-0.05, 0.00, 1.017), 
-                                                          new Rotation3d(0,0, Math.PI));
+                                                          new Rotation3d(0,Math.toRadians(2.1), Math.PI));
+    static final Vector<N3> upperCamStdDevs = VecBuilder.fill(1.0, 1.0, Units.degreesToRadians(10));
+
 
     // Instanciate subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
     public final WristSubsystem wrist = new WristSubsystem();
     public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist);
-    public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam, false);
-    public final VisionSubsystem upperVision = new VisionSubsystem(drivetrain, "UpperTagCamera", robotToUpperCam, true);
+    public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam, lowerCamStdDevs, false);
+    public final VisionSubsystem upperVision = new VisionSubsystem(drivetrain, "UpperTagCamera", robotToUpperCam, upperCamStdDevs, true);
     public final ApproachSubsystem approach = new ApproachSubsystem(drivetrain);
     
     public final LEDSubsystem led = new LEDSubsystem(0);
@@ -101,6 +111,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("WAIT_FOR_HOME",             new WaitForTowerStateCmd(tower, TowerState.HOME));
 
         NamedCommands.registerCommand("GO_DIRECTLY_TO_ALGAE",      Commands.runOnce(() -> tower.enableGoToDirectAlgae()));
+        NamedCommands.registerCommand("DISABLE_HIGH_CAM",          Commands.runOnce(() -> Globals.disableHighCam()));
+        NamedCommands.registerCommand("ENABLE_HIGH_CAM",           Commands.runOnce(() -> Globals.enableHighCam()));
+        
 
         // All Path Planner event triggers  ===========
         new EventTrigger("GOTO_L1_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.GOTO_L1));

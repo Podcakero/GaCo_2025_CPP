@@ -141,11 +141,11 @@ public class WristSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
     SmartDashboard.putNumber("Wrist Angle", getWristAngle());
-    SmartDashboard.putNumber("Intake Speed", intakeSpark.getAppliedOutput());
 
     SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
     SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRange);
     SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRange);
+    SmartDashboard.putBoolean("Wrist In Position", inPosition());
   }
 
   // TOF sensor
