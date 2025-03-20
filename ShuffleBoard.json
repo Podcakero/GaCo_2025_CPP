@@ -175,7 +175,7 @@
               "Visuals/Show value": true
             }
           },
-          "16,8": {
+          "3,8": {
             "size": [
               2,
               2
@@ -252,7 +252,7 @@
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Elevator In Position",
-              "_title": "/SmartDashboard/Elevator In Position",
+              "_title": "Elevator In Position",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
@@ -267,7 +267,7 @@
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/Wrist In Position",
-              "_title": "/SmartDashboard/Wrist In Position",
+              "_title": "Wrist In Position",
               "_glyph": 148,
               "_showGlyph": false,
               "Colors/Color when true": "#7CFC00FF",
