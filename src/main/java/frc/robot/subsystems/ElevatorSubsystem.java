@@ -101,6 +101,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     setDefaultCommand(new DefaultElevatorCmd(this));
 
     elevatorEncoder.setPosition(Constants.Elevator.elevatorHomeHeight.in(Meters)); 
+
+
   }
 
     /**
@@ -139,6 +141,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	}
 
   public void readSensors() {
+    getCurrent();
     relativeEncoderHeight = Meters.of(elevatorEncoder.getPosition()); 
   }
   
@@ -176,11 +179,19 @@ public class ElevatorSubsystem extends SubsystemBase {
   
     double arbFF = elevatorFeedforward.calculate(elevatorSetpoint.velocity);
       
-    elevatorController.setReference(
-      elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
+    elevatorController.setReference(elevatorSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
   
-      SmartDashboard.putNumber("Elevator FeedForward", arbFF);
-      
+    SmartDashboard.putNumber("Elevator FeedForward", arbFF);
+  }
+
+  public void setSpeed(double speed) {
+    centerElevatorMotor.set(speed);
+  }
+
+  public double getCurrent() {
+    double current = leftElevatorMotor.getOutputCurrent() +  centerElevatorMotor.getOutputCurrent() + rightElevatorMotor.getOutputCurrent();
+    SmartDashboard.putNumber("Elevator Current", current);
+    return current;
   }
 
   //----------//

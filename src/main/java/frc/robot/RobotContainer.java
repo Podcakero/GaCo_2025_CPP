@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.HomeElevatorCmd;
 import frc.robot.commands.JustIntakeCmd;
 import frc.robot.commands.TriggerEventCmd;
 import frc.robot.commands.WaitForTowerStateCmd;
@@ -172,6 +173,9 @@ public class RobotContainer {
         joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE)));  // score coral or algae
 
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));  // reset field centric home
+
+
+        joystick.start().onTrue(new HomeElevatorCmd(elevator, tower));  //home the elevator
 
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));  // collect coral left side
         joystick.rightBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));// collect coral right side
