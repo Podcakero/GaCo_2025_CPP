@@ -59,8 +59,6 @@ public class LEDSubsystem extends SubsystemBase {
       }
     } 
 
-    SmartDashboard.putString("LED Mode", Globals.getLEDMode().toString());
-   
     if (Globals.getLEDMode() != lastMode) {
       clearStrip();
       ledTimer.restart();

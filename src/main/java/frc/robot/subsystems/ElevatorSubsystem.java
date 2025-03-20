@@ -137,7 +137,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Elev Rel Hgt", relativeEncoderHeight.in(Inches));
 		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
     SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
-    SmartDashboard.putBoolean("Elevator In Position", inPosition());
 	}
 
   public void readSensors() {

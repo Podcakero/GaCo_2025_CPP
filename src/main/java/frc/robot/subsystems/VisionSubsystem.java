@@ -59,7 +59,6 @@ public class VisionSubsystem extends SubsystemBase{
 
 
     public void periodic(){
-
         estimatedRobotPose = getEstimatedGlobalPose();
         if (estimatedRobotPose.isPresent()){
             EstimatedRobotPose estPose = estimatedRobotPose.get();   
@@ -73,7 +72,7 @@ public class VisionSubsystem extends SubsystemBase{
             double displacement = oldPosition.getDistance(newPosition);
 
             // Make sure we're not the upper cam with a lockout
-            if (!upperCam || Globals.HIGH_CAM_ENABLED) {
+            if (!upperCam || Globals.UPPER_CAM_ENABLED) {
 
                 // validate the position before usig it.
                 if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
@@ -83,11 +82,6 @@ public class VisionSubsystem extends SubsystemBase{
                 // dont display if locked out
                 SmartDashboard.putString(cameraName + " Pose 2d", robotPose.toString());
             }
-
-            if (upperCam) {
-                SmartDashboard.putBoolean("High Cam Enabled", Globals.HIGH_CAM_ENABLED);   
-            }
-          
         }
         
         SmartDashboard.putBoolean(cameraName + " Safety Override", safetyOverride);

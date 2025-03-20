@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.5703893442622954,
-        "y": 7.4594774590163935
+        "x": 1.4725171232876713,
+        "y": 7.3982662671232875
       },
       "prevControl": {
-        "x": 2.781147540983607,
-        "y": 6.296670081967213
+        "x": 2.683275320008983,
+        "y": 6.235458890074107
       },
       "nextControl": null,
       "isLocked": true,
@@ -31,7 +31,14 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "USE_UPPER_CAM",
+      "waypointRelativePos": 0.33220338983050823,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 2.5,
     "maxAcceleration": 3.5,

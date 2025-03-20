@@ -41,7 +41,6 @@ public class ApproachSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putString("Approach Target", Globals.IDENTIFIED_TARGET.toString());
   }
 
   public void identifyTarget(ApproachTarget targetPos) {
@@ -88,7 +87,7 @@ public class ApproachSubsystem extends SubsystemBase {
       reefBranchOffset = 0.4;
       centerStandoff = OVERHEAD_STANDOFF; // Space out further for algae
     }
-    Globals.HIGH_CAM_ENABLED = targetPos.enableHighCam;
+    Globals.UPPER_CAM_ENABLED = targetPos.enableHighCam;
 
     // Calculate left/right offsets for branch coordinates
     if (reefBranchOffset != 0) {

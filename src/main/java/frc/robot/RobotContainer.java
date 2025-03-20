@@ -82,6 +82,7 @@ public class RobotContainer {
 
 
     // Instanciate subsystems
+    public final Globals globals = new Globals();
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
     public final WristSubsystem wrist = new WristSubsystem();
@@ -89,6 +90,7 @@ public class RobotContainer {
     public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam, lowerCamStdDevs, false);
     public final VisionSubsystem upperVision = new VisionSubsystem(drivetrain, "UpperTagCamera", robotToUpperCam, upperCamStdDevs, true);
     public final ApproachSubsystem approach = new ApproachSubsystem(drivetrain);
+    
     
     public final LEDSubsystem led = new LEDSubsystem(0);
 
@@ -112,8 +114,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("WAIT_FOR_HOME",             new WaitForTowerStateCmd(tower, TowerState.HOME));
 
         NamedCommands.registerCommand("GO_DIRECTLY_TO_ALGAE",      Commands.runOnce(() -> tower.enableGoToDirectAlgae()));
-        NamedCommands.registerCommand("DISABLE_HIGH_CAM",          Commands.runOnce(() -> Globals.disableHighCam()));
-        NamedCommands.registerCommand("ENABLE_HIGH_CAM",           Commands.runOnce(() -> Globals.enableHighCam()));
+        NamedCommands.registerCommand("DISABLE_UPPER_CAM",         Commands.runOnce(() -> Globals.disableUpperCam()));
+        NamedCommands.registerCommand("ENABLE_UPPER_CAM",          Commands.runOnce(() -> Globals.enableUpperCam()));
         
 
         // All Path Planner event triggers  ===========
@@ -121,6 +123,8 @@ public class RobotContainer {
         new EventTrigger("GOTO_L3_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.GOTO_L3));
         new EventTrigger("INTAKE_LOW_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.INTAKE_LOW_ALGAE));
         new EventTrigger("INTAKE_HIGH_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.INTAKE_HIGH_ALGAE));
+        new EventTrigger("USE_UPPER_CAM").onTrue(Commands.runOnce(() -> Globals.enableUpperCam()))
+                                              .onFalse(Commands.runOnce(() -> Globals.disableUpperCam()));
 
 
         // Configure Auto Chooser  ===============================
