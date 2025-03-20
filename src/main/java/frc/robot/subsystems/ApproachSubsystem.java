@@ -87,7 +87,6 @@ public class ApproachSubsystem extends SubsystemBase {
       reefBranchOffset = 0.4;
       centerStandoff = OVERHEAD_STANDOFF; // Space out further for algae
     }
-    Globals.UPPER_CAM_ENABLED = targetPos.enableHighCam;
 
     // Calculate left/right offsets for branch coordinates
     if (reefBranchOffset != 0) {

@@ -175,7 +175,7 @@
               "Visuals/Show value": true
             }
           },
-          "3,8": {
+          "3,6": {
             "size": [
               2,
               2
@@ -218,7 +218,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "5,8": {
+          "5,6": {
             "size": [
               8,
               2
@@ -231,7 +231,7 @@
               "_showGlyph": false
             }
           },
-          "5,6": {
+          "5,8": {
             "size": [
               8,
               2
@@ -274,7 +274,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "3,6": {
+          "3,8": {
             "size": [
               2,
               2

@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.995315401593458,
-        "y": 0.6872149357794762
+        "x": 6.045640677973637,
+        "y": 0.761459862345223
       },
       "prevControl": {
-        "x": 5.982120612270642,
-        "y": 1.9129488271761566
+        "x": 6.032445888650821,
+        "y": 1.9871937537419022
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,7 +29,21 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Slow",
+      "minWaypointRelativePos": 0.769147202607272,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 2.5,
+        "maxAngularVelocity": 360.0,
+        "maxAngularAcceleration": 360.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -43,13 +57,13 @@
     "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 360.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularAcceleration": 360.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.86147474025668
+    "rotation": -90.96286362563627
   },
   "reversed": false,
   "folder": "EF",

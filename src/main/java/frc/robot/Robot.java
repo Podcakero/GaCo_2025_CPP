@@ -37,7 +37,6 @@ public class Robot extends TimedRobot {
     SignalLogger.enableAutoLogging(false);
     SmartDashboard.putData("Field", m_field);
     SmartDashboard.putData("AutoField", Telemetry.m_field2);
-    Globals.enableUpperCam();  // Use high cam in disabled
     m_robotContainer.tower.initialize();
   }
 
@@ -50,8 +49,6 @@ public class Robot extends TimedRobot {
   public void disabledExit() {
     m_robotContainer.tower.initialize();
     m_robotContainer.lowerVision.setSafetyOverride(false);
-    /m_robotContainer.upperVision.setSafetyOverride(false);
-
   }
 
   @Override
@@ -64,7 +61,6 @@ public class Robot extends TimedRobot {
     }
 
     m_robotContainer.tower.homeTower();
-    Globals.disableUpperCam();  // ignore high cam in Auto
   }
 
   @Override
@@ -80,7 +76,6 @@ public class Robot extends TimedRobot {
     }
     m_robotContainer.tower.initialize();
     Globals.setLEDMode(LEDmode.MANUAL );
-    Globals.enableUpperCam();  // Use high cam in teleop
   }
 
   @Override
