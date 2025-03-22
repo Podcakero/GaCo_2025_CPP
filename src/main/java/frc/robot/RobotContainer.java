@@ -86,7 +86,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
     public final WristSubsystem wrist = new WristSubsystem();
-    public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist);
+    public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist, joystick);
     public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam, lowerCamStdDevs);
     public final ApproachSubsystem approach = new ApproachSubsystem(drivetrain);
         
