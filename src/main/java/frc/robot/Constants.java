@@ -40,7 +40,7 @@ public class Constants {
         public static final double kAngleMaxVelocityDPS = 400; // 
 		public static final double kAngleMaxAccelerationDPSPS = 1000; // 
 
-        public static final double kIntakeAngle             = 4;
+        public static final double kIntakeAngle             = 2;
         public static final double kSafeAngle               = 30;
         public static final double kL4Angle                 = 48;
         public static final double kHighAlgaeAngle          = 60;
