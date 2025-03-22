@@ -97,7 +97,7 @@ public class Constants {
         public static final Distance kL2AlgaeHeight = Inches.of(39);
         public static final Distance kL3AlgaeHeight = Inches.of(54);  
 
-        public static final Distance kL4AlgaeWindupHeight = Inches.of(71.5);  
+        public static final Distance kL4AlgaeWindupHeight = Inches.of(70.5);  
 
         public static final Distance kSafeHomeHeight = Inches.of(19);
         
