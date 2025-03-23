@@ -12,7 +12,6 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkSim;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -31,8 +30,6 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 public class WristSubsystem extends SubsystemBase {
 
   private final SparkFlex intakeSpark;
-  private final SparkSim simIntakeSpark;
-
   private final SparkFlex angleSpark;
 
   private final RelativeEncoder intakeEncoder;
@@ -52,8 +49,6 @@ public class WristSubsystem extends SubsystemBase {
   public WristSubsystem() {
 
     intakeSpark = new SparkFlex(Constants.Wrist.kIntakeMotorId, MotorType.kBrushless);
-    simIntakeSpark = new SparkSim(intakeSpark, null);
-
     angleSpark = new SparkFlex(Constants.Wrist.kAngleMotorId, MotorType.kBrushless);
 
     intakeEncoder = intakeSpark.getEncoder();
@@ -195,8 +190,6 @@ public class WristSubsystem extends SubsystemBase {
   // intake
   public void setIntakeSpeed(double speed) {
     intakeSpark.set(speed);
-
-    simIntakeSpark.setVelocity(speed);
   }
 
   public double getIntakeSpeed() {
@@ -204,8 +197,7 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public double getIntakeCurrent() {
-   // return simIntakeSpark.getOutputCurrent();
-    return simIntakeSpark.getMotorCurrent();
+    return intakeSpark.getOutputCurrent();
   }
 
   // wrist
