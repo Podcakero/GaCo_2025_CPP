@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkSim;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
@@ -23,12 +24,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.DefaultWristCmd;
 
+import com.ctre.phoenix6.Utils;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 public class WristSubsystem extends SubsystemBase {
 
   private final SparkFlex intakeSpark;
+  private final SparkSim simIntakeSpark;
+
   private final SparkFlex angleSpark;
 
   private final RelativeEncoder intakeEncoder;
@@ -48,6 +52,8 @@ public class WristSubsystem extends SubsystemBase {
   public WristSubsystem() {
 
     intakeSpark = new SparkFlex(Constants.Wrist.kIntakeMotorId, MotorType.kBrushless);
+    simIntakeSpark = new SparkSim(intakeSpark, null);
+
     angleSpark = new SparkFlex(Constants.Wrist.kAngleMotorId, MotorType.kBrushless);
 
     intakeEncoder = intakeSpark.getEncoder();
@@ -122,6 +128,17 @@ public class WristSubsystem extends SubsystemBase {
   // The configuration interfaces may be accessed by typing in the IP address of the roboRIO into a web
   //  browser followed by :5812.
   @Override
+  public void simulationPeriodic() {
+      // TODO Auto-generated method stub
+      SmartDashboard.putNumber("Wrist Goal", angleGoal.position);    
+      SmartDashboard.putNumber("Wrist Angle", angleGoal.position);
+
+      SmartDashboard.putString("Wrist Power", "SIMULATION");
+      SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRange);
+      SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRange);
+  }
+
+  @Override
   public void periodic() {
 
     getRangeMM();
@@ -155,11 +172,19 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public boolean gotExitCoral() {
-    return (exitCoralRange < Constants.Wrist.kMaxCoralDetectRangeMM);
+    if (Utils.isSimulation()){
+      return true;
+    } else {
+      return (exitCoralRange < Constants.Wrist.kMaxCoralDetectRangeMM);
+    }
   }
 
   public boolean gotEnterCoral() {
-    return (enterCoralRange < Constants.Wrist.kMaxCoralDetectRangeMM);
+    if (Utils.isSimulation()){
+      return true;
+    } else {
+      return (exitCoralRange < Constants.Wrist.kMaxCoralDetectRangeMM);
+    }
   }
 
   public void getRangeMM() {
@@ -170,6 +195,8 @@ public class WristSubsystem extends SubsystemBase {
   // intake
   public void setIntakeSpeed(double speed) {
     intakeSpark.set(speed);
+
+    simIntakeSpark.setVelocity(speed);
   }
 
   public double getIntakeSpeed() {
@@ -177,7 +204,8 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public double getIntakeCurrent() {
-    return intakeSpark.getOutputCurrent();
+   // return simIntakeSpark.getOutputCurrent();
+    return simIntakeSpark.getMotorCurrent();
   }
 
   // wrist
@@ -201,8 +229,13 @@ public class WristSubsystem extends SubsystemBase {
 
 
   public boolean inPosition(){
-    Globals.WRIST_IN_POSITION = (Math.abs(angleGoal.position - getWristAngle()) < Constants.Wrist.kAngleTollerance);
-    return Globals.WRIST_IN_POSITION;
+    if (Utils.isSimulation()){
+      Globals.WRIST_IN_POSITION = true;
+      return Globals.WRIST_IN_POSITION;
+    } else {
+      Globals.WRIST_IN_POSITION = (Math.abs(angleGoal.position - getWristAngle()) < Constants.Wrist.kAngleTollerance);
+      return Globals.WRIST_IN_POSITION;
+    }
   }
 
   
