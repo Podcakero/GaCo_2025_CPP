@@ -12,12 +12,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LEDSubsystem extends SubsystemBase {
-
   private final int               stripLength = 25;
+  private final AddressableLED          ledStrip;
+  private final Timer                   ledTimer = new Timer();
   private LEDmode                 lastMode = LEDmode.NONE;
-  private AddressableLED          ledStrip;
   private Addressable2815LEDBuffer ledBuffer;  // Use the new class that flips the R&G LEDs
-  private Timer                   ledTimer = new Timer();
 
   
   // members for different modes

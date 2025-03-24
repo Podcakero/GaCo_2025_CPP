@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 
 /** Add your docs here. */
@@ -12,6 +13,7 @@ public class Constants {
     public static final double kDt = 0.02;
 
     public static final AprilTagFields kField = AprilTagFields.k2025ReefscapeAndyMark;
+    public static final AprilTagFieldLayout kFieldLayout = AprilTagFieldLayout.loadField(kField);
 
     public class Wrist {
         public static final int kAngleMotorId = 61;
@@ -57,6 +59,8 @@ public class Constants {
         public static final double kMaxAngleDegrees                = 210;
 
         public static final double kMaxCoralDetectRangeMM   = 80;
+
+        public static final double kTOFSampleTime = 24;
     }
 
     public class Elevator {
@@ -149,4 +153,11 @@ public class Constants {
         public static final int pose_a = 12;
 
     }
+
+    public class ApproachConstants {
+		public static final double maxApproachLinearVelocityMPS = 2.0;
+		public static final double maxApproachLinearAccelerationMPSPS = 1.5;
+		public static final double maxApproachAngularVelocityRPS = 2 * Math.PI;
+		public static final double maxApproachAngularAccelerationRPSPS = 4 * Math.PI;
+	}
 }

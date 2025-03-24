@@ -30,19 +30,24 @@ public class WristSubsystem extends SubsystemBase {
 
   private final SparkFlex intakeSpark;
   private final SparkFlex angleSpark;
+  private final SparkFlexConfig intakeConfig = new SparkFlexConfig();
+  private final SparkFlexConfig angleConfig = new SparkFlexConfig();
+  private final SparkFlexConfig resetFrameRateConfig = new SparkFlexConfig();
 
   private final RelativeEncoder intakeEncoder;
   private final AbsoluteEncoder angleEncoder;
 
   private final SparkClosedLoopController angleController;
   private final TrapezoidProfile angleTrapezoidProfile;
+
 	private TrapezoidProfile.State angleGoal = new TrapezoidProfile.State();
 	private TrapezoidProfile.State angleSetpoint;
 
-  TimeOfFlight enterTOF;
-  TimeOfFlight exitTOF;
-  double exitCoralRangeMM = 0;
-  double enterCoralRangeMM = 0;
+  private final TimeOfFlight enterTOF;
+  private final TimeOfFlight exitTOF;
+
+  private double exitCoralRangeMM = 0;
+  private double enterCoralRangeMM = 0;
   
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
@@ -59,17 +64,13 @@ public class WristSubsystem extends SubsystemBase {
 	  angleSetpoint = new TrapezoidProfile.State(angleEncoder.getPosition(), angleEncoder.getVelocity());
     angleController = angleSpark.getClosedLoopController();
 
+    // Use module constants to calculate conversion factors and feed forward gain.
+    double intakeFactor = 1;
+    // Sprocket reduction
+
     // Apply the respective configurations to the SPARKS. Reset parameters before
     // applying the configuration to bring the SPARK to a known good state. Persist
     // the settings to the SPARK to avoid losing them on a power cycle.
-
-    SparkFlexConfig intakeConfig = new SparkFlexConfig();
-    SparkFlexConfig angleConfig = new SparkFlexConfig();
-
-    // Use module constants to calculate conversion factors and feed forward gain.
-    double intakeFactor = 1;
-     // Sprocket reduction
-
 
     intakeConfig
       .idleMode(IdleMode.kBrake)
@@ -97,14 +98,16 @@ public class WristSubsystem extends SubsystemBase {
     angleSpark.configure(angleConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     exitTOF = new TimeOfFlight(Constants.Wrist.kExitTOFId);
-    exitTOF.setRangingMode(RangingMode.Short, 30);
+    exitTOF.setRangingMode(RangingMode.Short, Constants.Wrist.kTOFSampleTime);
     exitTOF.setRangeOfInterest(0, 0, 15, 15);
     
     enterTOF = new TimeOfFlight(Constants.Wrist.kEnterTOFId);
-    enterTOF.setRangingMode(RangingMode.Short, 30);
+    enterTOF.setRangingMode(RangingMode.Short, Constants.Wrist.kTOFSampleTime);
     enterTOF.setRangeOfInterest(0, 0, 15, 15);
 
-    setDefaultCommand( new DefaultWristCmd(this));
+    resetFrameRateConfig.signals.appliedOutputPeriodMs(10);
+
+    setDefaultCommand(new DefaultWristCmd(this));
   }
 
   public void initialize() {
@@ -112,11 +115,8 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public void resetFrameRate() {
-    SparkFlexConfig config = new SparkFlexConfig();
-    config.signals.appliedOutputPeriodMs(10);
-    
-    intakeSpark.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    angleSpark.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    intakeSpark.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    angleSpark.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   // The configuration interfaces may be accessed by typing in the IP address of the roboRIO into a web
@@ -187,8 +187,11 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public void setGoalAngle(double angle){
-    angleGoal = new TrapezoidProfile.State(angle, 0.0);
-    angleSetpoint = new TrapezoidProfile.State(getWristAngle(), 0.0);
+    angleGoal.position = angle;
+    angleGoal.velocity = 0.0;
+    
+    angleSetpoint.position = getWristAngle();
+    angleSetpoint.velocity = 0.0;
   }
 
   public double getWristAngle(){

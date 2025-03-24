@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import com.pathplanner.lib.path.GoalEndState;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -46,7 +45,7 @@ public enum ApproachTarget {
 
     public final ApproachPosition position;
 
-    public final Optional<Alliance> alliance;
+    public static final Optional<Alliance> alliance = DriverStation.getAlliance();
 
     public final Pose2d tagPose;
     public final Pose2d pt1;
@@ -60,9 +59,7 @@ public enum ApproachTarget {
 
         this.position = position;
 
-        this.alliance = DriverStation.getAlliance();
-
-        this.tagPose = AprilTagFieldLayout.loadField(Constants.kField).getTagPose(tagId).get().toPose2d();
+        this.tagPose = Constants.kFieldLayout.getTagPose(tagId).get().toPose2d();
         this.pt1 = tagPose.plus(position.pt1Transform);
         this.pt2 = tagPose.plus(position.pt2Transform);
 
@@ -70,51 +67,31 @@ public enum ApproachTarget {
     }
 
     // Modify tag ID is running on Red Alliance.
-    private int getTagId(int id){
+    public static int getTagId(int id){
         if(alliance.isPresent() && alliance.get().equals(Alliance.Red)){
             switch(id){
                 case 12:
-                    id = 2;
-                break;
-
+                    return 2;
                 case 13:
-                    id = 1;
-                break;
-
+                    return 1;
                 case 14:
-                    id = 5;
-                break;
-
+                    return 5;
                 case 16:
-                    id = 3;
-                break;
-
+                    return 3;
                 case 17:
-                    id = 8;
-                break;
-
+                    return 8;
                 case 18:
-                    id = 7;
-                break;
-
+                    return 7;
                 case 19:
-                    id = 6;
-                break;
-
+                    return 6;
                 case 20:
-                    id = 11;
-                break;
-
+                    return 11;
                 case 21:
-                    id = 10;
-                break;
-                
+                    return 10;
                 case 22:
-                    id = 9;
-                break;
+                    return 9;
             }
         }
-        
         return id;
     }
 }

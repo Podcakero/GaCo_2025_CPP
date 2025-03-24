@@ -17,15 +17,17 @@ public class TowerSubsystem extends SubsystemBase {
 
 	private TowerState currentState = TowerState.INIT;
 
-	private Timer stateTimer = new Timer();
+	private final Timer stateTimer = new Timer();
 
-	private ElevatorSubsystem elevator;
-	private WristSubsystem wrist;
+	private final ElevatorSubsystem elevator;
+	private final WristSubsystem wrist;
+	private final CommandXboxController joystick;
+
 	private TowerEvent pendingEvent = TowerEvent.NONE;   
+
 	private double safetyFactor = 1;
 	private int currentLevel = 0;
 	private boolean goDirectAlgae = false;
-	private CommandXboxController joystick;
 
 	/** Creates a new Tower. */
 	public TowerSubsystem(ElevatorSubsystem elevator, WristSubsystem wrist, CommandXboxController joystick) {
@@ -413,10 +415,7 @@ public class TowerSubsystem extends SubsystemBase {
 		if ((currentState == TowerState.SCORING_CORAL) || (currentState == TowerState.PAUSING_AFTER_SCORING_CORAL)) {
 			safetyFactor = 0.25;
 		} else if (elevator.getHeightMeters() > Constants.Elevator.kElevatorSpeedSafeHeightInches) {
-			double span    = Constants.Elevator.kElevatorMaxHeightInches - Constants.Elevator.kElevatorSpeedSafeHeightInches; 
-			double overage = elevator.getHeightMeters() - Constants.Elevator.kElevatorSpeedSafeHeightInches; 
-			double ratio   = overage / span;
-			safetyFactor   = 1.0 - (0.5 * ratio) ;
+			safetyFactor   = 1.0 - (0.5 * elevator.getHeightMeters() - Constants.Elevator.kElevatorSpeedSafeHeightInches / Constants.Elevator.kElevatorMaxHeightInches - Constants.Elevator.kElevatorSpeedSafeHeightInches) ;
 		}
 
 		return safetyFactor;

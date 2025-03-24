@@ -29,12 +29,13 @@ import frc.robot.commands.DefaultElevatorCmd;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private final SparkFlex leftElevatorMotor;
-  private SparkFlex centerElevatorMotor; // Cannot be final due to sysID Routine method
+  private final SparkFlex centerElevatorMotor; // Cannot be final due to sysID Routine method
   private final SparkFlex rightElevatorMotor;
   
   private final SparkFlexConfig leftElevatorMotorConfig;
   private final SparkFlexConfig centerElevatorMotorConfig;
   private final SparkFlexConfig rightElevatorMotorConfig;
+  private final SparkFlexConfig resetFrameRateConfig;
   private final SparkClosedLoopController elevatorController;
   private final RelativeEncoder elevatorEncoder;
 
@@ -98,6 +99,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     setDefaultCommand(new DefaultElevatorCmd(this));
 
     elevatorEncoder.setPosition(Units.inchesToMeters(Constants.Elevator.elevatorHomeHeightInches)); 
+
+    resetFrameRateConfig = new SparkFlexConfig();
+    resetFrameRateConfig.signals.appliedOutputPeriodMs(10);
   }
 
     /**
@@ -114,24 +118,21 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void resetFrameRate() {
-    SparkFlexConfig config = new SparkFlexConfig();
-    config.signals.appliedOutputPeriodMs(10);
-    leftElevatorMotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    centerElevatorMotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    rightElevatorMotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    leftElevatorMotor.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    centerElevatorMotor.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    rightElevatorMotor.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
     System.out.println("RESET FRAME RATE");
   }
 
-
   @Override
 	public void periodic() {
-
     readSensors();
 
 		// This method will be called once per scheduler run
     SmartDashboard.putNumber("Elev Rel Hgt", Units.metersToInches(relativeEncoderHeightMeters));
-		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
+		SmartDashboard.putNumber("Elevator Goal", Units.metersToInches(elevatorGoal.position));
     SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
+    SmartDashboard.putNumber("Elevator Current", getCurrent());
 	}
 
   public void readSensors() {
@@ -155,8 +156,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     lastGoalPositionMeters = goalPositionMeters;
-	  elevatorGoal = new TrapezoidProfile.State(goalPositionMeters, 0.0);
-    elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), 0.0);
+    
+	  elevatorGoal.position = goalPositionMeters;
+    elevatorGoal.velocity = 0.0;
+
+    elevatorSetpoint.position = elevatorEncoder.getPosition();
+    elevatorSetpoint.velocity = 0.0;
 	}
 
   public double getHeightMeters(){
@@ -183,9 +188,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public double getCurrent() {
-    double current = leftElevatorMotor.getOutputCurrent() +  centerElevatorMotor.getOutputCurrent() + rightElevatorMotor.getOutputCurrent();
-    SmartDashboard.putNumber("Elevator Current", current);
-    return current;
+    return leftElevatorMotor.getOutputCurrent() +  centerElevatorMotor.getOutputCurrent() + rightElevatorMotor.getOutputCurrent();
   }
 
   //----------//
