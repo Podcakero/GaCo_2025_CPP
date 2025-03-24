@@ -170,6 +170,7 @@ public class RobotContainer {
 
         joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));  // reset field centric home
 
+        joystick.rightStick().onTrue(tower.runOnce(() -> tower.tiltForward()));
 
         joystick.start().onTrue(new HomeElevatorCmd(elevator, tower));  //home the elevator
 
