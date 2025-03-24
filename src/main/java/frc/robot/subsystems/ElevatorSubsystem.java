@@ -10,10 +10,12 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
+import com.ctre.phoenix6.Utils;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -129,13 +131,21 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
   @Override
+  public void simulationPeriodic() {
+      // TODO Auto-generated method stub
+      SmartDashboard.putNumber("Elev Rel Hgt", Units.metersToInches(elevatorGoal.position));
+      SmartDashboard.putNumber("ElevatorGoal", Units.metersToInches(elevatorGoal.position));
+      SmartDashboard.putString("Elevator Power", "SIMULATION");
+  }
+
+  @Override
 	public void periodic() {
 
     readSensors();
 
 		// This method will be called once per scheduler run
     SmartDashboard.putNumber("Elev Rel Hgt", relativeEncoderHeight.in(Inches));
-		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
+		SmartDashboard.putNumber("ElevatorGoal", Units.metersToInches(elevatorGoal.position));
     SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
 	}
 
@@ -169,8 +179,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean inPosition(){
-    Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Constants.Elevator.kHeightTollerance.in(Meters));
-    return Globals.ELEVATOR_IN_POSITION;
+    if (Utils.isSimulation()){
+      Globals.ELEVATOR_IN_POSITION = true;
+      return Globals.ELEVATOR_IN_POSITION;
+    } else {
+      Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Constants.Elevator.kHeightTollerance.in(Meters));
+      return Globals.ELEVATOR_IN_POSITION;
+    }
   }
 	
   public void runClosedLoop() {

@@ -288,6 +288,32 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
+          },
+          "7,10": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Enter Coral Sensor",
+              "_title": "/SmartDashboard/Enter Coral Sensor",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,10": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Exit Coral Sensor",
+              "_title": "/SmartDashboard/Exit Coral Sensor",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
           }
         }
       }
@@ -307,9 +333,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -7.199999809265137,
-    "y": -7.199999809265137,
-    "width": 1550.4000244140625,
-    "height": 830.4000244140625
+    "x": -7.333333492279053,
+    "y": -7.333333492279053,
+    "width": 1294.6666259765625,
+    "height": 814.6666870117188
   }
 }
