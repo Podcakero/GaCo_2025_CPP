@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
@@ -132,8 +133,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
       // TODO Auto-generated method stub
-      SmartDashboard.putNumber("Elev Rel Hgt", elevatorGoal.position * 39.333);
-      SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
+      SmartDashboard.putNumber("Elev Rel Hgt", Units.metersToInches(elevatorGoal.position));
+      SmartDashboard.putNumber("ElevatorGoal", Units.metersToInches(elevatorGoal.position));
       SmartDashboard.putString("Elevator Power", "SIMULATION");
   }
 
@@ -144,7 +145,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 		// This method will be called once per scheduler run
     SmartDashboard.putNumber("Elev Rel Hgt", relativeEncoderHeight.in(Inches));
-		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
+		SmartDashboard.putNumber("ElevatorGoal", Units.metersToInches(elevatorGoal.position));
     SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
 	}
 
