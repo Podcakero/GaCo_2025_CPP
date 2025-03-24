@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFields;
+
 /** Add your docs here. */
 public class Constants {
 
     public static final double kDt = 0.02;
+
+    public static final AprilTagFields kField = AprilTagFields.k2025ReefscapeAndyMark;
 
     public class Wrist {
         public static final int kAngleMotorId = 61;
