@@ -10,9 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
+import edu.wpi.first.math.util.Units;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -23,7 +21,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -47,8 +44,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 	private TrapezoidProfile.State elevatorGoal = new TrapezoidProfile.State();
 	private TrapezoidProfile.State elevatorSetpoint;
 
-  private Distance relativeEncoderHeight =  Meters.of(0);
-  private Distance lastGoalPosition = Constants.Elevator.kElevatorMinHeight;
+  private double relativeEncoderHeightMeters =  0;
+  private double lastGoalPositionMeters = Units.inchesToMeters(Constants.Elevator.kElevatorMinHeightInches);
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
@@ -61,8 +58,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   
 	  elevatorFeedforward = new ElevatorFeedforward(Elevator.kS, Elevator.kG, Elevator.kV);
 
-	  elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(Elevator.kElevatorMaxVelocityRPS,
-				                                              Elevator.kElevatorMaxAccelerationRPSPS));
+	  elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(Elevator.kElevatorMaxVelocityMPS,
+				                                              Elevator.kElevatorMaxAccelerationMPSPS));
 
 	  elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), elevatorEncoder.getVelocity());
 
@@ -100,16 +97,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     setDefaultCommand(new DefaultElevatorCmd(this));
 
-    elevatorEncoder.setPosition(Constants.Elevator.elevatorHomeHeight.in(Meters)); 
-
-
+    elevatorEncoder.setPosition(Units.inchesToMeters(Constants.Elevator.elevatorHomeHeightInches)); 
   }
 
     /**
    * WARNING: This will rebase the elevator at the current position.
    */
   public void resetEncoder(){
-    elevatorEncoder.setPosition(Constants.Elevator.elevatorHomeHeight.in(Meters)); 
+    elevatorEncoder.setPosition(Units.inchesToMeters(Constants.Elevator.elevatorHomeHeightInches)); 
     initialize();
   }
 
@@ -134,42 +129,42 @@ public class ElevatorSubsystem extends SubsystemBase {
     readSensors();
 
 		// This method will be called once per scheduler run
-    SmartDashboard.putNumber("Elev Rel Hgt", relativeEncoderHeight.in(Inches));
+    SmartDashboard.putNumber("Elev Rel Hgt", Units.metersToInches(relativeEncoderHeightMeters));
 		SmartDashboard.putNumber("ElevatorGoal", elevatorGoal.position * 39.333);
     SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
 	}
 
   public void readSensors() {
     getCurrent();
-    relativeEncoderHeight = Meters.of(elevatorEncoder.getPosition()); 
+    relativeEncoderHeightMeters = elevatorEncoder.getPosition(); 
   }
   
-  public void bumpElevator(double changeMeters) {
-    setGoalPosition(Meters.of(lastGoalPosition.in(Meters) + changeMeters));
+  public void bumpElevatorMeters(double changeMeters) {
+    setGoalPositionMeters(lastGoalPositionMeters + changeMeters);
   }
 
   public void resetElevatorControl() {
-    setGoalPosition(relativeEncoderHeight);
+    setGoalPositionMeters(relativeEncoderHeightMeters);
   }
 
-  public void setGoalPosition(Distance goalPosition) {
-    if (goalPosition.lt(Constants.Elevator.kElevatorMinHeight)) {
-      goalPosition = Constants.Elevator.kElevatorMinHeight;
-    } else if (goalPosition.gt(Constants.Elevator.kElevatorMaxHeight)) {
-      goalPosition = Constants.Elevator.kElevatorMaxHeight;
+  public void setGoalPositionMeters(double goalPositionMeters) {
+    if (goalPositionMeters < Units.inchesToMeters(Constants.Elevator.kElevatorMinHeightInches)) {
+      goalPositionMeters = Units.inchesToMeters(Constants.Elevator.kElevatorMinHeightInches);
+    } else if (goalPositionMeters > Units.inchesToMeters(Constants.Elevator.kElevatorMaxHeightInches)) {
+      goalPositionMeters = Units.inchesToMeters(Constants.Elevator.kElevatorMaxHeightInches);
     }
 
-    lastGoalPosition = goalPosition;
-	  elevatorGoal = new TrapezoidProfile.State(goalPosition.in(Meters), 0.0);
+    lastGoalPositionMeters = goalPositionMeters;
+	  elevatorGoal = new TrapezoidProfile.State(goalPositionMeters, 0.0);
     elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), 0.0);
 	}
 
-  public Distance getHeight(){
-    return relativeEncoderHeight;
+  public double getHeightMeters(){
+    return relativeEncoderHeightMeters;
   }
 
   public boolean inPosition(){
-    Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Constants.Elevator.kHeightTollerance.in(Meters));
+    Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Units.inchesToMeters(Constants.Elevator.kHeightTolleranceInches));
     return Globals.ELEVATOR_IN_POSITION;
   }
 	

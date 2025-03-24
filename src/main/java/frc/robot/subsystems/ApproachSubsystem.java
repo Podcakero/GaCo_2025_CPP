@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import java.util.List;
 import java.util.Optional;
 
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
@@ -54,18 +53,18 @@ public class ApproachSubsystem extends SubsystemBase {
     }
   }
 
-  static final double BUMPER_TO_CENTER = 0.45;
-  static final double REEF_HALF_WIDTH  = 0.165;       // Offset from the center to the pole
-  static final double NORMAL_APPROACH_DISTANCE = 0.2; // Target Distance from reef when first approaching
-  static final double ALGAE_STANDOFF   = 0.80;        // Extra distance for wrist fold down
-  static final double OVERHEAD_STANDOFF = 0.0;        // Negative is more under the barge
+  static final double kBumperToCenterMeters = 0.45;
+  static final double kReefHalfWidthMeters  = 0.165;       // Offset from the center to the pole
+  static final double kNormalApproachDistanceMeters = 0.2; // Target Distance from reef when first approaching
+  static final double kAlgaeStandoffMeters   = 0.80;        // Extra distance for wrist fold down
+  static final double kOverheadStandoffMeters = 0.0;        // Negative is more under the barge
   
   /* Create a Path Command to navigate to the specified position **/
   public Command buildPathCmd(ApproachTarget targetPos){
 
     // Distance in meters
-    double centerStandoff   = BUMPER_TO_CENTER;
-    double reefBranchOffset = REEF_HALF_WIDTH;      
+    double centerStandoff   = kBumperToCenterMeters;
+    double reefBranchOffset = kReefHalfWidthMeters;      
 
     // Get tag coordinates and heading
     int adjTagID    = getTagId(targetPos.tagId);
@@ -82,10 +81,10 @@ public class ApproachSubsystem extends SubsystemBase {
       reefBranchOffset = -reefBranchOffset;
     } else if(targetPos.position == ApproachPosition.ALGAE){
       reefBranchOffset = 0.0;
-      centerStandoff = ALGAE_STANDOFF; // Space out further for algae
+      centerStandoff = kAlgaeStandoffMeters; // Space out further for algae
     } else if(targetPos.position == ApproachPosition.OVERHEAD){
       reefBranchOffset = 0.4;
-      centerStandoff = OVERHEAD_STANDOFF; // Space out further for algae
+      centerStandoff = kOverheadStandoffMeters; // Space out further for algae
     }
 
     // Calculate left/right offsets for branch coordinates
@@ -97,8 +96,8 @@ public class ApproachSubsystem extends SubsystemBase {
     // Determine intermediate and final approach points
     double pt0X = drivetrain.getState().Pose.getX();
     double pt0Y = drivetrain.getState().Pose.getY();
-    double pt1X = tagX + (Math.cos(tagAngle) * (centerStandoff + NORMAL_APPROACH_DISTANCE)) + offsetX;
-    double pt1Y = tagY + (Math.sin(tagAngle) * (centerStandoff + NORMAL_APPROACH_DISTANCE)) + offsetY;
+    double pt1X = tagX + (Math.cos(tagAngle) * (centerStandoff + kNormalApproachDistanceMeters)) + offsetX;
+    double pt1Y = tagY + (Math.sin(tagAngle) * (centerStandoff + kNormalApproachDistanceMeters)) + offsetY;
     double pt2X = tagX + (Math.cos(tagAngle) * (centerStandoff)) + offsetX;
     double pt2Y = tagY + (Math.sin(tagAngle) * (centerStandoff)) + offsetY;
 

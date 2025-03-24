@@ -41,8 +41,8 @@ public class WristSubsystem extends SubsystemBase {
 
   TimeOfFlight enterTOF;
   TimeOfFlight exitTOF;
-  double exitCoralRange = 0;
-  double enterCoralRange = 0;
+  double exitCoralRangeMM = 0;
+  double enterCoralRangeMM = 0;
   
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
@@ -143,8 +143,8 @@ public class WristSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Wrist Angle", getWristAngle());
 
     SmartDashboard.putNumber("Wrist Power", angleSpark.getAppliedOutput());
-    SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRange);
-    SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRange);
+    SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRangeMM);
+    SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRangeMM);
     
   }
 
@@ -155,16 +155,16 @@ public class WristSubsystem extends SubsystemBase {
   }
 
   public boolean gotExitCoral() {
-    return (exitCoralRange < Constants.Wrist.kMaxCoralDetectRangeMM);
+    return (exitCoralRangeMM < Constants.Wrist.kMaxCoralDetectRangeMM);
   }
 
   public boolean gotEnterCoral() {
-    return (enterCoralRange < Constants.Wrist.kMaxCoralDetectRangeMM);
+    return (enterCoralRangeMM < Constants.Wrist.kMaxCoralDetectRangeMM);
   }
 
   public void getRangeMM() {
-    exitCoralRange = exitTOF.getRange();
-    enterCoralRange = enterTOF.getRange();
+    exitCoralRangeMM = exitTOF.getRange();
+    enterCoralRangeMM = enterTOF.getRange();
   }
       
   // intake
