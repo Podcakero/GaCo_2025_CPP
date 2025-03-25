@@ -47,7 +47,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 	private TrapezoidProfile.State elevatorSetpoint;
 
   private double relativeEncoderHeightMeters =  0;
-  private double lastGoalPositionMeters = Units.inchesToMeters(Constants.Elevator.kElevatorMinHeightInches);
+  private double lastGoalPositionMeters = Constants.Elevator.kElevatorMinHeightMeters;
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
@@ -99,7 +99,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     setDefaultCommand(new DefaultElevatorCmd(this));
 
-    elevatorEncoder.setPosition(Units.inchesToMeters(Constants.Elevator.elevatorHomeHeightInches)); 
+    elevatorEncoder.setPosition(Constants.Elevator.elevatorHomeHeightMeters); 
 
     resetFrameRateConfig = new SparkFlexConfig();
     resetFrameRateConfig.signals.appliedOutputPeriodMs(10);
@@ -109,7 +109,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * WARNING: This will rebase the elevator at the current position.
    */
   public void resetEncoder(){
-    elevatorEncoder.setPosition(Units.inchesToMeters(Constants.Elevator.elevatorHomeHeightInches)); 
+    elevatorEncoder.setPosition(Constants.Elevator.elevatorHomeHeightMeters); 
     initialize();
   }
 
@@ -158,10 +158,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setGoalPositionMeters(double goalPositionMeters) {
-    if (goalPositionMeters < Units.inchesToMeters(Constants.Elevator.kElevatorMinHeightInches)) {
-      goalPositionMeters = Units.inchesToMeters(Constants.Elevator.kElevatorMinHeightInches);
-    } else if (goalPositionMeters > Units.inchesToMeters(Constants.Elevator.kElevatorMaxHeightInches)) {
-      goalPositionMeters = Units.inchesToMeters(Constants.Elevator.kElevatorMaxHeightInches);
+    if (goalPositionMeters < Constants.Elevator.kElevatorMinHeightMeters) {
+      goalPositionMeters = Constants.Elevator.kElevatorMinHeightMeters;
+    } else if (goalPositionMeters > Constants.Elevator.kElevatorMaxHeightMeters) {
+      goalPositionMeters = Constants.Elevator.kElevatorMaxHeightMeters;
     }
 
     lastGoalPositionMeters = goalPositionMeters;
@@ -182,7 +182,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       Globals.ELEVATOR_IN_POSITION = true;
       return Globals.ELEVATOR_IN_POSITION;
     } else {
-      Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Units.inchesToMeters(Constants.Elevator.kHeightTolleranceInches));
+      Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Constants.Elevator.kHeightTolleranceMeters);
       return Globals.ELEVATOR_IN_POSITION;
     }
   }
