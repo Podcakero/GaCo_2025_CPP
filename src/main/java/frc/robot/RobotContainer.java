@@ -4,7 +4,9 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.BooleanSupplier;
 
@@ -25,12 +27,9 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -53,8 +52,8 @@ import frc.robot.subsystems.TowerSubsystem;
 import frc.robot.Constants.DriverConstants;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -80,7 +79,6 @@ public class RobotContainer {
                                                           new Rotation3d(0,Math.toRadians(2.1), Math.PI));
     static final Vector<N3> upperCamStdDevs = VecBuilder.fill(1.0, 1.0, Units.degreesToRadians(10));
 
-
     // Instanciate subsystems
     public final Globals globals = new Globals();
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -89,35 +87,109 @@ public class RobotContainer {
     public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist, joystick);
     public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam, lowerCamStdDevs);
     public final ApproachSubsystem approach = new ApproachSubsystem(drivetrain);
-        
     public final LEDSubsystem led = new LEDSubsystem(0);
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
 
+    /* Intake and Goto Commands */
+    private final JustIntakeCmd intakeAndGotoL1 = new JustIntakeCmd(tower, TowerEvent.GOTO_L1);
+    private final JustIntakeCmd intakeAndGotoL2 = new JustIntakeCmd(tower, TowerEvent.GOTO_L2);
+    private final JustIntakeCmd intakeAndGotoL3 = new JustIntakeCmd(tower, TowerEvent.GOTO_L3);
+    private final JustIntakeCmd intakeAndGotoL4 = new JustIntakeCmd(tower, TowerEvent.GOTO_L4);
+
+    /* Event Trigger Commands */
+    private final TriggerEventCmd intakeCoral = new TriggerEventCmd(tower, TowerEvent.INTAKE_CORAL);
+    private final TriggerEventCmd score = new TriggerEventCmd(tower, TowerEvent.SCORE);
+    private final TriggerEventCmd intakeLowAlgae = new TriggerEventCmd(tower, TowerEvent.INTAKE_LOW_ALGAE);
+    private final TriggerEventCmd intakeHighAlgae = new TriggerEventCmd(tower, TowerEvent.INTAKE_HIGH_ALGAE);
+    private final TriggerEventCmd gotoL1 = new TriggerEventCmd(tower, TowerEvent.GOTO_L1);
+    private final TriggerEventCmd gotoL3 = new TriggerEventCmd(tower, TowerEvent.GOTO_L3);
+
+    /* Waiting Commands */
+    private final WaitForTowerStateCmd waitForAlgae = new WaitForTowerStateCmd(tower, TowerState.WAITING_FOR_ALGAE);
+    private final WaitForTowerStateCmd waitForLowering = new WaitForTowerStateCmd(tower, TowerState.PAUSING_AFTER_SCORING_CORAL);
+    private final WaitForTowerStateCmd waitForHome = new WaitForTowerStateCmd(tower, TowerState.HOME);
+
+    /* Home Elevator Command */
+    private final HomeElevatorCmd homeElevator = new HomeElevatorCmd(elevator, tower);
+
+    /* Instant Commands */
+    private final Command scoreInstant = tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE));
+
+    private final Command collectCoralLeftInstant = drivetrain.runOnce(() -> faceCoralStation(true).schedule());
+    private final Command collectCoralRightInstant = drivetrain.runOnce(() -> faceCoralStation(false).schedule());
+
+    private final Command intakeLowAlgaeInstant = drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_LOW_ALGAE));
+    private final Command intakeHighAlgaeInstant = drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_HIGH_ALGAE));
+
+    private final Command seedFieldCentricInstant = drivetrain.runOnce(() -> drivetrain.seedFieldCentric());
+    private final Command stopDrivetrainInstant = drivetrain.runOnce(() -> drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0)));
+    
+    private final Command enableSafetyOverrideInstant = lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true));
+    private final Command enableDirectToAlgaeInstant = Commands.runOnce(() -> tower.enableGoToDirectAlgae());
+
+    private final Command homeTowerInstant = tower.runOnce(() -> tower.homeTower());
+    private final Command tiltTowerInstant = tower.runOnce(() -> tower.tiltForward());
+
+    private final Command gotoL1Instant = tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1));
+    private final Command gotoL2Instant = tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2));
+    private final Command gotoL3Instant = tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L3));
+    private final Command gotoL4Instant = tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L4));
+
+    private final Command startApproachInstant = approach.runOnce(() -> approach.startApproach());
+    private final Command reefAInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_A));
+    private final Command reefBInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_B));
+    private final Command reefABInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_AB));
+    private final Command reefCInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_C));
+    private final Command reefDInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_D));
+    private final Command reefCDInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_CD));
+    private final Command reefEInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_E));
+    private final Command reefFInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_F));
+    private final Command reefEFInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_EF));
+    private final Command reefGInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_G));
+    private final Command reefHInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_H));
+    private final Command reefGHInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_GH));
+    private final Command reefIInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_I));
+    private final Command reefJInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_J));
+    private final Command reefIJInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_IJ));
+    private final Command reefKInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_K));
+    private final Command reefLInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_L));
+    private final Command reefKLInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_KL));
+    private final Command leftCoralStationInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.LEFT_SOURCE)).andThen(startApproachInstant).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL));
+    private final Command rightCoralStationInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.RIGHT_SOURCE)).andThen(startApproachInstant).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL));
+    private final Command approachBargeInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.BARGE));
+    private final Command approachProcessorInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.PROCESSOR));
+
+    /* Robot Centric Movement Commands */
+    private final Command robotCentricForward = drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.75).withVelocityY(0));
+    private final Command robotCentricBackward = drivetrain.applyRequest(() -> forwardStraight.withVelocityX(-0.75).withVelocityY(0));
+    private final Command robotCentricLeft = drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.25));
+    private final Command robotCentricRight = drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(-0.25));
+
     public RobotContainer() {
         
         // All named commands =========================
-        NamedCommands.registerCommand("INTAKE_CORAL",              new TriggerEventCmd(tower, TowerEvent.INTAKE_CORAL));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L1",        new JustIntakeCmd(tower, TowerEvent.GOTO_L1));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L2",        new JustIntakeCmd(tower, TowerEvent.GOTO_L2));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L3",        new JustIntakeCmd(tower, TowerEvent.GOTO_L3));
-        NamedCommands.registerCommand("INTAKE_AND_GOTO_L4",        new JustIntakeCmd(tower, TowerEvent.GOTO_L4));
-        NamedCommands.registerCommand("SCORE_CORAL",               new TriggerEventCmd(tower, TowerEvent.SCORE));
-        NamedCommands.registerCommand("SCORE_ALGAE",               new TriggerEventCmd(tower, TowerEvent.SCORE)); // same as coral
-        NamedCommands.registerCommand("GET_ALGAE",                 new TriggerEventCmd(tower, TowerEvent.INTAKE_HIGH_ALGAE));
-        NamedCommands.registerCommand("GO_TO_L1",                  new TriggerEventCmd(tower, TowerEvent.GOTO_L1));
-        NamedCommands.registerCommand("WAIT_FOR_ALGAE",            new WaitForTowerStateCmd(tower, TowerState.WAITING_FOR_ALGAE));
-        NamedCommands.registerCommand("WAIT_FOR_LOWERING",         new WaitForTowerStateCmd(tower, TowerState.PAUSING_AFTER_SCORING_CORAL));
-        NamedCommands.registerCommand("WAIT_FOR_HOME",             new WaitForTowerStateCmd(tower, TowerState.HOME));
+        NamedCommands.registerCommand("INTAKE_CORAL",              intakeCoral);
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L1",        intakeAndGotoL1);
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L2",        intakeAndGotoL2);
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L3",        intakeAndGotoL3);
+        NamedCommands.registerCommand("INTAKE_AND_GOTO_L4",        intakeAndGotoL4);
+        NamedCommands.registerCommand("SCORE_CORAL",               score);
+        NamedCommands.registerCommand("SCORE_ALGAE",               score); // same as coral
+        NamedCommands.registerCommand("GET_ALGAE",                 intakeHighAlgae);
+        NamedCommands.registerCommand("GO_TO_L1",                  gotoL1);
+        NamedCommands.registerCommand("WAIT_FOR_ALGAE",            waitForAlgae);
+        NamedCommands.registerCommand("WAIT_FOR_LOWERING",         waitForLowering);
+        NamedCommands.registerCommand("WAIT_FOR_HOME",             waitForHome);
 
-        NamedCommands.registerCommand("GO_DIRECTLY_TO_ALGAE",      Commands.runOnce(() -> tower.enableGoToDirectAlgae()));
+        NamedCommands.registerCommand("GO_DIRECTLY_TO_ALGAE",      enableDirectToAlgaeInstant);
     
         // All Path Planner event triggers  ===========
-        new EventTrigger("GOTO_L1_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.GOTO_L1));
-        new EventTrigger("GOTO_L3_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.GOTO_L3));
-        new EventTrigger("INTAKE_LOW_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.INTAKE_LOW_ALGAE));
-        new EventTrigger("INTAKE_HIGH_ALGAE").onTrue(new TriggerEventCmd(tower, TowerEvent.INTAKE_HIGH_ALGAE));
+        new EventTrigger("GOTO_L1_ALGAE").onTrue(gotoL1);
+        new EventTrigger("GOTO_L3_ALGAE").onTrue(gotoL3);
+        new EventTrigger("INTAKE_LOW_ALGAE").onTrue(intakeLowAlgae);
+        new EventTrigger("INTAKE_HIGH_ALGAE").onTrue(intakeHighAlgae);
  
         // Configure Auto Chooser  ===============================
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
@@ -165,79 +237,69 @@ public class RobotContainer {
     private void configureBindings() {
 
         // Driver Buttons
+        joystick.rightTrigger(0.5).onTrue(scoreInstant);  // score coral or algae
 
-        joystick.rightTrigger(0.5).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.SCORE)));  // score coral or algae
+        joystick.back().onTrue(seedFieldCentricInstant);  // reset field centric home
 
-        joystick.back().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));  // reset field centric home
+        joystick.start().onTrue(homeTowerInstant);  //home the elevator
+        joystick.rightStick().onTrue(tiltTowerInstant); // Tilt the elevator
 
-        joystick.rightStick().onTrue(tower.runOnce(() -> tower.tiltForward()));
+        joystick.leftBumper().onTrue(collectCoralLeftInstant);  // collect coral left side
+        joystick.rightBumper().onTrue(collectCoralRightInstant);// collect coral right side
 
-        joystick.start().onTrue(new HomeElevatorCmd(elevator, tower));  //home the elevator
+        joystick.y().onTrue(intakeHighAlgaeInstant);
+        joystick.a().onTrue(intakeLowAlgaeInstant);
 
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(true)));  // collect coral left side
-        joystick.rightBumper().onTrue(drivetrain.runOnce(() -> runCoralStationCmd(false)));// collect coral right side
-
-        joystick.y().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_HIGH_ALGAE)));
-        joystick.a().onTrue(drivetrain.runOnce(() -> tower.triggerEvent(TowerEvent.INTAKE_LOW_ALGAE)));
-
-        joystick.x().onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.BARGE)));
-        joystick.b().onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.PROCESSOR)));
+        joystick.x().onTrue(approachBargeInstant);
+        joystick.b().onTrue(approachProcessorInstant);
 
         // ==== Approach Buttons ================================
 
-        joystick.leftTrigger(0.5).onTrue(approach.runOnce(() -> approach.startApproach()))
-        .onFalse(drivetrain.runOnce(() -> drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0))));
+        joystick.leftTrigger(0.5).onTrue(startApproachInstant)
+        .onFalse(stopDrivetrainInstant);
 
         // ==== NON Field Centric driving ================================
 
-        joystick.pov(0).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(0.75).withVelocityY(0))
-        );
-        joystick.pov(180).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(-0.75).withVelocityY(0))
-        );
-        joystick.pov(90).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(0).withVelocityY(-0.25))
-        );
-        joystick.pov(270).whileTrue(drivetrain.applyRequest(() ->
-            forwardStraight.withVelocityX(0).withVelocityY(0.25))
-        );
+        joystick.pov(0).whileTrue(robotCentricForward);
+        joystick.pov(180).whileTrue(robotCentricBackward);
+        joystick.pov(90).whileTrue(robotCentricLeft);
+        joystick.pov(270).whileTrue(robotCentricRight);
             
         // ====  CoPilot 1 Buttons  ======================================
 
-        copilot_1.button(DriverConstants.reset).onTrue(lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true))
+        copilot_1.button(DriverConstants.reset).onTrue(enableSafetyOverrideInstant
 //                                             .andThen(upperVision.runOnce(() -> upperVision.setSafetyOverride(true)))  //   only override low cam safety to reposition
                                                );
 
-        copilot_1.button(DriverConstants.home).onTrue(tower.runOnce(() -> tower.homeTower()));
+        copilot_1.button(DriverConstants.home).onTrue(homeTowerInstant);
 
-        copilot_1.button(DriverConstants.l1).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1)));
-        copilot_1.button(DriverConstants.l2).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2)));
-        copilot_1.button(DriverConstants.l3).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L3)));
-        copilot_1.button(DriverConstants.l4).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L4)));
+        copilot_1.button(DriverConstants.l1).onTrue(gotoL1Instant);
+        copilot_1.button(DriverConstants.l2).onTrue(gotoL2Instant);
+        copilot_1.button(DriverConstants.l3).onTrue(gotoL3Instant);
+        copilot_1.button(DriverConstants.l4).onTrue(gotoL4Instant);
 
-        copilot_1.button(DriverConstants.pose_i).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_I)));
-        copilot_1.button(DriverConstants.pose_j).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_J)));
-        copilot_1.button(DriverConstants.pose_ija).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_IJ)));
-        copilot_1.button(DriverConstants.pose_k).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_K)));
-        copilot_1.button(DriverConstants.pose_l).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_L)));
-        copilot_1.button(DriverConstants.pose_kla).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_KL)));
+        copilot_1.button(DriverConstants.pose_i).onTrue(reefIInstant);
+        copilot_1.button(DriverConstants.pose_j).onTrue(reefJInstant);
+        copilot_1.button(DriverConstants.pose_ija).onTrue(reefIJInstant);
+        copilot_1.button(DriverConstants.pose_k).onTrue(reefKInstant);
+        copilot_1.button(DriverConstants.pose_l).onTrue(reefLInstant);
+        copilot_1.button(DriverConstants.pose_kla).onTrue(reefKLInstant);
         
         // ===  CoPilot 2 Buttons  ===========================================
 
-        copilot_2.button(DriverConstants.reset).onTrue(tower.runOnce(() -> tower.triggerEvent(TowerEvent.HOME_TOWER)));
-        copilot_2.button(DriverConstants.pose_a).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_A)));
-        copilot_2.button(DriverConstants.pose_b).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_B)));
-        copilot_2.button(DriverConstants.pose_aba).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_AB)));
-        copilot_2.button(DriverConstants.pose_c).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_C)));
-        copilot_2.button(DriverConstants.pose_d).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_D)));
-        copilot_2.button(DriverConstants.pose_cda).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_CD)));
-        copilot_2.button(DriverConstants.pose_e).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_E)));
-        copilot_2.button(DriverConstants.pose_f).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_F)));
-        copilot_2.button(DriverConstants.pose_efa).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_EF)));
-        copilot_2.button(DriverConstants.pose_g).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_G)));
-        copilot_2.button(DriverConstants.pose_h).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_H)));
-        copilot_2.button(DriverConstants.pose_gha).onTrue(tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_GH)));
+        copilot_2.button(DriverConstants.reset).onTrue(homeTowerInstant);
+        copilot_2.button(DriverConstants.pose_a).onTrue(reefAInstant);
+        copilot_2.button(DriverConstants.pose_b).onTrue(reefBInstant);
+        copilot_2.button(DriverConstants.pose_aba).onTrue(reefABInstant);
+        copilot_2.button(DriverConstants.pose_c).onTrue(reefCInstant);
+        copilot_2.button(DriverConstants.pose_d).onTrue(reefDInstant);
+        copilot_2.button(DriverConstants.pose_cda).onTrue(reefCDInstant);
+        copilot_2.button(DriverConstants.pose_e).onTrue(reefEInstant);
+        copilot_2.button(DriverConstants.pose_f).onTrue(reefFInstant);
+        copilot_2.button(DriverConstants.pose_efa).onTrue(reefEFInstant);
+        copilot_2.button(DriverConstants.pose_g).onTrue(reefGInstant);
+        copilot_2.button(DriverConstants.pose_h).onTrue(reefHInstant);
+        copilot_2.button(DriverConstants.pose_gha).onTrue(reefGHInstant);
        
         drivetrain.registerTelemetry(logger::telemeterize);
     }
@@ -250,10 +312,8 @@ public class RobotContainer {
     // ==============================================================================================
     // Approach Command code
     // ==============================================================================================
-    private Command approachCoralStationCommand;
-    boolean isAtTarget = false;
-    double targetAngle = (approach.tags.getTagPose(12).get().getRotation().toRotation2d().getDegrees());
-    double headingError = 0;
+    private double targetAngle = 0.0;
+    private double headingError = 0.0;
 
     BooleanSupplier atTarget = (() -> {
         
@@ -274,43 +334,21 @@ public class RobotContainer {
         }
     });
 
-    public void faceCoralStation(boolean isLeft){
-        // Choose correct tag based on alliance color and side
-        int tagId = 13;
-        if(!isLeft){
-            tagId -= 1;
-        }
-        approach.alliance = DriverStation.getAlliance();
-        if(approach.alliance.get().equals(Alliance.Red)){
-            tagId -= 11;
-            if(isLeft){
-                tagId -= 1;
-            } else{
-                tagId += 1;
-            }
-        }
-        targetAngle = (approach.tags.getTagPose(tagId).get().getRotation().toRotation2d().getDegrees());
+    public Command faceCoralStation(boolean isLeft){
+        // Left coral station is tag 13, right is 12. Uses getTagId to convert Blue april tag IDs to Red
+        targetAngle = Constants.kFieldLayout.getTagPose(ApproachTarget.getTagId((isLeft) ? 13 : 12)).get().getRotation().toRotation2d().getDegrees();
 
         if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) > 180){
             headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) + 360;
         } else{
             headingError = targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees());
         }
-            approachCoralStationCommand = drivetrain.applyRequest(() ->
+        return drivetrain.applyRequest(() ->
                 drive.withVelocityX(-joystick.getLeftY() * MaxSpeed / 2) // Drive forward with negative Y (forward)
                     .withVelocityY(-joystick.getLeftX() * MaxSpeed / 2) // Drive left with negative X (left)
                     .withRotationalRate(clamp((headingError * MaxAngularRate / 80), -Math.PI, Math.PI, Math.PI/4)) // Auto rotate to position
-            ).until(atTarget); // Run until target angle is reached
+            ).until(atTarget).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)); // Run until target angle is reached
       }
-
-
-    private CommandScheduler scheduler = CommandScheduler.getInstance();
-
-    public void runCoralStationCmd(boolean isLeft) {
-        faceCoralStation(isLeft);
-        scheduler.schedule(approachCoralStationCommand);
-        tower.triggerEvent(TowerEvent.INTAKE_CORAL);
-    }
 
     private double clamp(double value, double min, double max, double innerBound){
         if(value > max){

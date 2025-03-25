@@ -8,31 +8,25 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class VisionSubsystem extends SubsystemBase{
 
-    CommandSwerveDrivetrain drivetrain;
-    PhotonCamera photonCamera;
-    PhotonPoseEstimator poseEstimator;
-    Optional<EstimatedRobotPose>  estimatedRobotPose;
-    AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-    Pose3d robotPose;
-    boolean safetyOverride = false;
-    String cameraName;
-    Vector<N3> visionMeasurementStdDevs;
+    private final CommandSwerveDrivetrain drivetrain;
+    private final PhotonCamera photonCamera;
+    private final PhotonPoseEstimator poseEstimator;
+    private Optional<EstimatedRobotPose>  estimatedRobotPose;
+    private boolean safetyOverride = false;
+    private String cameraName;
+    private Vector<N3> visionMeasurementStdDevs;
    
     /**
      * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
@@ -47,7 +41,7 @@ public class VisionSubsystem extends SubsystemBase{
         photonCamera = new PhotonCamera(cameraName);
 
         // Construct PhotonPoseEstimator
-        poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
+        poseEstimator = new PhotonPoseEstimator(Constants.kFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, robotToCam);
         poseEstimator.setMultiTagFallbackStrategy(PhotonPoseEstimator.PoseStrategy.LOWEST_AMBIGUITY);
     }
 
@@ -55,31 +49,18 @@ public class VisionSubsystem extends SubsystemBase{
         this.safetyOverride = safetyOverride;
     }
 
-
     public void periodic(){
         estimatedRobotPose = getEstimatedGlobalPose();
         if (estimatedRobotPose.isPresent()){
-            EstimatedRobotPose estPose = estimatedRobotPose.get();   
-            
-            double timestampSeconds = estPose.timestampSeconds;
-            Pose2d robotPose = estPose.estimatedPose.toPose2d();
-
             // send this new vision position to drivetrain to adjust odometry if we are within 1 M of out last position
-            Translation2d newPosition = robotPose.getTranslation();
-            Translation2d oldPosition = drivetrain.getState().Pose.getTranslation();
-            double displacement = oldPosition.getDistance(newPosition);
-
-            // validate the position before usig it.
-            if ((displacement <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
-                drivetrain.addVisionMeasurement(robotPose, timestampSeconds, visionMeasurementStdDevs);
+            // validate the position before using it.
+            if ((drivetrain.getState().Pose.getTranslation().getDistance(estimatedRobotPose.get().estimatedPose.toPose2d().getTranslation()) <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
+                drivetrain.addVisionMeasurement(estimatedRobotPose.get().estimatedPose.toPose2d(), estimatedRobotPose.get().timestampSeconds, visionMeasurementStdDevs);
             }
-
             // dont display if locked out
-            SmartDashboard.putString(cameraName + " Pose 2d", robotPose.toString());
+            SmartDashboard.putString(cameraName + " Pose 2d", estimatedRobotPose.get().estimatedPose.toPose2d().toString());
         }
-        
         SmartDashboard.putBoolean(cameraName + " Safety Override", safetyOverride);
-        
     }
 
     /**
