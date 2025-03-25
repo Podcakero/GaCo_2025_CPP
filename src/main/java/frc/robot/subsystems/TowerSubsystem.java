@@ -80,7 +80,7 @@ public class TowerSubsystem extends SubsystemBase {
 			// =================== Initializing ===================
 			case INIT: {
 				if (elevator.getHeightMeters() < Constants.Elevator.kSafeHomeHeightMeters) {
-					elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightInches);	
+					elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightMeters);	
 					setState(TowerState.HOMING_ELEVATOR);
 				} else {
 					wrist.setGoalAngle(Constants.Wrist.kSafeAngleDegrees);
@@ -91,7 +91,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case MAKING_WRIST_SAFE: {
 				if (wrist.inPosition()) {
-					elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightInches);	
+					elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightMeters);	
 					setState(TowerState.HOMING_ELEVATOR);
 				}
 				break;
@@ -280,7 +280,7 @@ public class TowerSubsystem extends SubsystemBase {
 						wrist.setGoalAngle(Constants.Wrist.kAlgaeIntakeAngleDegrees);
 						setState(TowerState.GOING_TO_ALGAE_INTAKE);
 					} else {
-						elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightInches);
+						elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightMeters);
 						setState(TowerState.LOWERING);
 					}
 				}
@@ -402,7 +402,7 @@ public class TowerSubsystem extends SubsystemBase {
 						setState(TowerState.WAITING_FOR_ALGAE);
 					} else {
 						wrist.setGoalAngle(Constants.Wrist.kSafeAngleDegrees);
-						elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightInches);
+						elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightMeters);
 						setState(TowerState.LOWERING);
 					}
 				}
