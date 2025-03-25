@@ -129,8 +129,8 @@ public class WristSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Wrist Angle", angleGoal.position);
 
       SmartDashboard.putString("Wrist Power", "SIMULATION");
-      SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRange);
-      SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRange);
+      SmartDashboard.putNumber("Exit Coral Sensor", exitCoralRangeMM);
+      SmartDashboard.putNumber("Enter Coral Sensor", enterCoralRangeMM);
   }
 
   @Override
@@ -170,7 +170,7 @@ public class WristSubsystem extends SubsystemBase {
     if (Utils.isSimulation()){
       return true;
     } else {
-      return (exitCoralRange < Constants.Wrist.kMaxCoralDetectRangeMM);
+      return (exitCoralRangeMM < Constants.Wrist.kMaxCoralDetectRangeMM);
     }
   }
 
@@ -178,7 +178,7 @@ public class WristSubsystem extends SubsystemBase {
     if (Utils.isSimulation()){
       return true;
     } else {
-      return (exitCoralRange < Constants.Wrist.kMaxCoralDetectRangeMM);
+      return (exitCoralRangeMM < Constants.Wrist.kMaxCoralDetectRangeMM);
     }
   }
 

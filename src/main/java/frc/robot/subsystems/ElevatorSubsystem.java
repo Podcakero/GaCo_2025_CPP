@@ -184,6 +184,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     } else {
       Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Units.inchesToMeters(Constants.Elevator.kHeightTolleranceInches));
       return Globals.ELEVATOR_IN_POSITION;
+    }
   }
 	
   public void runClosedLoop() {

@@ -70,7 +70,7 @@ public class TowerSubsystem extends SubsystemBase {
 	}
 	
 	public void tiltForward(){
-		wrist.setGoalAngle(Constants.Wrist.kSafeAngle);
+		wrist.setGoalAngle(Constants.Wrist.kSafeAngleDegrees);
 		setState(TowerState.GOING_TO_SAFE);
 	}
 
@@ -419,7 +419,10 @@ public class TowerSubsystem extends SubsystemBase {
 		if ((currentState == TowerState.SCORING_CORAL) || (currentState == TowerState.PAUSING_AFTER_SCORING_CORAL)) {
 			safetyFactor = 0.25;
 		} else if (elevator.getHeightMeters() > Constants.Elevator.kElevatorSpeedSafeHeightInches) {
-			safetyFactor   = 1.0 - (0.5 * elevator.getHeightMeters() - Constants.Elevator.kElevatorSpeedSafeHeightInches / Constants.Elevator.kElevatorMaxHeightInches - Constants.Elevator.kElevatorSpeedSafeHeightInches) ;
+			double currentSafeHeight = elevator.getHeightMeters() - Constants.Elevator.kElevatorSpeedSafeHeightInches;
+			double maxSafeHeight = Constants.Elevator.kElevatorMaxHeightInches - Constants.Elevator.kElevatorSpeedSafeHeightInches;
+			double ratio =  currentSafeHeight / maxSafeHeight;
+			safetyFactor = 1.0 - (0.5 * ratio) ;
 		}
 
 		return safetyFactor;
