@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
 public class Constants {
@@ -65,7 +66,7 @@ public class Constants {
 
     public class Elevator {
 
-        public static final double elevatorHomeHeightInches = 17.5;  // only valid when elevator is homed;
+        public static final double elevatorHomeHeightMeters = Units.inchesToMeters(17.5);  // only valid when elevator is homed;
 
         // scale factors
         public static final double kRelativeEncoderScaleRevToMeters = 0.0315;  // 25 turns for 31 inches of travel
@@ -89,24 +90,24 @@ public class Constants {
         public static final int kElevatorMotorCenterId = 52;
         public static final int kElevatorMotorRightId = 53;
 
-        public static final double kElevatorMaxHeightInches = 73;
-        public static final double kElevatorSpeedSafeHeightInches = 40;
-        public static final double kElevatorMinHeightInches = 17.5;
+        public static final double kElevatorMaxHeightMeters = Units.inchesToMeters(73);
+        public static final double kElevatorSpeedSafeHeightMeters = Units.inchesToMeters(40);
+        public static final double kElevatorMinHeightMeters = Units.inchesToMeters(17.5);
 
-        public static final double kIntakeHeightInches = 17.5; 
+        public static final double kIntakeHeightMeters = Units.inchesToMeters(17.5); 
 
-        public static final double kL1CoralHeightInches = 21;
-        public static final double kL2CoralHeightInches = 31;
-        public static final double kL3CoralHeightInches = 46;
-        public static final double kL4CoralHeightInches = 70;  // was 70
+        public static final double kL1CoralHeightMeters = Units.inchesToMeters(21);
+        public static final double kL2CoralHeightMeters = Units.inchesToMeters(31);
+        public static final double kL3CoralHeightMeters = Units.inchesToMeters(46);
+        public static final double kL4CoralHeightMeters = Units.inchesToMeters(70);  // was 70
 
-        public static final double kL1AlgaeHeightInches = 24;
-        public static final double kL2AlgaeHeightInches = 39;
-        public static final double kL3AlgaeHeightInches = 54;  
+        public static final double kL1AlgaeHeightMeters = Units.inchesToMeters(24);
+        public static final double kL2AlgaeHeightMeters = Units.inchesToMeters(39);
+        public static final double kL3AlgaeHeightMeters = Units.inchesToMeters(54);  
 
-        public static final double kL4AlgaeWindupHeightInches = 70.5;  
+        public static final double kL4AlgaeWindupHeightMeters = Units.inchesToMeters(70.5);  
 
-        public static final double kSafeHomeHeightInches = 19;
+        public static final double kSafeHomeHeightMeters = Units.inchesToMeters(19);
         
         public static final double kElevatorMaxVelocityMPS = 2.0;  // MPS
 		public static final double kElevatorMaxAccelerationMPSPS = 4.0; // MPSS  was 6
