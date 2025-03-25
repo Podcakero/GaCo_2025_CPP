@@ -59,7 +59,7 @@ public enum ApproachTarget {
 
         this.position = position;
 
-        this.tagPose = Constants.kFieldLayout.getTagPose(tagId).get().toPose2d();
+        this.tagPose = (tagId == 0) ? Pose2d.kZero : Constants.kFieldLayout.getTagPose(tagId).get().toPose2d();
         this.pt1 = tagPose.plus(position.pt1Transform);
         this.pt2 = tagPose.plus(position.pt2Transform);
 
