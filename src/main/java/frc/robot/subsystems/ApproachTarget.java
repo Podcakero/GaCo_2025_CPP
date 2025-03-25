@@ -45,7 +45,7 @@ public enum ApproachTarget {
 
     public final ApproachPosition position;
 
-    public static final Optional<Alliance> alliance = DriverStation.getAlliance();
+    public static Optional<Alliance> alliance = DriverStation.getAlliance();
 
     public final Pose2d tagPose;
     public final Pose2d pt1;
@@ -68,6 +68,10 @@ public enum ApproachTarget {
 
     // Modify tag ID is running on Red Alliance.
     public static int getTagId(int id){
+        if (alliance == null && DriverStation.getAlliance() != null) {
+            alliance = DriverStation.getAlliance();
+        }
+
         if(alliance.isPresent() && alliance.get().equals(Alliance.Red)){
             switch(id){
                 case 12:
