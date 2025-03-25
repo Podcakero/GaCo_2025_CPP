@@ -69,6 +69,10 @@ public class TowerSubsystem extends SubsystemBase {
 		setState(TowerState.INIT);
 	}
 	
+	public void tiltForward(){
+		wrist.setGoalAngle(Constants.Wrist.kSafeAngle);
+		setState(TowerState.GOING_TO_SAFE);
+	}
 
 	public void runStateMachine() {
 		switch(currentState){

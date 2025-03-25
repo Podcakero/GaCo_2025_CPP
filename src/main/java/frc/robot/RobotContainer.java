@@ -130,6 +130,7 @@ public class RobotContainer {
     private final Command enableDirectToAlgaeInstant = Commands.runOnce(() -> tower.enableGoToDirectAlgae());
 
     private final Command homeTowerInstant = tower.runOnce(() -> tower.homeTower());
+    private final Command tiltTowerInstant = tower.runOnce(() -> tower.tiltForward());
 
     private final Command gotoL1Instant = tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L1));
     private final Command gotoL2Instant = tower.runOnce(() -> tower.triggerEvent(TowerEvent.GOTO_L2));
@@ -240,7 +241,8 @@ public class RobotContainer {
 
         joystick.back().onTrue(seedFieldCentricInstant);  // reset field centric home
 
-        joystick.start().onTrue(homeElevator);  //home the elevator
+        joystick.start().onTrue(homeTowerInstant);  //home the elevator
+        joystick.rightStick().onTrue(tiltTowerInstant); // Tilt the elevator
 
         joystick.leftBumper().onTrue(collectCoralLeftInstant);  // collect coral left side
         joystick.rightBumper().onTrue(collectCoralRightInstant);// collect coral right side

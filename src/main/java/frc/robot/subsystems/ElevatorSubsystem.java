@@ -12,6 +12,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 
+import com.ctre.phoenix6.Utils;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -125,6 +126,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   @Override
+  public void simulationPeriodic() {
+      // TODO Auto-generated method stub
+      SmartDashboard.putNumber("Elev Rel Hgt", Units.metersToInches(elevatorGoal.position));
+      SmartDashboard.putNumber("ElevatorGoal", Units.metersToInches(elevatorGoal.position));
+      SmartDashboard.putString("Elevator Power", "SIMULATION");
+  }
+
+  @Override
 	public void periodic() {
     readSensors();
 
@@ -169,8 +178,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public boolean inPosition(){
-    Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Units.inchesToMeters(Constants.Elevator.kHeightTolleranceInches));
-    return Globals.ELEVATOR_IN_POSITION;
+    if (Utils.isSimulation()){
+      Globals.ELEVATOR_IN_POSITION = true;
+      return Globals.ELEVATOR_IN_POSITION;
+    } else {
+      Globals.ELEVATOR_IN_POSITION = (Math.abs(elevatorGoal.position - elevatorEncoder.getPosition()) < Units.inchesToMeters(Constants.Elevator.kHeightTolleranceInches));
+      return Globals.ELEVATOR_IN_POSITION;
   }
 	
   public void runClosedLoop() {
