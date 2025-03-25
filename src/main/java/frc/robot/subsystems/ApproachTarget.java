@@ -4,6 +4,16 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
+import com.pathplanner.lib.path.GoalEndState;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import frc.robot.Constants;
+
 /** Reef target positions using blue side AprilTag IDs */
 public enum ApproachTarget {
     UNKNOWN(0, ApproachPosition.ALGAE, false),
@@ -28,17 +38,60 @@ public enum ApproachTarget {
     PROCESSOR(16,ApproachPosition.ALGAE, false),
     BARGE(14, ApproachPosition.OVERHEAD, true),
     LEFT_SOURCE(13, ApproachPosition.ALGAE, true),
-    RIGHT_SOURCE(12, ApproachPosition.ALGAE, true)
-    ;
+    RIGHT_SOURCE(12, ApproachPosition.ALGAE, true);
 
-
-    public ApproachPosition position;
     public final int tagId;
     public final boolean enableHighCam;
 
-    ApproachTarget(int tagId, ApproachPosition position, boolean enableHighCam){
-        this.tagId = tagId;
-        this.position = position;
+    public final ApproachPosition position;
+
+    public static final Optional<Alliance> alliance = DriverStation.getAlliance();
+
+    public final Pose2d tagPose;
+    public final Pose2d pt1;
+    public final Pose2d pt2;
+
+    public final GoalEndState goalEndState;
+
+    private ApproachTarget(int tagId, ApproachPosition position, boolean enableHighCam){
+        this.tagId = getTagId(tagId);
         this.enableHighCam = enableHighCam;
+
+        this.position = position;
+
+        this.tagPose = Constants.kFieldLayout.getTagPose(tagId).get().toPose2d();
+        this.pt1 = tagPose.plus(position.pt1Transform);
+        this.pt2 = tagPose.plus(position.pt2Transform);
+
+        this.goalEndState = new GoalEndState(0.0, (position == ApproachPosition.OVERHEAD) ? tagPose.getRotation() : tagPose.getRotation().rotateBy(Rotation2d.k180deg));
+    }
+
+    // Modify tag ID is running on Red Alliance.
+    public static int getTagId(int id){
+        if(alliance.isPresent() && alliance.get().equals(Alliance.Red)){
+            switch(id){
+                case 12:
+                    return 2;
+                case 13:
+                    return 1;
+                case 14:
+                    return 5;
+                case 16:
+                    return 3;
+                case 17:
+                    return 8;
+                case 18:
+                    return 7;
+                case 19:
+                    return 6;
+                case 20:
+                    return 11;
+                case 21:
+                    return 10;
+                case 22:
+                    return 9;
+            }
+        }
+        return id;
     }
 }

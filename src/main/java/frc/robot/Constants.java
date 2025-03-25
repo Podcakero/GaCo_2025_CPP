@@ -4,19 +4,24 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Inches;
-import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 
 /** Add your docs here. */
 public class Constants {
 
     public static final double kDt = 0.02;
 
+    public static final AprilTagFields kField = AprilTagFields.k2025ReefscapeAndyMark;
+    public static final AprilTagFieldLayout kFieldLayout = AprilTagFieldLayout.loadField(kField);
+
     public class Wrist {
         public static final int kAngleMotorId = 61;
         public static final int kIntakeMotorId = 62;
         public static final int kExitTOFId = 63;
         public static final int kEnterTOFId = 64;
+
+		public static final int kAlgaeGrabbedCurrent = 40;
         
         public static final double kAngleFactor = 360 * 24 / 40; // 216 degrees
 
@@ -40,25 +45,27 @@ public class Constants {
         public static final double kAngleMaxVelocityDPS = 400; // 
 		public static final double kAngleMaxAccelerationDPSPS = 1000; // 
 
-        public static final double kIntakeAngle             = 2;
-        public static final double kSafeAngle               = 30;
-        public static final double kL4Angle                 = 48;
-        public static final double kHighAlgaeAngle          = 60;
+        public static final double kIntakeAngleDegrees             = 2;
+        public static final double kSafeAngleDegrees               = 30;
+        public static final double kL4AngleDegrees                 = 48;
+        public static final double kHighAlgaeAngleDegrees          = 60;
 
-        public static final double kAlgaeIntakeAngle        = 180; 
+        public static final double kAlgaeIntakeAngleDegrees        = 180; 
 
-        public static final double kAlgaeWindupAngle        = 150; 
-        public static final double kAlgaeReleaseAngle       = 60; 
+        public static final double kAlgaeWindupAngleDegrees        = 150; 
+        public static final double kAlgaeReleaseAngleDegrees       = 60; 
         
-        public static final double kMaxAngleWhenHome        = 182;
-        public static final double kMaxAngle                = 210;
+        public static final double kMaxAngleWhenHomeDegrees        = 182;
+        public static final double kMaxAngleDegrees                = 210;
 
         public static final double kMaxCoralDetectRangeMM   = 80;
+
+        public static final double kTOFSampleTime = 24;
     }
 
     public class Elevator {
 
-        public static final Distance elevatorHomeHeight = Inches.of(17.5);  // only valid when elevator is homed;
+        public static final double elevatorHomeHeightInches = 17.5;  // only valid when elevator is homed;
 
         // scale factors
         public static final double kRelativeEncoderScaleRevToMeters = 0.0315;  // 25 turns for 31 inches of travel
@@ -74,7 +81,7 @@ public class Constants {
 		public static final double kV = 0.117 ;     //
 		public static final double kA = 0.00803 ;   //
 
-        public static final Distance kHeightTollerance = Inches.of(1.0);
+        public static final double kHeightTolleranceInches = 1.0;
 
         public static final int kElevatorCurrentLimit = 60;
 
@@ -82,27 +89,27 @@ public class Constants {
         public static final int kElevatorMotorCenterId = 52;
         public static final int kElevatorMotorRightId = 53;
 
-        public static final Distance kElevatorMaxHeight = Inches.of(73);
-        public static final Distance kElevatorSpeedSafeHeight = Inches.of(40);
-        public static final Distance kElevatorMinHeight = Inches.of(17.5);
+        public static final double kElevatorMaxHeightInches = 73;
+        public static final double kElevatorSpeedSafeHeightInches = 40;
+        public static final double kElevatorMinHeightInches = 17.5;
 
-        public static final Distance kIntakeHeight = Inches.of(17.5); 
+        public static final double kIntakeHeightInches = 17.5; 
 
-        public static final Distance kL1CoralHeight = Inches.of(21);
-        public static final Distance kL2CoralHeight = Inches.of(31);
-        public static final Distance kL3CoralHeight = Inches.of(46);
-        public static final Distance kL4CoralHeight = Inches.of(70);  // was 70
+        public static final double kL1CoralHeightInches = 21;
+        public static final double kL2CoralHeightInches = 31;
+        public static final double kL3CoralHeightInches = 46;
+        public static final double kL4CoralHeightInches = 70;  // was 70
 
-        public static final Distance kL1AlgaeHeight = Inches.of(24);
-        public static final Distance kL2AlgaeHeight = Inches.of(39);
-        public static final Distance kL3AlgaeHeight = Inches.of(54);  
+        public static final double kL1AlgaeHeightInches = 24;
+        public static final double kL2AlgaeHeightInches = 39;
+        public static final double kL3AlgaeHeightInches = 54;  
 
-        public static final Distance kL4AlgaeWindupHeight = Inches.of(70.5);  
+        public static final double kL4AlgaeWindupHeightInches = 70.5;  
 
-        public static final Distance kSafeHomeHeight = Inches.of(19);
+        public static final double kSafeHomeHeightInches = 19;
         
-        public static final double kElevatorMaxVelocityRPS = 2.0;  // MPS
-		public static final double kElevatorMaxAccelerationRPSPS = 4.0; // MPSS  was 6
+        public static final double kElevatorMaxVelocityMPS = 2.0;  // MPS
+		public static final double kElevatorMaxAccelerationMPSPS = 4.0; // MPSS  was 6
 	
         public static final double kElevatorEncoderPositionConversionFactor = kRelativeEncoderScaleRevToMeters; 
         public static final double kElevatorEncoderVelocityConversionFactor = kRelativeEncoderScaleRevToMeters; 
@@ -146,4 +153,11 @@ public class Constants {
         public static final int pose_a = 12;
 
     }
+
+    public class ApproachConstants {
+		public static final double maxApproachLinearVelocityMPS = 2.0;
+		public static final double maxApproachLinearAccelerationMPSPS = 1.5;
+		public static final double maxApproachAngularVelocityRPS = 2 * Math.PI;
+		public static final double maxApproachAngularAccelerationRPSPS = 4 * Math.PI;
+	}
 }
