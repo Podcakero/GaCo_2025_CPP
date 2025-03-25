@@ -156,8 +156,8 @@ public class RobotContainer {
     private final Command reefKInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_K));
     private final Command reefLInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_L));
     private final Command reefKLInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_KL));
-    private final Command leftCoralStationInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.LEFT_SOURCE)).andThen(startApproachInstant).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL));
-    private final Command rightCoralStationInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.RIGHT_SOURCE)).andThen(startApproachInstant).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL));
+    private final Command leftCoralStationInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.LEFT_SOURCE)).andThen(approach.runOnce(() -> approach.startApproach())).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL));
+    private final Command rightCoralStationInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.RIGHT_SOURCE)).andThen(approach.runOnce(() -> approach.startApproach())).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL));
     private final Command approachBargeInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.BARGE));
     private final Command approachProcessorInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.PROCESSOR));
 
@@ -241,7 +241,7 @@ public class RobotContainer {
 
         joystick.back().onTrue(seedFieldCentricInstant);  // reset field centric home
 
-        joystick.start().onTrue(homeTowerInstant);  //home the elevator
+        joystick.start().onTrue(homeElevator);  //home the elevator
         joystick.rightStick().onTrue(tiltTowerInstant); // Tilt the elevator
 
         joystick.leftBumper().onTrue(collectCoralLeftInstant);  // collect coral left side
@@ -286,8 +286,6 @@ public class RobotContainer {
         copilot_1.button(DriverConstants.pose_kla).onTrue(reefKLInstant);
         
         // ===  CoPilot 2 Buttons  ===========================================
-
-        copilot_2.button(DriverConstants.reset).onTrue(homeTowerInstant);
         copilot_2.button(DriverConstants.pose_a).onTrue(reefAInstant);
         copilot_2.button(DriverConstants.pose_b).onTrue(reefBInstant);
         copilot_2.button(DriverConstants.pose_aba).onTrue(reefABInstant);

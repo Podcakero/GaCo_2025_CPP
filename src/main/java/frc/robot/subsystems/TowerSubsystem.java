@@ -79,8 +79,8 @@ public class TowerSubsystem extends SubsystemBase {
 
 			// =================== Initializing ===================
 			case INIT: {
-				if (elevator.getHeightMeters() < Constants.Elevator.kSafeHomeHeightInches) {
-					elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightInches);	
+				if (elevator.getHeightMeters() < Constants.Elevator.kSafeHomeHeightMeters) {
+					elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightMeters);	
 					setState(TowerState.HOMING_ELEVATOR);
 				} else {
 					wrist.setGoalAngle(Constants.Wrist.kSafeAngleDegrees);
@@ -91,7 +91,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case MAKING_WRIST_SAFE: {
 				if (wrist.inPosition()) {
-					elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightInches);	
+					elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightMeters);	
 					setState(TowerState.HOMING_ELEVATOR);
 				}
 				break;
@@ -179,22 +179,22 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case GOT_CORAL: {
 				if (isTriggered(TowerEvent.GOTO_L1)){
-					elevator.setGoalPositionMeters(Constants.Elevator.kL1CoralHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL1CoralHeightMeters);
 					currentLevel = 1;
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING_TO_L123);
 				} else if (isTriggered(TowerEvent.GOTO_L2)){
-					elevator.setGoalPositionMeters(Constants.Elevator.kL2CoralHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL2CoralHeightMeters);
 					currentLevel = 2;
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING_TO_L123);
 				} else if (isTriggered(TowerEvent.GOTO_L3)) {
-					elevator.setGoalPositionMeters(Constants.Elevator.kL3CoralHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL3CoralHeightMeters);
 					currentLevel = 3;
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING_TO_L123);
 				} else if (isTriggered(TowerEvent.GOTO_L4)){
-					elevator.setGoalPositionMeters(Constants.Elevator.kL4CoralHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL4CoralHeightMeters);
 					currentLevel = 4;
 					wrist.setIntakeSpeed(0);
 					setState(TowerState.RAISING_TO_L4);
@@ -242,21 +242,21 @@ public class TowerSubsystem extends SubsystemBase {
 					
 					setState(TowerState.SCORING_CORAL);
 				} else if ((isTriggered(TowerEvent.GOTO_L4))  && (currentLevel != 4)){
-					elevator.setGoalPositionMeters(Constants.Elevator.kL4CoralHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL4CoralHeightMeters);
 					currentLevel = 4;
 					setState(TowerState.RAISING_TO_L4);
 				} else if ((isTriggered(TowerEvent.GOTO_L3))  && (currentLevel != 3)){
-					elevator.setGoalPositionMeters(Constants.Elevator.kL3CoralHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL3CoralHeightMeters);
 					wrist.setGoalAngle(Constants.Wrist.kSafeAngleDegrees);
 					currentLevel = 3;
 					setState(TowerState.RAISING_TO_L123);
 				} else if ((isTriggered(TowerEvent.GOTO_L2))  && (currentLevel != 2)){
-					elevator.setGoalPositionMeters(Constants.Elevator.kL2CoralHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL2CoralHeightMeters);
 					wrist.setGoalAngle(Constants.Wrist.kSafeAngleDegrees);
 					currentLevel = 2;
 					setState(TowerState.RAISING_TO_L123);
 				} else if ((isTriggered(TowerEvent.GOTO_L1))  && (currentLevel != 1)){
-					elevator.setGoalPositionMeters(Constants.Elevator.kL1CoralHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL1CoralHeightMeters);
 					wrist.setGoalAngle(Constants.Wrist.kSafeAngleDegrees);
 					currentLevel = 1;
 					setState(TowerState.RAISING_TO_L123);
@@ -276,11 +276,11 @@ public class TowerSubsystem extends SubsystemBase {
 				if (wrist.inPosition() && stateTimer.hasElapsed(0.2)) {
 					if (goDirectAlgae){  // special bypass to go to pickup Algae in Auto
 						goDirectAlgae = false;  // reset the flag
-						elevator.setGoalPositionMeters(Constants.Elevator.kL2AlgaeHeightInches);
+						elevator.setGoalPositionMeters(Constants.Elevator.kL2AlgaeHeightMeters);
 						wrist.setGoalAngle(Constants.Wrist.kAlgaeIntakeAngleDegrees);
 						setState(TowerState.GOING_TO_ALGAE_INTAKE);
 					} else {
-						elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightInches);
+						elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightMeters);
 						setState(TowerState.LOWERING);
 					}
 				}
@@ -307,7 +307,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case GET_SAFE_FOR_L2_ALGAE: {
 				if(wrist.inPosition()){
-					elevator.setGoalPositionMeters(Constants.Elevator.kL2AlgaeHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL2AlgaeHeightMeters);
 					wrist.setGoalAngle(Constants.Wrist.kAlgaeIntakeAngleDegrees);
 					setState(TowerState.GOING_TO_ALGAE_INTAKE);
 				}
@@ -316,7 +316,7 @@ public class TowerSubsystem extends SubsystemBase {
 
 			case GET_SAFE_FOR_L3_ALGAE: {
 				if(wrist.inPosition()){
-					elevator.setGoalPositionMeters(Constants.Elevator.kL3AlgaeHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL3AlgaeHeightMeters);
 					wrist.setGoalAngle(Constants.Wrist.kAlgaeIntakeAngleDegrees);
 					setState(TowerState.GOING_TO_ALGAE_INTAKE);
 				}
@@ -344,23 +344,23 @@ public class TowerSubsystem extends SubsystemBase {
 					}
 				} else if (isTriggered(TowerEvent.GOTO_L1)) {
 					currentLevel = 1;
-					elevator.setGoalPositionMeters(Constants.Elevator.kL1AlgaeHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL1AlgaeHeightMeters);
 					wrist.setGoalAngle(Constants.Wrist.kAlgaeIntakeAngleDegrees);
 					Globals.IDENTIFIED_TARGET = ApproachTarget.PROCESSOR;
 					setState(TowerState.CHANGING_ALGAE_HEIGHT);
 				} else if (isTriggered(TowerEvent.GOTO_L2)) {
 					currentLevel = 2;
-					elevator.setGoalPositionMeters(Constants.Elevator.kL2AlgaeHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL2AlgaeHeightMeters);
 					wrist.setGoalAngle(Constants.Wrist.kAlgaeIntakeAngleDegrees);
 					setState(TowerState.CHANGING_ALGAE_HEIGHT);
 				} else if (isTriggered(TowerEvent.GOTO_L3)) {
 					currentLevel = 3;
-					elevator.setGoalPositionMeters(Constants.Elevator.kL3AlgaeHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL3AlgaeHeightMeters);
 					wrist.setGoalAngle(Constants.Wrist.kAlgaeIntakeAngleDegrees);
 					setState(TowerState.CHANGING_ALGAE_HEIGHT);
 				} else if (isTriggered(TowerEvent.GOTO_L4)) {
 					currentLevel = 4;
-					elevator.setGoalPositionMeters(Constants.Elevator.kL4AlgaeWindupHeightInches);
+					elevator.setGoalPositionMeters(Constants.Elevator.kL4AlgaeWindupHeightMeters);
 					wrist.setGoalAngle(Constants.Wrist.kAlgaeWindupAngleDegrees);
 					setState(TowerState.CHANGING_ALGAE_HEIGHT);
 				} else if(wrist.getIntakeCurrent() > Constants.Wrist.kAlgaeGrabbedCurrent){
@@ -402,7 +402,7 @@ public class TowerSubsystem extends SubsystemBase {
 						setState(TowerState.WAITING_FOR_ALGAE);
 					} else {
 						wrist.setGoalAngle(Constants.Wrist.kSafeAngleDegrees);
-						elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightInches);
+						elevator.setGoalPositionMeters(Constants.Elevator.kIntakeHeightMeters);
 						setState(TowerState.LOWERING);
 					}
 				}
@@ -418,9 +418,9 @@ public class TowerSubsystem extends SubsystemBase {
 
 		if ((currentState == TowerState.SCORING_CORAL) || (currentState == TowerState.PAUSING_AFTER_SCORING_CORAL)) {
 			safetyFactor = 0.25;
-		} else if (elevator.getHeightMeters() > Constants.Elevator.kElevatorSpeedSafeHeightInches) {
-			double currentSafeHeight = elevator.getHeightMeters() - Constants.Elevator.kElevatorSpeedSafeHeightInches;
-			double maxSafeHeight = Constants.Elevator.kElevatorMaxHeightInches - Constants.Elevator.kElevatorSpeedSafeHeightInches;
+		} else if (elevator.getHeightMeters() > Constants.Elevator.kElevatorSpeedSafeHeightMeters) {
+			double currentSafeHeight = elevator.getHeightMeters() - Constants.Elevator.kElevatorSpeedSafeHeightMeters;
+			double maxSafeHeight = Constants.Elevator.kElevatorMaxHeightMeters - Constants.Elevator.kElevatorSpeedSafeHeightMeters;
 			double ratio =  currentSafeHeight / maxSafeHeight;
 			safetyFactor = 1.0 - (0.5 * ratio) ;
 		}

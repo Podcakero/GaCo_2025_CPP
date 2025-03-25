@@ -45,8 +45,6 @@ public enum ApproachTarget {
 
     public final ApproachPosition position;
 
-    public static final Optional<Alliance> alliance = DriverStation.getAlliance();
-
     public final Pose2d tagPose;
     public final Pose2d pt1;
     public final Pose2d pt2;
@@ -59,7 +57,7 @@ public enum ApproachTarget {
 
         this.position = position;
 
-        this.tagPose = Constants.kFieldLayout.getTagPose(tagId).get().toPose2d();
+        this.tagPose = (tagId == 0) ? Pose2d.kZero : Constants.kFieldLayout.getTagPose(tagId).get().toPose2d();
         this.pt1 = tagPose.plus(position.pt1Transform);
         this.pt2 = tagPose.plus(position.pt2Transform);
 
@@ -68,7 +66,7 @@ public enum ApproachTarget {
 
     // Modify tag ID is running on Red Alliance.
     public static int getTagId(int id){
-        if(alliance.isPresent() && alliance.get().equals(Alliance.Red)){
+        if(DriverStation.getAlliance() != null && DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)){
             switch(id){
                 case 12:
                     return 2;
