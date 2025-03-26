@@ -263,32 +263,6 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "7,10": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Enter Coral Sensor",
-              "_title": "/SmartDashboard/Enter Coral Sensor",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "9,10": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Exit Coral Sensor",
-              "_title": "/SmartDashboard/Exit Coral Sensor",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "5,8": {
             "size": [
               9,

@@ -49,7 +49,7 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.TowerEvent;
 import frc.robot.subsystems.TowerState;
 import frc.robot.subsystems.TowerSubsystem;
-import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.Driver;
 
 public class RobotContainer {
     private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -57,7 +57,7 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.08).withRotationalDeadband(MaxAngularRate * 0.08) // Add a 8% deadband
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 8% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     //private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -76,7 +76,7 @@ public class RobotContainer {
 
 
     static final Transform3d robotToRightCam = new Transform3d(new Translation3d(0.24, -0.27, 0.217), 
-                                                          new Rotation3d(0, Math.toRadians(0), Math.toRadians(45)));
+                                                          new Rotation3d(0, Math.toRadians(-5), Math.toRadians(45)));
     static final Vector<N3> rightCamStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5));
 
     // Instanciate subsystems
@@ -224,9 +224,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * Constants.DriverConstants.kMaxDriveSpeed * tower.getTowerSpeedSafetyFactor()) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed * Constants.DriverConstants.kMaxDriveSpeed  * tower.getTowerSpeedSafetyFactor()) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate * Constants.DriverConstants.kMaxTurnSpeed * tower.getTowerSpeedSafetyFactor()) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * Constants.Driver.kMaxDriveSpeed * tower.getTowerSpeedSafetyFactor()) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed * Constants.Driver.kMaxDriveSpeed  * tower.getTowerSpeedSafetyFactor()) // Drive left with negative X (left)
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate * Constants.Driver.kMaxTurnSpeed * tower.getTowerSpeedSafetyFactor()) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -267,37 +267,37 @@ public class RobotContainer {
             
         // ====  CoPilot 1 Buttons  ======================================
 
-        copilot_1.button(DriverConstants.reset).onTrue(enableSafetyOverrideInstant
+        copilot_1.button(Driver.reset).onTrue(enableSafetyOverrideInstant
 //                                             .andThen(upperVision.runOnce(() -> upperVision.setSafetyOverride(true)))  //   only override low cam safety to reposition
                                                );
 
-        copilot_1.button(DriverConstants.home).onTrue(homeTowerInstant);
+        copilot_1.button(Driver.home).onTrue(homeTowerInstant);
 
-        copilot_1.button(DriverConstants.l1).onTrue(gotoL1Instant);
-        copilot_1.button(DriverConstants.l2).onTrue(gotoL2Instant);
-        copilot_1.button(DriverConstants.l3).onTrue(gotoL3Instant);
-        copilot_1.button(DriverConstants.l4).onTrue(gotoL4Instant);
+        copilot_1.button(Driver.l1).onTrue(gotoL1Instant);
+        copilot_1.button(Driver.l2).onTrue(gotoL2Instant);
+        copilot_1.button(Driver.l3).onTrue(gotoL3Instant);
+        copilot_1.button(Driver.l4).onTrue(gotoL4Instant);
 
-        copilot_1.button(DriverConstants.pose_i).onTrue(reefIInstant);
-        copilot_1.button(DriverConstants.pose_j).onTrue(reefJInstant);
-        copilot_1.button(DriverConstants.pose_ija).onTrue(reefIJInstant);
-        copilot_1.button(DriverConstants.pose_k).onTrue(reefKInstant);
-        copilot_1.button(DriverConstants.pose_l).onTrue(reefLInstant);
-        copilot_1.button(DriverConstants.pose_kla).onTrue(reefKLInstant);
+        copilot_1.button(Driver.pose_i).onTrue(reefIInstant);
+        copilot_1.button(Driver.pose_j).onTrue(reefJInstant);
+        copilot_1.button(Driver.pose_ija).onTrue(reefIJInstant);
+        copilot_1.button(Driver.pose_k).onTrue(reefKInstant);
+        copilot_1.button(Driver.pose_l).onTrue(reefLInstant);
+        copilot_1.button(Driver.pose_kla).onTrue(reefKLInstant);
         
         // ===  CoPilot 2 Buttons  ===========================================
-        copilot_2.button(DriverConstants.pose_a).onTrue(reefAInstant);
-        copilot_2.button(DriverConstants.pose_b).onTrue(reefBInstant);
-        copilot_2.button(DriverConstants.pose_aba).onTrue(reefABInstant);
-        copilot_2.button(DriverConstants.pose_c).onTrue(reefCInstant);
-        copilot_2.button(DriverConstants.pose_d).onTrue(reefDInstant);
-        copilot_2.button(DriverConstants.pose_cda).onTrue(reefCDInstant);
-        copilot_2.button(DriverConstants.pose_e).onTrue(reefEInstant);
-        copilot_2.button(DriverConstants.pose_f).onTrue(reefFInstant);
-        copilot_2.button(DriverConstants.pose_efa).onTrue(reefEFInstant);
-        copilot_2.button(DriverConstants.pose_g).onTrue(reefGInstant);
-        copilot_2.button(DriverConstants.pose_h).onTrue(reefHInstant);
-        copilot_2.button(DriverConstants.pose_gha).onTrue(reefGHInstant);
+        copilot_2.button(Driver.pose_a).onTrue(reefAInstant);
+        copilot_2.button(Driver.pose_b).onTrue(reefBInstant);
+        copilot_2.button(Driver.pose_aba).onTrue(reefABInstant);
+        copilot_2.button(Driver.pose_c).onTrue(reefCInstant);
+        copilot_2.button(Driver.pose_d).onTrue(reefDInstant);
+        copilot_2.button(Driver.pose_cda).onTrue(reefCDInstant);
+        copilot_2.button(Driver.pose_e).onTrue(reefEInstant);
+        copilot_2.button(Driver.pose_f).onTrue(reefFInstant);
+        copilot_2.button(Driver.pose_efa).onTrue(reefEFInstant);
+        copilot_2.button(Driver.pose_g).onTrue(reefGInstant);
+        copilot_2.button(Driver.pose_h).onTrue(reefHInstant);
+        copilot_2.button(Driver.pose_gha).onTrue(reefGHInstant);
        
         drivetrain.registerTelemetry(logger::telemeterize);
     }
