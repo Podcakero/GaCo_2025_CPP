@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
@@ -55,7 +56,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
-    //private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
+    private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
     /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
@@ -94,7 +95,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
      * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
      */
-    /*
     private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
         new SysIdRoutine.Config(
             // This is in radians per second², but SysId only supports "volts per second" 
@@ -116,7 +116,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             this
         )
     );
-    */
 
     /* The SysId routine to test */
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
