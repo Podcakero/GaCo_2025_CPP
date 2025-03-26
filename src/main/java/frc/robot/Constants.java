@@ -112,7 +112,7 @@ public class Constants {
 
         public static final double kSafeHomeHeightMeters = Units.inchesToMeters(19);
         
-        public static final double kElevatorMaxVelocityMPS = 2.0;  // MPS
+        //public static final double kElevatorMaxVelocityMPS = 2.0;  // MPS
 		public static final double kElevatorMaxAccelerationMPSPS = 4.0; // MPSS  was 6
 	
         public static final double kElevatorEncoderPositionConversionFactor = kRelativeEncoderScaleRevToMeters; 

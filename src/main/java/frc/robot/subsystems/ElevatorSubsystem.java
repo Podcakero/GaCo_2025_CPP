@@ -25,6 +25,7 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.Elevator;
 import frc.robot.commands.DefaultElevatorCmd;
 
@@ -60,7 +61,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   
 	  elevatorFeedforward = new ElevatorFeedforward(Elevator.kS, Elevator.kG, Elevator.kV);
 
-	  elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(Elevator.kElevatorMaxVelocityMPS,
+	  elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(elevatorFeedforward.maxAchievableVelocity(12.0, Elevator.kElevatorMaxAccelerationMPSPS),
 				                                              Elevator.kElevatorMaxAccelerationMPSPS));
 
 	  elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), elevatorEncoder.getVelocity());
