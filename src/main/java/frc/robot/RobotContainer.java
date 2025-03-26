@@ -349,8 +349,9 @@ public class RobotContainer {
                 //     .withVelocityY(-joystick.getLeftX() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent) // Drive left with negative X (left)
                 //     .withRotationalRate(clamp((headingError * Constants.DrivetrainConstants.kMaxAngularVelocityRPS * Constants.ApproachConstants.maxApproachAngularVelocityPercent), -Math.PI, Math.PI, Math.PI/4)) // Auto rotate to position
                 rotateTo.withTargetDirection(targetAngle)
-                    .withVelocityX(-joystick.getLeftY() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent)
-                    .withVelocityY(-joystick.getLeftX() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent)
+                    .withVelocityX(-joystick.getLeftY() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent * tower.getTowerSpeedSafetyFactor())
+                    .withVelocityY(-joystick.getLeftX() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent * tower.getTowerSpeedSafetyFactor())
+                    .withMaxAbsRotationalRate(Constants.DrivetrainConstants.kMaxAngularVelocityRPS * Constants.ApproachConstants.maxApproachAngularVelocityPercent  * tower.getTowerSpeedSafetyFactor())
             ).until(atTarget).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)); // Run until target angle is reached
       }
 
