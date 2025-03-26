@@ -70,14 +70,14 @@ public class RobotContainer {
     private final CommandJoystick       copilot_1 = new CommandJoystick(1);
     private final CommandJoystick       copilot_2 = new CommandJoystick(2);
 
-    static final Transform3d robotToLowerCam = new Transform3d(new Translation3d(0.26, 0.00, 0.20), 
-                                                          new Rotation3d(0,0,0));
-    static final Vector<N3> lowerCamStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5));
+    static final Transform3d robotToLeftCam = new Transform3d(new Translation3d(0.24, 0.27, 0.21), 
+                                                            new Rotation3d(0, Math.toRadians(-5), Math.toRadians(-45)));
+    static final Vector<N3> leftCamStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5));
 
 
-    static final Transform3d robotToUpperCam = new Transform3d(new Translation3d(-0.05, 0.00, 1.017), 
-                                                          new Rotation3d(0,Math.toRadians(2.1), Math.PI));
-    static final Vector<N3> upperCamStdDevs = VecBuilder.fill(1.0, 1.0, Units.degreesToRadians(10));
+    static final Transform3d robotToRightCam = new Transform3d(new Translation3d(0.24, -0.27, 0.217), 
+                                                          new Rotation3d(0, Math.toRadians(0), Math.toRadians(45)));
+    static final Vector<N3> rightCamStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5));
 
     // Instanciate subsystems
     public final Globals globals = new Globals();
@@ -85,7 +85,8 @@ public class RobotContainer {
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
     public final WristSubsystem wrist = new WristSubsystem();
     public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist, joystick);
-    public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam, lowerCamStdDevs);
+    public final VisionSubsystem leftVision = new VisionSubsystem(drivetrain, "LEFT_CAM", robotToLeftCam, leftCamStdDevs);
+    public final VisionSubsystem rightVision = new VisionSubsystem(drivetrain, "RIGHT_CAM", robotToRightCam, rightCamStdDevs);
     public final ApproachSubsystem approach = new ApproachSubsystem(drivetrain);
     public final LEDSubsystem led = new LEDSubsystem(0);
 
@@ -126,7 +127,7 @@ public class RobotContainer {
     private final Command seedFieldCentricInstant = drivetrain.runOnce(() -> drivetrain.seedFieldCentric());
     private final Command stopDrivetrainInstant = drivetrain.runOnce(() -> drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0)));
     
-    private final Command enableSafetyOverrideInstant = lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true));
+    private final Command enableSafetyOverrideInstant = leftVision.runOnce(() -> leftVision.setSafetyOverride(true));
     private final Command enableDirectToAlgaeInstant = Commands.runOnce(() -> tower.enableGoToDirectAlgae());
 
     private final Command homeTowerInstant = tower.runOnce(() -> tower.homeTower());
@@ -262,8 +263,8 @@ public class RobotContainer {
 
         joystick.pov(0).whileTrue(robotCentricForward);
         joystick.pov(180).whileTrue(robotCentricBackward);
-        joystick.pov(90).whileTrue(robotCentricLeft);
-        joystick.pov(270).whileTrue(robotCentricRight);
+        joystick.pov(90).whileTrue(robotCentricRight);
+        joystick.pov(270).whileTrue(robotCentricLeft);
             
         // ====  CoPilot 1 Buttons  ======================================
 

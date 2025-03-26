@@ -156,8 +156,8 @@ public class Constants {
     }
 
     public class ApproachConstants {
-		public static final double maxApproachLinearVelocityMPS = 2.0;
-		public static final double maxApproachLinearAccelerationMPSPS = 1.5;
+		public static final double maxApproachLinearVelocityMPS = 4.0;
+		public static final double maxApproachLinearAccelerationMPSPS = 3.0;
 		public static final double maxApproachAngularVelocityRPS = 2 * Math.PI;
 		public static final double maxApproachAngularAccelerationRPSPS = 4 * Math.PI;
 	}
