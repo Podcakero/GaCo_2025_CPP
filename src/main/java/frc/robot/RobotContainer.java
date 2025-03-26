@@ -16,6 +16,7 @@ import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -60,6 +61,12 @@ public class RobotContainer {
     private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
+    private final SwerveRequest.FieldCentricFacingAngle rotateTo = new SwerveRequest.FieldCentricFacingAngle()
+            .withDeadband(Constants.DrivetrainConstants.kMaxVelocityMPS * 0.08)
+            .withRotationalDeadband(Constants.DrivetrainConstants.kMaxAngularVelocityRPS * 0.08)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+            .withHeadingPID(Constants.DrivetrainConstants.kPHeading, Constants.DrivetrainConstants.kIHeading, Constants.DrivetrainConstants.kDHeading);
+
     private final Telemetry logger = new Telemetry(Constants.DrivetrainConstants.kMaxVelocityMPS);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
@@ -69,7 +76,6 @@ public class RobotContainer {
     static final Transform3d robotToLowerCam = new Transform3d(new Translation3d(0.26, 0.00, 0.20), 
                                                           new Rotation3d(0,0,0));
     static final Vector<N3> lowerCamStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5));
-
 
     static final Transform3d robotToUpperCam = new Transform3d(new Translation3d(-0.05, 0.00, 1.017), 
                                                           new Rotation3d(0,Math.toRadians(2.1), Math.PI));
@@ -306,23 +312,24 @@ public class RobotContainer {
     // ==============================================================================================
     // Approach Command code
     // ==============================================================================================
-    private double targetAngle = 0.0;
-    private double headingError = 0.0;
+    private Rotation2d targetAngle;
+    private double headingError;
 
     BooleanSupplier atTarget = (() -> {
         
-        if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) > 180){
-            headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) - 360;
-        } else if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) < -180){
-            headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) + 360;
-        } else{
-            headingError = targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees());
-        }
+        //if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) > 180){
+        //    headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) - 360;
+        //} else if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) < -180){
+        //    headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) + 360;
+        //} else{
+        //    headingError = targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees());
+        //}
 
-        if(Math.abs(targetAngle - drivetrain.getState().Pose.getRotation().getDegrees()) < 1){
+        headingError = Math.abs(targetAngle.getDegrees() - drivetrain.getState().Pose.getRotation().getDegrees());
+
+        if(headingError < 1) {
             return true;
         } else{
-            
             SmartDashboard.putNumber("Degrees Left to Turn", headingError);
             return false;
         }
@@ -330,31 +337,33 @@ public class RobotContainer {
 
     public Command faceCoralStation(boolean isLeft){
         // Left coral station is tag 13, right is 12. Uses getTagId to convert Blue april tag IDs to Red
-        targetAngle = Constants.kFieldLayout.getTagPose(ApproachTarget.getTagId((isLeft) ? 13 : 12)).get().getRotation().toRotation2d().getDegrees();
+        targetAngle = Constants.kFieldLayout.getTagPose(ApproachTarget.getTagId((isLeft) ? 13 : 12)).get().getRotation().toRotation2d();
 
-        if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) > 180){
-            headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) + 360;
-        } else{
-            headingError = targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees());
-        }
+        // if(targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees()) > 180){
+        //     headingError = (targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees())) + 360;
+        // } else{
+        //     headingError = targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees());
+        // }
         return drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent) // Drive left with negative X (left)
-                    .withRotationalRate(clamp((headingError * Constants.DrivetrainConstants.kMaxAngularVelocityRPS * Constants.ApproachConstants.maxApproachAngularVelocityPercent), -Math.PI, Math.PI, Math.PI/4)) // Auto rotate to position
+                // drive.withVelocityX(-joystick.getLeftY() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent) // Drive forward with negative Y (forward)
+                //     .withVelocityY(-joystick.getLeftX() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent) // Drive left with negative X (left)
+                //     .withRotationalRate(clamp((headingError * Constants.DrivetrainConstants.kMaxAngularVelocityRPS * Constants.ApproachConstants.maxApproachAngularVelocityPercent), -Math.PI, Math.PI, Math.PI/4)) // Auto rotate to position
+                rotateTo.withTargetDirection(targetAngle)
+                    .withVelocityX(-joystick.getLeftY() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent)
+                    .withVelocityY(-joystick.getLeftX() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent)
             ).until(atTarget).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)); // Run until target angle is reached
       }
 
-    private double clamp(double value, double min, double max, double innerBound){
-        if(value > max){
-            value = max;
-        } else if(value > 0 && value < innerBound){
-            value = innerBound;
-        } else if(value < min){
-            value = min;
-        } else if(value < 0 && value > -innerBound){
-            value = -innerBound;
-        }
-        return value;
-    }
-
+    // private double clamp(double value, double min, double max, double innerBound){
+    //     if(value > max){
+    //         value = max;
+    //     } else if(value > 0 && value < innerBound){
+    //         value = innerBound;
+    //     } else if(value < min){
+    //         value = min;
+    //     } else if(value < 0 && value > -innerBound){
+    //         value = -innerBound;
+    //     }
+    //     return value;
+    // }
 }

@@ -163,6 +163,10 @@ public class Constants {
         public static final double kMaxAccelerationMPSPS = 2 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         public static final double kMaxAngularVelocityRPS = 2 * Math.PI;
         public static final double kMaxAngularAccelerationRPSPS = 4 * Math.PI;
+
+        public static final double kPHeading = 0.0;
+        public static final double kIHeading = 0.0;
+        public static final double kDHeading = 0.0;
     }
 
     public class ApproachConstants {
