@@ -173,9 +173,9 @@ public class Constants {
     }
 
     public class ApproachConstants {
-		public static final double maxApproachLinearVelocityPercent = 0.5; // Was 2.0m/s, now percent of kMaxVelocityMPS
-		public static final double maxApproachLinearAccelerationPercent = 0.5; // Was 1.5m/s, now percent of kMaxAccelerationMPSPS
-		public static final double maxApproachAngularVelocityPercent = 0.5; // Was 2PI, now percent of kMaxAngularVelocityRPS
-		public static final double maxApproachAngularAccelerationPercent = 0.5; // Was 4PI, now percent of kMaxAngularAccelerationRPSPS
+		public static final double maxApproachLinearVelocityPercent = 0.4; // Was 2.0m/s, now percent of kMaxVelocityMPS
+		public static final double maxApproachLinearAccelerationPercent = 0.6; // Was 1.5m/s, now percent of kMaxAccelerationMPSPS
+		public static final double maxApproachAngularVelocityPercent = 1.0; // Was 2PI, now percent of kMaxAngularVelocityRPS
+		public static final double maxApproachAngularAccelerationPercent = 1.0; // Was 4PI, now percent of kMaxAngularAccelerationRPSPS
 	}
 }
