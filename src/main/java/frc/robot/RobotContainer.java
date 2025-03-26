@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -52,19 +48,19 @@ import frc.robot.subsystems.TowerSubsystem;
 import frc.robot.Constants.DriverConstants;
 
 public class RobotContainer {
-    private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    //public static final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    //public static final double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond); // was 0.75
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.08).withRotationalDeadband(MaxAngularRate * 0.08) // Add a 8% deadband
+            .withDeadband(Constants.DrivetrainConstants.kMaxVelocityMPS * 0.08).withRotationalDeadband(Constants.DrivetrainConstants.kMaxAngularVelocityRPS * 0.08) // Add a 8% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
     //private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(Constants.DrivetrainConstants.kMaxVelocityMPS);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
     private final CommandJoystick       copilot_1 = new CommandJoystick(1);
@@ -224,9 +220,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * Constants.DriverConstants.kMaxDriveSpeed * tower.getTowerSpeedSafetyFactor()) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed * Constants.DriverConstants.kMaxDriveSpeed  * tower.getTowerSpeedSafetyFactor()) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate * Constants.DriverConstants.kMaxTurnSpeed * tower.getTowerSpeedSafetyFactor()) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-joystick.getLeftY() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.DriverConstants.kMaxDriveSpeed * tower.getTowerSpeedSafetyFactor()) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.DriverConstants.kMaxDriveSpeed  * tower.getTowerSpeedSafetyFactor()) // Drive left with negative X (left)
+                    .withRotationalRate(-joystick.getRightX() * Constants.DrivetrainConstants.kMaxAngularVelocityRPS * Constants.DriverConstants.kMaxTurnSpeed * tower.getTowerSpeedSafetyFactor()) // Drive counterclockwise with negative X (left)
             )
         );
 
@@ -342,9 +338,9 @@ public class RobotContainer {
             headingError = targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees());
         }
         return drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed / 2) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed / 2) // Drive left with negative X (left)
-                    .withRotationalRate(clamp((headingError * MaxAngularRate / 80), -Math.PI, Math.PI, Math.PI/4)) // Auto rotate to position
+                drive.withVelocityX(-joystick.getLeftY() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent) // Drive forward with negative Y (forward)
+                    .withVelocityY(-joystick.getLeftX() * Constants.DrivetrainConstants.kMaxVelocityMPS * Constants.ApproachConstants.maxApproachLinearVelocityPercent) // Drive left with negative X (left)
+                    .withRotationalRate(clamp((headingError * Constants.DrivetrainConstants.kMaxAngularVelocityRPS * Constants.ApproachConstants.maxApproachAngularVelocityPercent), -Math.PI, Math.PI, Math.PI/4)) // Auto rotate to position
             ).until(atTarget).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL)); // Run until target angle is reached
       }
 

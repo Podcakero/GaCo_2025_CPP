@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.util.Units;
+import frc.robot.generated.TunerConstants;
 
 /** Add your docs here. */
 public class Constants {
@@ -118,9 +121,9 @@ public class Constants {
 
     public class DriverConstants{
         
-        // driver
-        public static final double kMaxDriveSpeed = 0.9;
-        public static final double kMaxTurnSpeed  = 2;
+        // driver 
+        public static final double kMaxDriveSpeed = 1.0; // 100% of RobotContainer.MaxSpeed
+        public static final double kMaxTurnSpeed  = 1.0; // 100% of RobotContainer.MaxAngularRate
 
         //Co-Pilot 1
         public static final int reset = 1;
@@ -155,10 +158,17 @@ public class Constants {
 
     }
 
+    public class DrivetrainConstants {
+        public static final double kMaxVelocityMPS = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double kMaxAccelerationMPSPS = 2 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        public static final double kMaxAngularVelocityRPS = 2 * Math.PI;
+        public static final double kMaxAngularAccelerationRPSPS = 4 * Math.PI;
+    }
+
     public class ApproachConstants {
-		public static final double maxApproachLinearVelocityMPS = 2.0;
-		public static final double maxApproachLinearAccelerationMPSPS = 1.5;
-		public static final double maxApproachAngularVelocityRPS = 2 * Math.PI;
-		public static final double maxApproachAngularAccelerationRPSPS = 4 * Math.PI;
+		public static final double maxApproachLinearVelocityPercent = 0.5; // Was 2.0m/s, now percent of kMaxVelocityMPS
+		public static final double maxApproachLinearAccelerationPercent = 0.5; // Was 1.5m/s, now percent of kMaxAccelerationMPSPS
+		public static final double maxApproachAngularVelocityPercent = 0.5; // Was 2PI, now percent of kMaxAngularVelocityRPS
+		public static final double maxApproachAngularAccelerationPercent = 0.5; // Was 4PI, now percent of kMaxAngularAccelerationRPSPS
 	}
 }
