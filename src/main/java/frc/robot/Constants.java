@@ -125,8 +125,8 @@ public class Constants {
     public class DriverConstants{
         
         // driver 
-        public static final double kMaxDriveSpeed = 1.0; // 100% of RobotContainer.MaxSpeed
-        public static final double kMaxTurnSpeed  = 1.0; // 100% of RobotContainer.MaxAngularRate
+        public static final double kMaxDriveSpeed = 0.9; // Percent of kMaxVelocityMPS
+        public static final double kMaxTurnSpeed  = 0.75; // Percent of kMaxAngularVelocityRPS
 
         //Co-Pilot 1
         public static final int reset = 1;
