@@ -254,10 +254,11 @@ public class RobotContainer {
         //joystick.x().onTrue(approachBargeInstant);
         //joystick.b().onTrue(approachProcessorInstant);
 
-        joystick.leftStick().and(joystick.a()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.leftStick().and(joystick.b()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.leftStick().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.leftStick().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        joystick.a().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        joystick.x().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        
 
         // ==== Approach Buttons ================================
 
