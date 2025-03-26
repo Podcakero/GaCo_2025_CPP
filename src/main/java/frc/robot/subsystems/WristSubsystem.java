@@ -16,12 +16,25 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.units.measure.MutAngle;
+import edu.wpi.first.units.measure.MutAngularVelocity;
+import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants;
 import frc.robot.commands.DefaultWristCmd;
+
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.Utils;
 import com.playingwithfusion.TimeOfFlight;
@@ -30,7 +43,7 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 public class WristSubsystem extends SubsystemBase {
 
   private final SparkFlex intakeSpark;
-  private final SparkFlex angleSpark;
+  private SparkFlex angleSpark; // cannot be final due to SysID
   private final SparkFlexConfig intakeConfig = new SparkFlexConfig();
   private final SparkFlexConfig angleConfig = new SparkFlexConfig();
   private final SparkFlexConfig resetFrameRateConfig = new SparkFlexConfig();
@@ -39,6 +52,7 @@ public class WristSubsystem extends SubsystemBase {
   private final AbsoluteEncoder angleEncoder;
 
   private final SparkClosedLoopController angleController;
+  private final ArmFeedforward angleFeedforward;
   private final TrapezoidProfile angleTrapezoidProfile;
 
 	private TrapezoidProfile.State angleGoal = new TrapezoidProfile.State();
@@ -49,6 +63,35 @@ public class WristSubsystem extends SubsystemBase {
 
   private double exitCoralRangeMM = 0;
   private double enterCoralRangeMM = 0;
+
+  // Mutable holder for unit-safe voltage values, persisted to avoid reallocation.
+  private final MutVoltage m_appliedVoltage = Volts.mutable(0);
+  // Mutable holder for unit-safe linear distance values, persisted to avoid reallocation.
+  private final MutAngle m_distance = Degrees.mutable(0);
+  // Mutable holder for unit-safe linear velocity values, persisted to avoid reallocation.
+  private final MutAngularVelocity m_velocity = DegreesPerSecond.mutable(0);
+
+  private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
+    new SysIdRoutine.Config(
+      null,
+      Volts.of(1),
+      null,
+      null
+    ),
+    new SysIdRoutine.Mechanism(
+      output -> setVoltage(output),
+      log -> {
+        log.motor("Angle")
+            .voltage(
+                m_appliedVoltage.mut_replace(
+                    angleSpark.getAppliedOutput() * RobotController.getBatteryVoltage(), Volts))
+            .angularPosition(m_distance.mut_replace(angleSpark.getEncoder().getPosition(), Degrees))
+            .angularVelocity(
+                m_velocity.mut_replace(angleSpark.getEncoder().getVelocity(), DegreesPerSecond));
+      },
+      this
+    )
+  );
   
   /** Creates a new WristSubsystem. */
   public WristSubsystem() {
@@ -59,10 +102,8 @@ public class WristSubsystem extends SubsystemBase {
     intakeEncoder = intakeSpark.getEncoder();
     angleEncoder = angleSpark.getAbsoluteEncoder();
 
-    angleTrapezoidProfile = new TrapezoidProfile(new Constraints(Constants.Wrist.kAngleMaxVelocityDPS,
-				                                              Constants.Wrist.kAngleMaxAccelerationDPSPS));
+    angleFeedforward = new ArmFeedforward(Constants.Wrist.kS, Constants.Wrist.kG, Constants.Wrist.kG, Constants.Wrist.kA);
 
-	  angleSetpoint = new TrapezoidProfile.State(angleEncoder.getPosition(), angleEncoder.getVelocity());
     angleController = angleSpark.getClosedLoopController();
 
     // Use module constants to calculate conversion factors and feed forward gain.
@@ -109,6 +150,15 @@ public class WristSubsystem extends SubsystemBase {
     resetFrameRateConfig.signals.appliedOutputPeriodMs(10);
 
     setDefaultCommand(new DefaultWristCmd(this));
+
+    angleTrapezoidProfile = new TrapezoidProfile(new Constraints(
+                                                      angleFeedforward.maxAchievableVelocity(
+                                                          12.0, 
+                                                          angleEncoder.getPosition(), 
+                                                          Constants.Wrist.kAngleMaxAccelerationDPSPS),
+				                                              Constants.Wrist.kAngleMaxAccelerationDPSPS));
+
+	  angleSetpoint = new TrapezoidProfile.State(angleEncoder.getPosition(), angleEncoder.getVelocity());
   }
 
   public void initialize() {
@@ -239,7 +289,19 @@ public class WristSubsystem extends SubsystemBase {
 		  angleController.setReference(angleSetpoint.position, ControlType.kPosition);
   }
 
+  private void setVoltage(Voltage voltage) {
+    angleSpark.setVoltage(voltage);
+  }
 
+  public Command sysIdDynamic(Direction direction)
+  {
+    return m_sysIdRoutine.dynamic(direction);
+  }
+
+  public Command sysIdQuasistatic(Direction direction)
+  {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
 
   //----------//
   // Commands //
