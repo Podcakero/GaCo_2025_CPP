@@ -64,8 +64,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 	  elevatorTrapezoidProfile = new TrapezoidProfile(new Constraints(elevatorFeedforward.maxAchievableVelocity(12.0, Elevator.kElevatorMaxAccelerationMPSPS),
 				                                              Elevator.kElevatorMaxAccelerationMPSPS));
 
-	  elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), elevatorEncoder.getVelocity());
-
     centerElevatorMotorConfig = new SparkFlexConfig();
 
     centerElevatorMotorConfig.closedLoop
@@ -101,6 +99,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     setDefaultCommand(new DefaultElevatorCmd(this));
 
     elevatorEncoder.setPosition(Constants.Elevator.elevatorHomeHeightMeters); 
+
+    elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), elevatorEncoder.getVelocity());
 
     resetFrameRateConfig = new SparkFlexConfig();
     resetFrameRateConfig.signals.appliedOutputPeriodMs(10);
