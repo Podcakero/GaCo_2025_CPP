@@ -55,16 +55,16 @@ public class RobotContainer {
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(Constants.DrivetrainConstants.kMaxVelocityMPS * 0.08).withRotationalDeadband(Constants.DrivetrainConstants.kMaxAngularVelocityRPS * 0.08) // Add a 8% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+            .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
 
     //private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDriveRequestType(DriveRequestType.Velocity); // Use closed-loop control for drive motors
 
     private final SwerveRequest.FieldCentricFacingAngle rotateTo = new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(Constants.DrivetrainConstants.kMaxVelocityMPS * 0.08)
             .withRotationalDeadband(Constants.DrivetrainConstants.kMaxAngularVelocityRPS * 0.08)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+            .withDriveRequestType(DriveRequestType.Velocity) // Use closed-loop control for drive motors
             .withHeadingPID(Constants.DrivetrainConstants.kPHeading, Constants.DrivetrainConstants.kIHeading, Constants.DrivetrainConstants.kDHeading);
 
     private final Telemetry logger = new Telemetry(Constants.DrivetrainConstants.kMaxVelocityMPS);
