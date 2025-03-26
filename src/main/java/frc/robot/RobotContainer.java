@@ -325,14 +325,17 @@ public class RobotContainer {
         //    headingError = targetAngle - (drivetrain.getState().Pose.getRotation().getDegrees());
         //}
 
-        headingError = Math.abs(targetAngle.getDegrees() - drivetrain.getState().Pose.getRotation().getDegrees());
+        // headingError = Math.abs(targetAngle.getDegrees() - drivetrain.getState().Pose.getRotation().getDegrees());
 
-        if(headingError < 1) {
-            return true;
-        } else{
-            SmartDashboard.putNumber("Degrees Left to Turn", headingError);
-            return false;
-        }
+        SmartDashboard.putNumber("Degrees Left to Turn", Units.radiansToDegrees(rotateTo.HeadingController.getPositionError()));
+        return rotateTo.HeadingController.atSetpoint();
+
+        // if(headingError < 1) {
+        //     return true;
+        // } else{
+        //     SmartDashboard.putNumber("Degrees Left to Turn", headingError);
+        //     return false;
+        // }
     });
 
     public Command faceCoralStation(boolean isLeft){
