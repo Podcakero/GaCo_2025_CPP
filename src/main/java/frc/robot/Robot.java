@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledExit() {
     m_robotContainer.tower.initialize();
-    m_robotContainer.lowerVision.setSafetyOverride(false);
+    m_robotContainer.leftVision.setSafetyOverride(false);
   }
 
   @Override
