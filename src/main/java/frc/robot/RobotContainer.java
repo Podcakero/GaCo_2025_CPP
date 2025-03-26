@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.HomeElevatorCmd;
 import frc.robot.commands.JustIntakeCmd;
 import frc.robot.commands.TriggerEventCmd;
@@ -62,7 +63,7 @@ public class RobotContainer {
 
     //private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); 
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -247,11 +248,16 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(collectCoralLeftInstant);  // collect coral left side
         joystick.rightBumper().onTrue(collectCoralRightInstant);// collect coral right side
 
-        joystick.y().onTrue(intakeHighAlgaeInstant);
-        joystick.a().onTrue(intakeLowAlgaeInstant);
+        //joystick.y().onTrue(intakeHighAlgaeInstant);
+        //joystick.a().onTrue(intakeLowAlgaeInstant);
 
-        joystick.x().onTrue(approachBargeInstant);
-        joystick.b().onTrue(approachProcessorInstant);
+        //joystick.x().onTrue(approachBargeInstant);
+        //joystick.b().onTrue(approachProcessorInstant);
+
+        joystick.leftStick().and(joystick.a()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        joystick.leftStick().and(joystick.b()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        joystick.leftStick().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystick.leftStick().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // ==== Approach Buttons ================================
 
