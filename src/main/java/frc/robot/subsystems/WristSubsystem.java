@@ -75,7 +75,7 @@ public class WristSubsystem extends SubsystemBase {
 
     intakeConfig
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(50);
+      .smartCurrentLimit(Constants.Wrist.kIntakeCurrentLimit);
     intakeConfig.encoder
       .positionConversionFactor(intakeFactor) // meters
       .velocityConversionFactor(intakeFactor / 60.0); // meters per second
@@ -83,7 +83,7 @@ public class WristSubsystem extends SubsystemBase {
     angleConfig
       .idleMode(IdleMode.kBrake)
       //.inverted(true)
-      .smartCurrentLimit(50);
+      .smartCurrentLimit(Constants.Wrist.kAngleCurrentLimit);
     angleConfig.absoluteEncoder
       //.inverted(true)
       .positionConversionFactor(Constants.Wrist.kAngleFactor) // degrees

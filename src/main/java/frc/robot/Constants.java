@@ -25,6 +25,9 @@ public class Constants {
         public static final int kExitTOFId = 63;
         public static final int kEnterTOFId = 64;
 
+        public static final int kAngleCurrentLimit = 50;
+        public static final int kIntakeCurrentLimit = 50;
+
 		public static final int kAlgaeGrabbedCurrent = 40;
         
         public static final double kAngleFactor = 360 * 24 / 40; // 216 degrees
