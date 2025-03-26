@@ -9,6 +9,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkFlex;
@@ -286,7 +287,10 @@ public class WristSubsystem extends SubsystemBase {
   
   public void runWristClosedLoop() {
       angleSetpoint = angleTrapezoidProfile.calculate(Constants.kDt, angleSetpoint, angleGoal);
-		  angleController.setReference(angleSetpoint.position, ControlType.kPosition);
+
+      double arbFF = angleFeedforward.calculate(angleSetpoint.position, angleSetpoint.velocity);
+
+		  angleController.setReference(angleSetpoint.position, ControlType.kPosition, ClosedLoopSlot.kSlot0, arbFF);
   }
 
   private void setVoltage(Voltage voltage) {
