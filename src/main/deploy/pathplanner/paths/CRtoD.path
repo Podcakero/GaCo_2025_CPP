@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.9949795081967214,
-        "y": 0.5425717213114762
+        "x": 1.3823630136986294,
+        "y": 0.6066566780821916
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.174729508196722,
-        "y": 1.0495717213114757
+        "x": 2.56211301369863,
+        "y": 1.113656678082191
       },
       "isLocked": false,
       "linkedName": "Collect Right"
@@ -32,10 +32,10 @@
   "constraintZones": [
     {
       "name": "Slow",
-      "minWaypointRelativePos": 0.8104291146116215,
+      "minWaypointRelativePos": 0.8,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.5,
+        "maxVelocity": 2.5,
         "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,

@@ -179,6 +179,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("SCORE_CORAL",               score);
         NamedCommands.registerCommand("SCORE_ALGAE",               score); // same as coral
         NamedCommands.registerCommand("GET_ALGAE",                 intakeHighAlgae);
+        NamedCommands.registerCommand("GET_LOW_ALGAE",             intakeLowAlgae);
         NamedCommands.registerCommand("GO_TO_L1",                  gotoL1);
         NamedCommands.registerCommand("WAIT_FOR_ALGAE",            waitForAlgae);
         NamedCommands.registerCommand("WAIT_FOR_LOWERING",         waitForLowering);
@@ -186,6 +187,9 @@ public class RobotContainer {
         NamedCommands.registerCommand("GO_DIRECTLY_TO_ALGAE",      enableDirectToAlgaeInstant);
     
         // All Path Planner event triggers  ===========
+        new EventTrigger("INTAKE_CORAL").onTrue(intakeCoral);
+        new EventTrigger("INTAKE_AND_GOTO_L3").onTrue( intakeAndGotoL3);
+        new EventTrigger("INTAKE_AND_GOTO_L4").onTrue(intakeAndGotoL4);
         new EventTrigger("GOTO_L1_ALGAE").onTrue(gotoL1);
         new EventTrigger("GOTO_L3_ALGAE").onTrue(gotoL3);
         new EventTrigger("INTAKE_LOW_ALGAE").onTrue(intakeLowAlgae);
