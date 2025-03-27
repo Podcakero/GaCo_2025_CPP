@@ -54,7 +54,7 @@ public class VisionSubsystem extends SubsystemBase{
         if (estimatedRobotPose.isPresent()){
             // send this new vision position to drivetrain to adjust odometry if we are within 1 M of out last position
             // validate the position before using it.
-            if ((drivetrain.getState().Pose.getTranslation().getDistance(estimatedRobotPose.get().estimatedPose.toPose2d().getTranslation()) <= 1.0) || (DriverStation.isDisabled()) || safetyOverride) {
+            if ((drivetrain.getState().Pose.getTranslation().getDistance(estimatedRobotPose.get().estimatedPose.toPose2d().getTranslation()) <= 0.5) || (DriverStation.isDisabled()) || safetyOverride) {
                 drivetrain.addVisionMeasurement(estimatedRobotPose.get().estimatedPose.toPose2d(), estimatedRobotPose.get().timestampSeconds, visionMeasurementStdDevs);
             }
             // dont display if locked out

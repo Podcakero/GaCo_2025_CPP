@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
-import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.Driver;
 
 public class TowerSubsystem extends SubsystemBase {
 
@@ -101,7 +101,7 @@ public class TowerSubsystem extends SubsystemBase {
 				if (elevator.inPosition()) {
 					wrist.setGoalAngle(Constants.Wrist.kIntakeAngleDegrees);
 					setState(TowerState.HOMING_WRIST);
-				} else if (DriverStation.getStickButton(1, DriverConstants.reset)) {
+				} else if (DriverStation.getStickButton(1, Driver.reset)) {
 					elevator.resetEncoder();
 				}
 				break;

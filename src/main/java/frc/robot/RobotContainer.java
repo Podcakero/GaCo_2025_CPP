@@ -46,7 +46,7 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.TowerEvent;
 import frc.robot.subsystems.TowerState;
 import frc.robot.subsystems.TowerSubsystem;
-import frc.robot.Constants.DriverConstants;
+import frc.robot.Constants.Driver;
 
 public class RobotContainer {
     //public static final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -73,13 +73,13 @@ public class RobotContainer {
     private final CommandJoystick       copilot_1 = new CommandJoystick(1);
     private final CommandJoystick       copilot_2 = new CommandJoystick(2);
 
-    static final Transform3d robotToLowerCam = new Transform3d(new Translation3d(0.26, 0.00, 0.20), 
-                                                          new Rotation3d(0,0,0));
-    static final Vector<N3> lowerCamStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5));
-
-    static final Transform3d robotToUpperCam = new Transform3d(new Translation3d(-0.05, 0.00, 1.017), 
-                                                          new Rotation3d(0,Math.toRadians(2.1), Math.PI));
-    static final Vector<N3> upperCamStdDevs = VecBuilder.fill(1.0, 1.0, Units.degreesToRadians(10));
+    static final Transform3d robotToLeftCam = new Transform3d(new Translation3d(0.24, 0.27, 0.21), 
+                                                            new Rotation3d(0, Math.toRadians(-5), Math.toRadians(-45)));
+    static final Vector<N3> leftCamStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5));
+  
+    static final Transform3d robotToRightCam = new Transform3d(new Translation3d(0.24, -0.27, 0.217), 
+                                                          new Rotation3d(0, Math.toRadians(-5), Math.toRadians(45)));
+    static final Vector<N3> rightCamStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(5));
 
     // Instanciate subsystems
     public final Globals globals = new Globals();
@@ -87,7 +87,8 @@ public class RobotContainer {
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
     public final WristSubsystem wrist = new WristSubsystem();
     public final TowerSubsystem tower = new TowerSubsystem(elevator, wrist, joystick);
-    public final VisionSubsystem lowerVision = new VisionSubsystem(drivetrain, "LowerTagCamera", robotToLowerCam, lowerCamStdDevs);
+    public final VisionSubsystem leftVision = new VisionSubsystem(drivetrain, "LEFT_CAM", robotToLeftCam, leftCamStdDevs);
+    public final VisionSubsystem rightVision = new VisionSubsystem(drivetrain, "RIGHT_CAM", robotToRightCam, rightCamStdDevs);
     public final ApproachSubsystem approach = new ApproachSubsystem(drivetrain);
     public final LEDSubsystem led = new LEDSubsystem(0);
 
@@ -128,7 +129,7 @@ public class RobotContainer {
     private final Command seedFieldCentricInstant = drivetrain.runOnce(() -> drivetrain.seedFieldCentric());
     private final Command stopDrivetrainInstant = drivetrain.runOnce(() -> drivetrain.applyRequest(() -> forwardStraight.withVelocityX(0.0).withVelocityY(0.0)));
     
-    private final Command enableSafetyOverrideInstant = lowerVision.runOnce(() -> lowerVision.setSafetyOverride(true));
+    private final Command enableSafetyOverrideInstant = leftVision.runOnce(() -> leftVision.setSafetyOverride(true));
     private final Command enableDirectToAlgaeInstant = Commands.runOnce(() -> tower.enableGoToDirectAlgae());
 
     private final Command homeTowerInstant = tower.runOnce(() -> tower.homeTower());
@@ -158,8 +159,8 @@ public class RobotContainer {
     private final Command reefKInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_K));
     private final Command reefLInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_L));
     private final Command reefKLInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.REEF_KL));
-    private final Command leftCoralStationInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.LEFT_SOURCE)).andThen(approach.runOnce(() -> approach.startApproach())).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL));
-    private final Command rightCoralStationInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.RIGHT_SOURCE)).andThen(approach.runOnce(() -> approach.startApproach())).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL));
+    //private final Command leftCoralStationInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.LEFT_SOURCE)).andThen(approach.runOnce(() -> approach.startApproach())).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL));
+    //private final Command rightCoralStationInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.RIGHT_SOURCE)).andThen(approach.runOnce(() -> approach.startApproach())).andThen(() -> tower.triggerEvent(TowerEvent.INTAKE_CORAL));
     private final Command approachBargeInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.BARGE));
     private final Command approachProcessorInstant = tower.runOnce(() -> approach.identifyTarget(ApproachTarget.PROCESSOR));
 
@@ -184,7 +185,6 @@ public class RobotContainer {
         NamedCommands.registerCommand("WAIT_FOR_ALGAE",            waitForAlgae);
         NamedCommands.registerCommand("WAIT_FOR_LOWERING",         waitForLowering);
         NamedCommands.registerCommand("WAIT_FOR_HOME",             waitForHome);
-
         NamedCommands.registerCommand("GO_DIRECTLY_TO_ALGAE",      enableDirectToAlgaeInstant);
     
         // All Path Planner event triggers  ===========
@@ -194,7 +194,7 @@ public class RobotContainer {
         new EventTrigger("INTAKE_HIGH_ALGAE").onTrue(intakeHighAlgae);
  
         // Configure Auto Chooser  ===============================
-        autoChooser = AutoBuilder.buildAutoChooser("Tests");
+        autoChooser = AutoBuilder.buildAutoChooser("None");
         SmartDashboard.putData("Auto Mode", autoChooser);
 
         // Send drive module data to dashboard
@@ -264,42 +264,42 @@ public class RobotContainer {
 
         joystick.pov(0).whileTrue(robotCentricForward);
         joystick.pov(180).whileTrue(robotCentricBackward);
-        joystick.pov(90).whileTrue(robotCentricLeft);
-        joystick.pov(270).whileTrue(robotCentricRight);
+        joystick.pov(90).whileTrue(robotCentricRight);
+        joystick.pov(270).whileTrue(robotCentricLeft);
             
         // ====  CoPilot 1 Buttons  ======================================
 
-        copilot_1.button(DriverConstants.reset).onTrue(enableSafetyOverrideInstant
+        copilot_1.button(Driver.reset).onTrue(enableSafetyOverrideInstant
 //                                             .andThen(upperVision.runOnce(() -> upperVision.setSafetyOverride(true)))  //   only override low cam safety to reposition
                                                );
 
-        copilot_1.button(DriverConstants.home).onTrue(homeTowerInstant);
+        copilot_1.button(Driver.home).onTrue(homeTowerInstant);
 
-        copilot_1.button(DriverConstants.l1).onTrue(gotoL1Instant);
-        copilot_1.button(DriverConstants.l2).onTrue(gotoL2Instant);
-        copilot_1.button(DriverConstants.l3).onTrue(gotoL3Instant);
-        copilot_1.button(DriverConstants.l4).onTrue(gotoL4Instant);
+        copilot_1.button(Driver.l1).onTrue(gotoL1Instant);
+        copilot_1.button(Driver.l2).onTrue(gotoL2Instant);
+        copilot_1.button(Driver.l3).onTrue(gotoL3Instant);
+        copilot_1.button(Driver.l4).onTrue(gotoL4Instant);
 
-        copilot_1.button(DriverConstants.pose_i).onTrue(reefIInstant);
-        copilot_1.button(DriverConstants.pose_j).onTrue(reefJInstant);
-        copilot_1.button(DriverConstants.pose_ija).onTrue(reefIJInstant);
-        copilot_1.button(DriverConstants.pose_k).onTrue(reefKInstant);
-        copilot_1.button(DriverConstants.pose_l).onTrue(reefLInstant);
-        copilot_1.button(DriverConstants.pose_kla).onTrue(reefKLInstant);
+        copilot_1.button(Driver.pose_i).onTrue(reefIInstant);
+        copilot_1.button(Driver.pose_j).onTrue(reefJInstant);
+        copilot_1.button(Driver.pose_ija).onTrue(reefIJInstant);
+        copilot_1.button(Driver.pose_k).onTrue(reefKInstant);
+        copilot_1.button(Driver.pose_l).onTrue(reefLInstant);
+        copilot_1.button(Driver.pose_kla).onTrue(reefKLInstant);
         
         // ===  CoPilot 2 Buttons  ===========================================
-        copilot_2.button(DriverConstants.pose_a).onTrue(reefAInstant);
-        copilot_2.button(DriverConstants.pose_b).onTrue(reefBInstant);
-        copilot_2.button(DriverConstants.pose_aba).onTrue(reefABInstant);
-        copilot_2.button(DriverConstants.pose_c).onTrue(reefCInstant);
-        copilot_2.button(DriverConstants.pose_d).onTrue(reefDInstant);
-        copilot_2.button(DriverConstants.pose_cda).onTrue(reefCDInstant);
-        copilot_2.button(DriverConstants.pose_e).onTrue(reefEInstant);
-        copilot_2.button(DriverConstants.pose_f).onTrue(reefFInstant);
-        copilot_2.button(DriverConstants.pose_efa).onTrue(reefEFInstant);
-        copilot_2.button(DriverConstants.pose_g).onTrue(reefGInstant);
-        copilot_2.button(DriverConstants.pose_h).onTrue(reefHInstant);
-        copilot_2.button(DriverConstants.pose_gha).onTrue(reefGHInstant);
+        copilot_2.button(Driver.pose_a).onTrue(reefAInstant);
+        copilot_2.button(Driver.pose_b).onTrue(reefBInstant);
+        copilot_2.button(Driver.pose_aba).onTrue(reefABInstant);
+        copilot_2.button(Driver.pose_c).onTrue(reefCInstant);
+        copilot_2.button(Driver.pose_d).onTrue(reefDInstant);
+        copilot_2.button(Driver.pose_cda).onTrue(reefCDInstant);
+        copilot_2.button(Driver.pose_e).onTrue(reefEInstant);
+        copilot_2.button(Driver.pose_f).onTrue(reefFInstant);
+        copilot_2.button(Driver.pose_efa).onTrue(reefEFInstant);
+        copilot_2.button(Driver.pose_g).onTrue(reefGInstant);
+        copilot_2.button(Driver.pose_h).onTrue(reefHInstant);
+        copilot_2.button(Driver.pose_gha).onTrue(reefGHInstant);
        
         drivetrain.registerTelemetry(logger::telemeterize);
     }

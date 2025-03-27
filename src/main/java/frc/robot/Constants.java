@@ -122,7 +122,7 @@ public class Constants {
         public static final double kElevatorEncoderVelocityConversionFactor = kRelativeEncoderScaleRevToMeters; 
     }
 
-    public class DriverConstants{
+    public class Driver{
         
         // driver 
         public static final double kMaxDriveSpeed = 0.9; // Percent of kMaxVelocityMPS
