@@ -98,19 +98,17 @@ public class Constants {
 
         public static final double kL1CoralHeightMeters = Units.inchesToMeters(21);
         public static final double kL2CoralHeightMeters = Units.inchesToMeters(31);
-        public static final double kL3CoralHeightMeters = Units.inchesToMeters(46);
-        public static final double kL4CoralHeightMeters = Units.inchesToMeters(70);  // was 70
-
-        public static final double kL1AlgaeHeightMeters = Units.inchesToMeters(24);
+        public static final double kL3CoralHeightMeters = Units.inchesToMeters(45);  // was 46
+        public static final double kL4CoralHeightMeters = Units.inchesToMeters(70);  
+        public static final double kL1AlgaeHeightMeters = Units.inchesToMeters(22);  // was 24
         public static final double kL2AlgaeHeightMeters = Units.inchesToMeters(39);
         public static final double kL3AlgaeHeightMeters = Units.inchesToMeters(54);  
 
-        public static final double kL4AlgaeWindupHeightMeters = Units.inchesToMeters(70.5);  
-
+        public static final double kL4AlgaeWindupHeightMeters = Units.inchesToMeters(72);  
         public static final double kSafeHomeHeightMeters = Units.inchesToMeters(19);
         
-        public static final double kElevatorMaxVelocityMPS = 2.0;  // MPS
-		public static final double kElevatorMaxAccelerationMPSPS = 4.0; // MPSS  was 6
+        public static final double kElevatorMaxVelocityMPS       = 2.0;  // MPS
+		public static final double kElevatorMaxAccelerationMPSPS = 4.0;  // MPSS  was 6
 	
         public static final double kElevatorEncoderPositionConversionFactor = kRelativeEncoderScaleRevToMeters; 
         public static final double kElevatorEncoderVelocityConversionFactor = kRelativeEncoderScaleRevToMeters; 

@@ -38,13 +38,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "EtoCR"
+            "pathName": "EtoCR Fast"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CRtoD"
+            "pathName": "CRtoD Fast"
           }
         },
         {
@@ -62,19 +62,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DtoCR"
+            "pathName": "DtoCR Fast"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "CRtoC"
+            "pathName": "CRtoC Fast"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GO_DIRECTLY_TO_ALGAE"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "SCORE_CORAL"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CtoCD"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "CDtoProcessor"
           }
         }
       ]
