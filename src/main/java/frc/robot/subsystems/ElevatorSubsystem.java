@@ -29,13 +29,17 @@ import frc.robot.Constants.Elevator;
 import frc.robot.commands.DefaultElevatorCmd;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  private final SparkFlex leftElevatorMotor;
-  private final SparkFlex centerElevatorMotor; // Cannot be final due to sysID Routine method
-  private final SparkFlex rightElevatorMotor;
+
+  private final boolean   USING_THREE_MOTORS = true;
+
+  private final SparkFlex leaderElevatorMotor; // Cannot be final due to sysID Routine method
+  private final SparkFlex follower1ElevatorMotor;
+  private final SparkFlex follower2ElevatorMotor;
   
-  private final SparkFlexConfig leftElevatorMotorConfig;
-  private final SparkFlexConfig centerElevatorMotorConfig;
-  private final SparkFlexConfig rightElevatorMotorConfig;
+  private final SparkFlexConfig leaderElevatorMotorConfig;
+  private final SparkFlexConfig follower1ElevatorMotorConfig;
+  private final SparkFlexConfig follower2ElevatorMotorConfig;
+  
   private final SparkFlexConfig resetFrameRateConfig;
   private final SparkClosedLoopController elevatorController;
   private final RelativeEncoder elevatorEncoder;
@@ -51,12 +55,17 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
-    leftElevatorMotor = new SparkFlex(Elevator.kElevatorMotorLeftId, MotorType.kBrushless);
-    centerElevatorMotor = new SparkFlex(Elevator.kElevatorMotorCenterId, MotorType.kBrushless);
-    rightElevatorMotor = new SparkFlex(Elevator.kElevatorMotorRightId, MotorType.kBrushless);
+    leaderElevatorMotor     = new SparkFlex(Elevator.kElevatorMotorLeftId, MotorType.kBrushless);
+    follower1ElevatorMotor  = new SparkFlex(Elevator.kElevatorMotorRightId, MotorType.kBrushless);
+    
+    if (USING_THREE_MOTORS) {
+      follower2ElevatorMotor= new SparkFlex(Elevator.kElevatorMotorCenterId, MotorType.kBrushless);
+    } else {
+      follower2ElevatorMotor = null;
+    }
 
-    elevatorController = centerElevatorMotor.getClosedLoopController();
-    elevatorEncoder = centerElevatorMotor.getEncoder();
+    elevatorController = leaderElevatorMotor.getClosedLoopController();
+    elevatorEncoder = leaderElevatorMotor.getEncoder();
   
 	  elevatorFeedforward = new ElevatorFeedforward(Elevator.kS, Elevator.kG, Elevator.kV);
 
@@ -65,38 +74,42 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 	  elevatorSetpoint = new TrapezoidProfile.State(elevatorEncoder.getPosition(), elevatorEncoder.getVelocity());
 
-    centerElevatorMotorConfig = new SparkFlexConfig();
+    leaderElevatorMotorConfig = new SparkFlexConfig();
 
-    centerElevatorMotorConfig.closedLoop
+    leaderElevatorMotorConfig.closedLoop
       .p(Elevator.kP)
       .i(Elevator.kI)
       .d(Elevator.kD)
       .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
 
-    centerElevatorMotorConfig.encoder
+    leaderElevatorMotorConfig.encoder
       .positionConversionFactor(Elevator.kElevatorEncoderPositionConversionFactor)
       .velocityConversionFactor(Elevator.kElevatorEncoderVelocityConversionFactor);
 
-    centerElevatorMotorConfig
+    leaderElevatorMotorConfig
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(Elevator.kElevatorCurrentLimit);
 
-    leftElevatorMotorConfig = new SparkFlexConfig();
-    leftElevatorMotorConfig
+    follower1ElevatorMotorConfig = new SparkFlexConfig();
+    follower1ElevatorMotorConfig
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(Elevator.kElevatorCurrentLimit)
-      .follow(centerElevatorMotor);
+      .follow(leaderElevatorMotor);
     
-    rightElevatorMotorConfig = new SparkFlexConfig();
-    rightElevatorMotorConfig
-      .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(Elevator.kElevatorCurrentLimit)
-      .follow(centerElevatorMotor);
+    leaderElevatorMotor.configure(leaderElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    follower1ElevatorMotor.configure(follower1ElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    leftElevatorMotor.configure(leftElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    centerElevatorMotor.configure(centerElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    rightElevatorMotor.configure(rightElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
+    if (USING_THREE_MOTORS){
+      follower2ElevatorMotorConfig = new SparkFlexConfig();
+      follower2ElevatorMotorConfig
+        .idleMode(IdleMode.kBrake)
+        .smartCurrentLimit(Elevator.kElevatorCurrentLimit)
+        .follow(leaderElevatorMotor);
+      follower2ElevatorMotor.configure(follower2ElevatorMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    } else {
+      follower2ElevatorMotorConfig = null;
+    }
+    
     setDefaultCommand(new DefaultElevatorCmd(this));
 
     elevatorEncoder.setPosition(Constants.Elevator.elevatorHomeHeightMeters); 
@@ -119,17 +132,18 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void resetFrameRate() {
-    leftElevatorMotor.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    centerElevatorMotor.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-    rightElevatorMotor.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    leaderElevatorMotor.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    follower1ElevatorMotor.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    if (USING_THREE_MOTORS){
+      follower2ElevatorMotor.configure(resetFrameRateConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    }
     System.out.println("RESET FRAME RATE");
   }
 
   @Override
   public void simulationPeriodic() {
-      // TODO Auto-generated method stub
       SmartDashboard.putNumber("Elev Rel Hgt", Units.metersToInches(elevatorGoal.position));
-      SmartDashboard.putNumber("ElevatorGoal", Units.metersToInches(elevatorGoal.position));
+      SmartDashboard.putNumber("Elevator Goal", Units.metersToInches(elevatorGoal.position));
       SmartDashboard.putString("Elevator Power", "SIMULATION");
   }
 
@@ -140,7 +154,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 		// This method will be called once per scheduler run
     SmartDashboard.putNumber("Elev Rel Hgt", Units.metersToInches(relativeEncoderHeightMeters));
 		SmartDashboard.putNumber("Elevator Goal", Units.metersToInches(elevatorGoal.position));
-    SmartDashboard.putNumber("Elevator Power", centerElevatorMotor.getAppliedOutput());
+    SmartDashboard.putNumber("Elevator Power", leaderElevatorMotor.getAppliedOutput());
     SmartDashboard.putNumber("Elevator Current", getCurrent());
 	}
 
@@ -198,11 +212,15 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setSpeed(double speed) {
-    centerElevatorMotor.set(speed);
+    leaderElevatorMotor.set(speed);
   }
 
   public double getCurrent() {
-    return leftElevatorMotor.getOutputCurrent() +  centerElevatorMotor.getOutputCurrent() + rightElevatorMotor.getOutputCurrent();
+    if (USING_THREE_MOTORS){
+      return leaderElevatorMotor.getOutputCurrent() +  follower1ElevatorMotor.getOutputCurrent() + follower2ElevatorMotor.getOutputCurrent();
+    } else {  
+      return leaderElevatorMotor.getOutputCurrent() +  follower1ElevatorMotor.getOutputCurrent() ;
+    }
   }
 
   //----------//
