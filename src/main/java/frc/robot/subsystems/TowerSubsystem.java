@@ -203,13 +203,14 @@ public class TowerSubsystem extends SubsystemBase {
 					setState(TowerState.PAUSING_AFTER_SCORING_CORAL);
 				} else {
 					if (wrist.gotExitCoral()) {
+						wrist.setIntakeSpeed(Constants.Wrist.kCoralRetractPower);
+					} else {
 						wrist.setIntakeSpeed(0);
 					}
 				}
 				break;
 			}
 		
-
 			case RAISING_TO_L123: {
 				if (elevator.inPosition()) {
 					setState(TowerState.READY_TO_SCORE_CORAL);
